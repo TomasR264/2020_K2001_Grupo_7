@@ -47,6 +47,9 @@ int main()
         }
     }
     fclose(archivo);
+
+    //getchar para que no se cierre el ejecutable automaticamente y se puedan ver los resultados
+    getchar();
     return 0;
 }
 
