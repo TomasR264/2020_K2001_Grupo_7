@@ -1,0 +1,40 @@
+main{
+
+    *se abre el archivo
+
+    *if(comprueba que se haya abierto correctamente)
+
+    *while(va repitiendo, y lee de a un caracter por vez){
+
+        if(si es una ,){
+            *muestra el estado
+            *resetea el estado
+        }
+        else{
+            *mostrar el caracter  (asi se va formando el numero, y es comodo de ver en pantalla)
+            *pasar por el automata
+            *actualizar el estado
+        }
+    }  
+}
+
+//subprograma que analiza con el automata(recibe el estado actual, y el caracter ingresado){
+
+*cargo el automata [][] = (
+          *  grupos de caracteres
+    estados ( les paso la foto del automata)
+)
+*veo dentro de que grupo esta el caracter, y lo convierto a un int para usarlo como columna
+
+*igualo el estado a el array en la posicion fila:estadoactual columna:int del caracter
+
+retorno el nuevo estado
+}
+
+
+
+
+//subprograma para clasificar caracter(recibe el caracter){
+
+    son varios if que van detectando si esta entre tal y tal caracter, y iguala a un entero, con la columna correspondiente
+}
