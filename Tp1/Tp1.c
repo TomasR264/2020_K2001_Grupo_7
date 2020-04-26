@@ -11,7 +11,7 @@ int main()
 {
     FILE *archivo;
     char caracter;
-    int estado = 0;
+    int estado = 1;
 
     archivo = fopen("entrada.txt", "r");
 
