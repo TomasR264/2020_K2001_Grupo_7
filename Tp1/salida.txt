@@ -1,0 +1,15 @@
+             Palabra vacia!
+0x12             Hexadecimal
+054             Octal
+78             Decimal
+11             Decimal
+0009             Palabra no reconocida
+00007             Octal
+0la             Palabra no reconocida
+abc             Palabra no reconocida
+0XAD123             Hexadecimal
+AFg             Palabra no reconocida
+  123             Palabra no reconocida
+0123             Octal
+0Xffff             Hexadecimal
+4567354345             Decimal

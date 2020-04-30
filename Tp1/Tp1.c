@@ -4,19 +4,21 @@
 
 int clasificarConstantes(char caracter, int estado);
 int clasificarCaracter(char caracter);
-void imprimirEstado(int estado);
-void imprimirCaracter(char caracter);
+void imprimirEstado(int estado, FILE *salida);
+void imprimirCaracter(char caracter, FILE *salida);
 
 int main()
 {
-    FILE *archivo;
+    FILE *entrada;
+    FILE *salida;
     char caracter;
     int estado = 1;
 
-    archivo = fopen("entrada.txt", "r");
+    salida = fopen("salida.txt", "wt");
+    entrada = fopen("entrada.txt", "r");
 
     //primero detecta que exista el archivo
-    if (archivo == NULL)
+    if (entrada == NULL)
     {
         printf("\nError de apertura del archivo. \n\n");
     }
@@ -26,27 +28,27 @@ int main()
         printf("\nLas variables enteras del archivo, clasificadas, son:  \n\n");
 
         // si no detecta el final del archivo, comienza a leer de a 1 caracter
-        while ((caracter = fgetc(archivo)) != EOF)
+        while ((caracter = fgetc(entrada)) != EOF)
         {
             //si detecta una "," salta de linea, y cambia de palabra
             if (caracter == ',')
             {
 
-                imprimirEstado(estado);
+                imprimirEstado(estado, salida);
 
                 //resetear estado
                 estado = 1;
             }
             else
             { //imprimo el numero que estoy analizando
-                imprimirCaracter(caracter);
+                imprimirCaracter(caracter, salida);
 
                 //llamo a la funcion que los clasifica, paso el estado actual, y me devuelve un nuevo estado actualizado
                 estado = clasificarConstantes(caracter, estado);
             }
         }
     }
-    fclose(archivo);
+    fclose(entrada);
 
     //getchar para que no se cierre el ejecutable automaticamente y se puedan ver los resultados
     getchar();
@@ -111,40 +113,50 @@ int clasificarCaracter(char caracter)
     return cClasificado;
 }
 
-void imprimirEstado(int estado)
+void imprimirEstado(int estado, FILE *salida)
 {
     printf("             ");
+    fputs("             ", salida);
     switch (estado)
     {
     case 1:
         printf("Palabra vacia!");
+        fputs("Palabra vacia!", salida);
         break;
     case 2:
         printf("Octal");
+        fputs("Octal", salida);
         break;
     case 3:
         printf("Octal");
+        fputs("Octal", salida);
         break;
     case 4:
         printf("Decimal");
+        fputs("Decimal", salida);
         break;
     case 5:
         printf("Palabra no reconocida (Hexadecimal incompleto)!");
+        fputs("Palabra no reconocida (Hexadecimal incompleto)!", salida);
         break;
     case 6:
         printf("Hexadecimal");
+        fputs("Hexadecimal", salida);
         break;
     case 7:
         printf("Palabra no reconocida");
+        fputs("Palabra no reconocida", salida);
         break;
 
     default:
         break;
     }
     printf("\n");
+    fputs("\n", salida);
 }
 
-void imprimirCaracter(char caracter)
+void imprimirCaracter(char caracter, FILE *salida)
 {
     printf("%C", caracter);
+    fputc(caracter, salida);
 }
