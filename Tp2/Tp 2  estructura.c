@@ -31,13 +31,16 @@ int main()
 
         }else
         {
-            //si no hay error
+            if (caracter != ' ')
+            {
+                //si no hay error
 
-            //imprimo el numero que estoy analizando
-            imprimirCaracter(caracter);
+                //imprimo el numero que estoy analizando
+                imprimirCaracter(caracter);
 
-            //llamo a la funcion que los clasifica, paso el estado actual, y me devuelve un nuevo estado actualizado
-            estado = clasificarConstantes(caracter, estado, hayError(estado));
+                //llamo a la funcion que los clasifica, paso el estado actual, y me devuelve un nuevo estado actualizado
+                estado = clasificarConstantes(caracter, estado, hayError(estado));
+            } 
         }
        
     }
