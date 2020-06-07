@@ -2,8 +2,9 @@
 #include <stdio.h>
 #include <conio.h>
 #include <stdbool.h>
+#include <pila.h>
 
-int clasificarConstantes(char caracter, int estado, bool error);
+int clasificarConstantes(char caracter, int estado, bool error, pila_t* pila);
 int clasificarCaracter(char caracter);
 void imprimirEstado(int estado);
 void imprimirCaracter(char caracter);
@@ -13,7 +14,7 @@ int main()
 {
     char caracter;
     int estado = 0;
-
+    pila_t* pila = pila_crear();
 
     // si no detecta el final del archivo, comienza a leer de a 1 caracter
     while ((caracter = fgetc(stdin)) != '\n')
@@ -39,32 +40,35 @@ int main()
                 imprimirCaracter(caracter);
 
                 //llamo a la funcion que los clasifica, paso el estado actual, y me devuelve un nuevo estado actualizado
-                estado = clasificarConstantes(caracter, estado, hayError(estado));
+                estado = clasificarConstantes(caracter, estado, hayError(estado), pila);
             } 
         }
        
     }
     
-    if(pop(pila) == '$' && (estado == 1 || estado == 2)){
-        printf("\n\n");
-        printf("Expresion sintácticamente correcta");
-    } else
-    {
-        imprimirEstado(estado);
+    if(!pila_esta_vacia(pila)){
+        if(pila_desapilar(pila) == '$' && (estado == 1 || estado == 2))
+        {
+            printf("\n\n");
+            printf("Expresion sintácticamente correcta");
+        }else{
+            imprimirEstado(estado);
+        }
     }
-    
-    
+
 
     //getchar para que no se cierre el ejecutable automaticamente y se puedan ver los resultados
     getchar();
     return 0;
 }
 
-int clasificarConstantes(char caracter, int estado, bool error)
+int clasificarConstantes(char caracter, int estado, bool error, pila_t* pila)
 {
+    //Tenemos que ver como implementamos la pila aca!!
+
     int cClasificado;
     int nuevoEstado;
-    int pila;
+    int pila1;
     int automata [2][3][5] = {
     /* pila $  */     { {3, 1, 4, 0, 5}, 
                         {1, 1, 0, 6, 5}, 
@@ -87,11 +91,11 @@ int clasificarConstantes(char caracter, int estado, bool error)
     cClasificado = clasificarCaracter(caracter);
 
     //Hacer los push y pop correspondientes de la pila y actualizar el valor
-    pila = detectarPila(cClasificado);
+    detectarPila(cClasificado, pila);
 
 
     //actualizar estado segun automata
-    nuevoEstado = automata[pila][estado][cClasificado];
+    nuevoEstado = automata[pila1][estado][cClasificado];
 
     return nuevoEstado;
 }
@@ -125,9 +129,9 @@ int clasificarCaracter(char caracter)
     return cClasificado;
 }
 
-int detectarPila (int caracterClasificado){
+int detectarPila (int caracterClasificado, pila_t* pila){
 
-    char cimaPila = pop ();
+    char cimaPila = pila_desapilar(pila);
 
     if(caracterClasificado == 4){
         return clasificarPila(cimaPila);
@@ -135,13 +139,13 @@ int detectarPila (int caracterClasificado){
 
     if(caracterClasificado == 3){
 
-        push(cimaPila);
-        push('R');
+        pila_apilar(pila, cimaPila);
+        pila_apilar(pila, 'R');
 
         return clasificarPila(cimaPila);
     }
 
-    push(cimaPila);
+     pila_apilar(pila, cimaPila);
 
     return clasificarPila(cimaPila);
 }
