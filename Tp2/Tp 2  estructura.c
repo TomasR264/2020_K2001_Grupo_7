@@ -2,13 +2,16 @@
 #include <stdio.h>
 #include <conio.h>
 #include <stdbool.h>
-#include <pila.h>
+#include "pila.h"
+#include <string.h>
 
 int clasificarConstantes(char caracter, int estado, bool error, pila_t* pila);
 int clasificarCaracter(char caracter);
 void imprimirEstado(int estado);
 void imprimirCaracter(char caracter);
 bool hayError(int estado);
+int detectarPila (int caracterClasificado, pila_t* pila);
+int clasificarPila (void* cimaPila);
 
 int main()
 {
@@ -47,7 +50,7 @@ int main()
     }
     
     if(!pila_esta_vacia(pila)){
-        if(pila_desapilar(pila) == '$' && (estado == 1 || estado == 2))
+        if(strcmp(pila_desapilar(pila), "$") == 0 && (estado == 1 || estado == 2))
         {
             printf("\n\n");
             printf("Expresion sintácticamente correcta");
@@ -68,7 +71,7 @@ int clasificarConstantes(char caracter, int estado, bool error, pila_t* pila)
 
     int cClasificado;
     int nuevoEstado;
-    int pila1;
+    // int pila1;
     int automata [2][3][5] = {
     /* pila $  */     { {3, 1, 4, 0, 5}, 
                         {1, 1, 0, 6, 5}, 
@@ -95,7 +98,7 @@ int clasificarConstantes(char caracter, int estado, bool error, pila_t* pila)
 
 
     //actualizar estado segun automata
-    nuevoEstado = automata[pila1][estado][cClasificado];
+    nuevoEstado = automata[1][estado][cClasificado];
 
     return nuevoEstado;
 }
@@ -131,7 +134,7 @@ int clasificarCaracter(char caracter)
 
 int detectarPila (int caracterClasificado, pila_t* pila){
 
-    char cimaPila = pila_desapilar(pila);
+    void* cimaPila = pila_desapilar(pila);
 
     if(caracterClasificado == 4){
         return clasificarPila(cimaPila);
@@ -140,7 +143,7 @@ int detectarPila (int caracterClasificado, pila_t* pila){
     if(caracterClasificado == 3){
 
         pila_apilar(pila, cimaPila);
-        pila_apilar(pila, 'R');
+        pila_apilar(pila, &"R");
 
         return clasificarPila(cimaPila);
     }
@@ -150,16 +153,16 @@ int detectarPila (int caracterClasificado, pila_t* pila){
     return clasificarPila(cimaPila);
 }
 
-int clasificarPila (char cimaPila){
+int clasificarPila (void* cimaPila){
 
     int pilaClasificada = 3;
 
-    if (cimaPila == '$')
+    if (strcmp(cimaPila, "$") == 0)
     {
         pilaClasificada = 0;
     }
 
-    if (cimaPila == 'R')
+    if (strcmp(cimaPila, "R") == 0)
     {
         pilaClasificada = 1;
     }
