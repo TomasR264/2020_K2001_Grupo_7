@@ -142,7 +142,7 @@ int detectarPila (int caracterClasificado, pila_t* pila){
 
     if(caracterClasificado == 3){
 
-        pila_apilar(pila, cimaPila);
+        pila_apilar(pila, &cimaPila);
         pila_apilar(pila, &"R");
 
         return clasificarPila(cimaPila);
