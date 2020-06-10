@@ -19,62 +19,76 @@ int main()
     char caracter;
     int estado = 0;
     pila_t *pila = pila_crear();
-    pila_apilar(pila, &"$"); //pila inicia en vacio
+     //pila inicia en vacio
     bool contador = true;    //contador para que solo señale una vez el caracter con error
+    char salida = '0';
 
     printf("Bienvenido al programa, ingrese la expresion a analizar \n \n");
 
-    // si no detecta el final del archivo, comienza a leer de a 1 caracter
-    while ((caracter = fgetc(stdin)) != '\n')
+    while (salida != '2')
     {
-
-        //detecto que no este en un estado con codigo de error
-
-        if (caracter != ' ')
+        printf("Introducir expresion:");
+        caracter = ' ';
+        estado = 0;
+        pila_apilar(pila, &"$");
+        fseek(stdin,0,SEEK_END);
+        // si no detecta el final del archivo, comienza a leer de a 1 caracter
+        while ((caracter = fgetc(stdin)) != '\n')
         {
 
-            //llamo a la funcion que los clasifica, paso el estado actual, y me devuelve un nuevo estado actualizado
-            estado = clasificarConstantes(caracter, estado, hayError(estado), pila);
+            //detecto que no este en un estado con codigo de error
 
-            //si hay error lo marco entre comillas
-            if (hayError(estado) && contador)
+            if (caracter != ' ')
             {
+                //llamo a la funcion que los clasifica, paso el estado actual, y me devuelve un nuevo estado actualizado
+                estado = clasificarConstantes(caracter, estado, hayError(estado), pila);
 
-                printf("\"");
-                imprimirCaracter(caracter);
-                printf("\"");
-                contador = false;
+                //si hay error lo marco entre comillas
+                if (hayError(estado) && contador)
+                {
+
+                    printf("\"");
+                    imprimirCaracter(caracter);
+                    printf("\"");
+                    contador = false;
+                }
+                else
+                {
+                    //imprimo el numero que estoy analizando
+                    imprimirCaracter(caracter);
+                }
+            }
+        }
+        
+        //termina de analizar todos los caracteres y da el resultado dependiendo del estado en que se encuentre
+        //printf("pila esta vacia : %d", pila_esta_vacia(pila));
+        if (!pila_esta_vacia(pila))
+        {
+            if (strcmp(pila_desapilar(pila), "$") == 0 && (estado == 1 || estado == 2))
+            {
+                printf("\n\n");
+                printf("Expresion sintacticamente correcta \n");
             }
             else
             {
-                //imprimo el numero que estoy analizando
-                imprimirCaracter(caracter);
+                imprimirEstado(estado);
             }
         }
-    }
-    //termina de analizar todos los caracteres y da el resultado dependiendo del estado en que se encuentre
-    if (!pila_esta_vacia(pila))
-    {
-        if (strcmp(pila_desapilar(pila), "$") == 0 && (estado == 1 || estado == 2))
-        {
-            printf("\n\n");
-            printf("Expresion sintacticamente correcta \n");
-            printf("Presione enter para salir del programa \n");
-        }
-        else
-        {
-            imprimirEstado(estado);
-        }
+
+        printf("\n\n\n1-Introducir otra expresion\n");
+        printf("2-Para salir\n");
+        salida = getchar();
+    
     }
 
-    //getchar para que no se cierre el ejecutable automaticamente y se puedan ver los resultados
-    getchar();
+    
     return 0;
 }
 
 int clasificarConstantes(char caracter, int estado, bool error, pila_t *pila)
 {
     //Tenemos que ver como implementamos la pila aca!!
+
 
     int pilaClasificada = 0;
     int cClasificado = 0;
@@ -99,6 +113,7 @@ int clasificarConstantes(char caracter, int estado, bool error, pila_t *pila)
 
     //convierte el caracter a un entero, columna del automata
     cClasificado = clasificarCaracter(caracter);
+
 
     //Hacer los push y pop correspondientes de la pila y actualizar el valor
     pilaClasificada = detectarPila(cClasificado, pila);
@@ -208,45 +223,45 @@ void imprimirEstado(int estado)
     {
     case 0:
         printf("Error: Sintacticamente incorrecto\n");
-        printf("Presione enter para salir del programa \n");
+        
         break;
     case 1:
         printf("Error: Sintacticamente incorrecto\n");
-        printf("Presione enter para salir del programa \n");
+        
         break;
     case 2:
         printf("Error: Sintacticamente incorrecto\n");
-        printf("Presione enter para salir del programa \n");
+        
         break;
     case 3:
         printf("Error: Sintacticamente incorrecto \n \n");
         printf("No se puede Insertar un número comenzando con 0\n");
-        printf("Presione enter para salir del programa \n");
+        
         break;
     case 4:
         printf("Error: Sintacticamente incorrecto \n \n");
         printf("No se puede insertar una operacion sin 2 numeros o 2 agrupaciones con parentesis\n");
-        printf("Presione enter para salir del programa \n");
+        
         break;
     case 5:
         printf("Error: Sintacticamente incorrecto \n \n");
         printf("No existe el parentesis de apertura correspondiente\n");
-        printf("Presione enter para salir del programa \n");
+        
         break;
     case 6:
         printf("Error: Sintacticamente incorrecto \n \n");
         printf("No se puede abrir un parentesis sin estar precedido por una operacion o ser el comienzo de la expresion\n");
-        printf("Presione enter para salir del programa \n");
+        
         break;
     case 7:
         printf("Error: Sintacticamente incorrecto \n \n");
         printf("No se puede escribir un numero luego de un parentesis\n");
-        printf("Presione enter para salir del programa \n");
+        
         break;
     case 8:
         printf("Error: Sintacticamente incorrecto \n \n");
         printf("No es posible abrir y cerrar parentesis sin contenido o luego de haber ingresado una operacion\n");
-        printf("Presione enter para salir del programa \n");
+        
         break;
 
     default:
