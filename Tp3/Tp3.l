@@ -3,6 +3,65 @@
 %{
     #include <stdio.h>
 
+    #include <stdlib.h>
+    #include <stdio.h>
+    #include <conio.h>
+    #include <stdbool.h>
+    #include <string.h>
+
+/************* definiciones de nodos ****************************/ 
+
+    struct nodo_identificador {
+        char* identificador;
+        int apariciones;
+    };
+    typedef struct nodo_identificador nodo_identificador;
+
+
+    struct nodo_literalCadena {
+        char* literalCadena;
+        int longitud;
+    };
+    typedef struct nodo_literalCadena nodo_literalCadena;
+
+
+    struct nodo_palabraReservada {
+        char* palabraReservada;
+    };
+    typedef struct nodo_palabraReservada nodo_palabraReservada;
+
+
+    struct nodo_constrante {
+        char* constrante;
+        char* tipo;
+        int valor;
+        bool caracter; 
+    };/*bool en el nodo de caracter con el objetivo de que en ese caso "valor" pase a representar el orden de aparicion*/
+    typedef struct nodo_constrante nodo_constrante;
+
+
+    struct nodo_operador_caracter {
+        char* operador_caracter;
+        int apariciones;
+    };
+    typedef struct nodo_operador_caracter nodo_operador_caracter;
+
+
+    struct nodo_comentario {
+        char* comentario;
+        bool unaLinea;
+    };
+    typedef struct nodo_comentario nodo_comentario;
+
+
+    struct nodo_noReconocido {
+        char* noReconocido;
+        int linea;
+    };
+    typedef struct nodo_noReconocido nodo_noReconocido;
+
+
+
 
 %}
 
@@ -40,9 +99,9 @@ ESCAPE_OCTAL \\[0-7]{1,3}
 ESCAPE_HEXA \\x[0-9a-fA-F]{1,2}
 
 
-OPERADORES
+OPERADORES operador
 
-PUNTUADORES
+PUNTUADORES puntuador
 
 
 
@@ -76,8 +135,6 @@ PUNTUADORES
 
 int main (){
 yylex();
-/*
-["auto""break""case""char""const""continue""default""do""double""else""enum""extern""float""for""goto""if""int""long""register""return""short""signed""sizeof""static""struct""switch""typedef""union""unsigned""void""volatile""while"]
-*/
+
 return 0;
 }
