@@ -12,54 +12,129 @@
 /************* definiciones de nodos ****************************/ 
 
     struct nodo_identificador {
-        char* identificador;
+        char *identificador;
         int apariciones;
+        struct nodo_identificador *siguiente;
     };
     typedef struct nodo_identificador nodo_identificador;
 
 
     struct nodo_literalCadena {
-        char* literalCadena;
+        char *literalCadena;
         int longitud;
+        struct nodo_literalCadena *siguiente;
     };
     typedef struct nodo_literalCadena nodo_literalCadena;
 
 
     struct nodo_palabraReservada {
-        char* palabraReservada;
+        char *palabraReservada;
+        struct nodo_palabraReservada *siguiente;
     };
     typedef struct nodo_palabraReservada nodo_palabraReservada;
 
 
-    struct nodo_constrante {
-        char* constrante;
-        char* tipo;
+    struct nodo_constante {
+        char *constrante;
+        char *tipo;
         int valor;
         bool caracter; 
+        struct nodo_constante *siguiente;
     };/*bool en el nodo de caracter con el objetivo de que en ese caso "valor" pase a representar el orden de aparicion*/
-    typedef struct nodo_constrante nodo_constrante;
+    typedef struct nodo_constante nodo_constante;
 
 
     struct nodo_operador_caracter {
-        char* operador_caracter;
+        char *operador_caracter;
         int apariciones;
+        struct nodo_operador_caracter *siguiente;
     };
     typedef struct nodo_operador_caracter nodo_operador_caracter;
 
 
     struct nodo_comentario {
-        char* comentario;
+        char *comentario;
         bool unaLinea;
+        struct nodo_comentario *siguiente;
     };
     typedef struct nodo_comentario nodo_comentario;
 
 
     struct nodo_noReconocido {
-        char* noReconocido;
+        char *noReconocido;
         int linea;
+        struct nodo_noReconocido *siguiente;
     };
     typedef struct nodo_noReconocido nodo_noReconocido;
 
+
+    /********************************* funciones listas *********************/
+
+
+    /***inicializar ***/
+
+    nodo_identificador * iniciar_identificador(nodo_identificador *Lista){
+        
+        Lista = NULL;
+        return Lista;
+    }
+    nodo_literalCadena * iniciar_literalCadena(nodo_literalCadena *Lista){
+        
+        Lista = NULL;
+        return Lista;
+    }
+    nodo_palabraReservada * iniciar_palabraReservada(nodo_palabraReservada *Lista){
+        
+        Lista = NULL;
+        return Lista;
+    }
+    nodo_constante * iniciar_constante(nodo_constante *Lista){
+        
+        Lista = NULL;
+        return Lista;
+    }
+    nodo_operador_caracter * iniciar_operador(nodo_operador_caracter *Lista){
+        
+        Lista = NULL;
+        return Lista;
+    }
+    nodo_comentario * iniciar_comentario(nodo_comentario *Lista){
+        
+        Lista = NULL;
+        return Lista;
+    }
+    nodo_noReconocido * iniciar_noReconocido(nodo_noReconocido *Lista){
+        
+        Lista = NULL;
+        return Lista;
+    }
+
+    /*** insertar ***/
+    nodo_identificador *insertar_identificador(nodo_identificador *Lista, char *identificador, int apariciones){
+
+        nodo_identificador *nuevoNodo, *auxiliar;
+        nuevoNodo = (nodo_identificador*) malloc(sizeof(nodo_identificador));
+
+        nuevoNodo->identificador = identificador;
+        nuevoNodo->apariciones = apariciones;
+        nuevoNodo->siguiente = NULL;
+        
+
+        if (Lista == NULL){
+            Lista = nuevoNodo;
+        }else{
+            auxiliar = lista;
+            while(auxiliar->siguiente != NULL){
+                auxiliar = auxiliar->siguiente;
+            }
+
+            auxiliar->siguiente = nuevoNodo;
+            
+        }
+
+        return Lista;
+    
+}
 
 
 
@@ -134,7 +209,18 @@ PUNTUADORES puntuador
 
 
 int main (){
-yylex();
+    nodo_identificador *Lista = iniciar_identificador(Lista);
 
-return 0;
+    
+    Lista = insertar_identificador (Lista, "un string", 3);
+    printf("lista: %p \n", Lista);
+
+    printf("null: %p \n", NULL);
+
+    if(Lista == NULL){
+        printf("hola");
+    }
+    yylex();
+
+    return 0;
 }
