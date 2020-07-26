@@ -35,7 +35,7 @@
 
 
     struct nodo_constante {
-        char *constrante;
+        char *constante;
         char *tipo;
         int valor;
         bool caracter; 
@@ -110,6 +110,7 @@
     }
 
     /*** insertar ***/
+    
     nodo_identificador *insertar_identificador(nodo_identificador *Lista, char *identificador, int apariciones){
 
         nodo_identificador *nuevoNodo, *auxiliar;
@@ -134,9 +135,169 @@
 
         return Lista;
     
-}
+    }
 
 
+    nodo_literalCadena *insertar_literalCadena(nodo_literalCadena *Lista, char *literalCadena, int longitud){
+
+        nodo_literalCadena *nuevoNodo, *auxiliar;
+        nuevoNodo = (nodo_literalCadena*) malloc(sizeof(nodo_literalCadena));
+
+        nuevoNodo->literalCadena = literalCadena;
+        nuevoNodo->longitud = longitud;
+        nuevoNodo->siguiente = NULL;
+        
+
+        if (Lista == NULL){
+            Lista = nuevoNodo;
+        }else{
+            auxiliar = lista;
+            while(auxiliar->siguiente != NULL){
+                auxiliar = auxiliar->siguiente;
+            }
+
+            auxiliar->siguiente = nuevoNodo;
+            
+        }
+
+        return Lista;
+    
+    }
+
+
+    nodo_palabraReservada *insertar_palabraReservada(nodo_palabraReservada *Lista, char *palabraReservada){
+
+        nodo_palabraReservada *nuevoNodo, *auxiliar;
+        nuevoNodo = (nodo_palabraReservada*) malloc(sizeof(nodo_palabraReservada));
+
+        nuevoNodo->palabraReservada = palabraReservada;
+        nuevoNodo->siguiente = NULL;
+        
+
+        if (Lista == NULL){
+            Lista = nuevoNodo;
+        }else{
+            auxiliar = lista;
+            while(auxiliar->siguiente != NULL){
+                auxiliar = auxiliar->siguiente;
+            }
+
+            auxiliar->siguiente = nuevoNodo;
+            
+        }
+
+        return Lista;
+    
+    }
+
+
+    nodo_constante *insertar_constante(nodo_constante *Lista, char *constante, char *tipo, int valor, bool caracter){
+
+        nodo_constante *nuevoNodo, *auxiliar;
+        nuevoNodo = (nodo_constante*) malloc(sizeof(nodo_constante));
+
+        nuevoNodo->constante = constante;
+        nuevoNodo->tipo = tipo;
+        nuevoNodo->valor = valor;
+        nuevoNodo->caracter = caracter;
+        nuevoNodo->siguiente = NULL;
+        
+
+        if (Lista == NULL){
+            Lista = nuevoNodo;
+        }else{
+            auxiliar = lista;
+            while(auxiliar->siguiente != NULL){
+                auxiliar = auxiliar->siguiente;
+            }
+
+            auxiliar->siguiente = nuevoNodo;
+            
+        }
+
+        return Lista;
+    
+    }
+
+
+    nodo_operador_caracter *insertar_operador_caracter(nodo_operador_caracter *Lista, char *operador_caracter int apariciones){
+
+        nodo_operador_caracter *nuevoNodo, *auxiliar;
+        nuevoNodo = (nodo_operador_caracter*) malloc(sizeof(nodo_operador_caracter));
+
+        nuevoNodo->operador_caracter = operador_caracter;
+        nuevoNodo->apariciones = apariciones;
+        nuevoNodo->siguiente = NULL;
+        
+
+        if (Lista == NULL){
+            Lista = nuevoNodo;
+        }else{
+            auxiliar = lista;
+            while(auxiliar->siguiente != NULL){
+                auxiliar = auxiliar->siguiente;
+            }
+
+            auxiliar->siguiente = nuevoNodo;
+            
+        }
+
+        return Lista;
+    
+    }
+
+
+    nodo_comentario *insertar_comentario(nodo_comentario *Lista, char *comentario bool unaLinea){
+
+        nodo_comentario *nuevoNodo, *auxiliar;
+        nuevoNodo = (nodo_comentario*) malloc(sizeof(nodo_comentario));
+
+        nuevoNodo->comentario = comentario;
+        nuevoNodo->unaLinea = unaLinea;
+        nuevoNodo->siguiente = NULL;
+        
+
+        if (Lista == NULL){
+            Lista = nuevoNodo;
+        }else{
+            auxiliar = lista;
+            while(auxiliar->siguiente != NULL){
+                auxiliar = auxiliar->siguiente;
+            }
+
+            auxiliar->siguiente = nuevoNodo;
+            
+        }
+
+        return Lista;
+    
+    }
+
+    nodo_noReconocido *insertar_comentario(nodo_noReconocido *Lista, char *noReconocido int linea){
+
+        nodo_noReconocido *nuevoNodo, *auxiliar;
+        nuevoNodo = (nodo_noReconocido*) malloc(sizeof(nodo_noReconocido));
+
+        nuevoNodo->noReconocido = noReconocido;
+        nuevoNodo->linea = linea;
+        nuevoNodo->siguiente = NULL;
+        
+
+        if (Lista == NULL){
+            Lista = nuevoNodo;
+        }else{
+            auxiliar = lista;
+            while(auxiliar->siguiente != NULL){
+                auxiliar = auxiliar->siguiente;
+            }
+
+            auxiliar->siguiente = nuevoNodo;
+            
+        }
+
+        return Lista;
+    
+    }
 
 %}
 
