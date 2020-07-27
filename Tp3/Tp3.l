@@ -2,7 +2,6 @@
 
 %{
     #include <stdio.h>
-
     #include <stdlib.h>
     #include <stdio.h>
     #include <conio.h>
@@ -136,11 +135,11 @@
     /*** insertar ***/
     
     nodo_identificador *insertar_identificador(nodo_identificador *Lista, char *identificador, int apariciones){
-
         nodo_identificador *nuevoNodo, *auxiliar;
         nuevoNodo = (nodo_identificador*) malloc(sizeof(nodo_identificador));
-
-        nuevoNodo->identificador = identificador;
+        
+        nuevoNodo->identificador = (char *) calloc(strlen(identificador), sizeof(char));
+        strcpy(nuevoNodo->identificador,identificador);
         nuevoNodo->apariciones = apariciones;
         nuevoNodo->siguiente = NULL;
         
@@ -324,6 +323,35 @@
     
     }
 
+    /*** mostrar listas por pantalla **/
+    void mostrarIdentificadores(nodo_identificador *ListaIdentificadores){
+        nodo_identificador *auxiliar;
+        if (ListaIdentificadores == NULL){
+            printf("No hay identificadores para mostrar");
+        }else{
+            auxiliar = ListaIdentificadores;
+            while(auxiliar->siguiente != NULL){
+                printf("Identificador: %s \n", auxiliar->identificador);
+                printf("apariciones: %d \n", auxiliar->apariciones);
+                auxiliar = auxiliar->siguiente;
+            }
+            printf("Identificador: %s \n", auxiliar->identificador);
+            printf("apariciones: %d \n", auxiliar->apariciones);
+        }
+
+        return;
+    }
+
+    /*************************************** GENERAR INFORME **********************************/
+
+
+    void generarInforme(nodo_identificador *ListaIdentificadores){
+
+        mostrarIdentificadores (ListaIdentificadores);
+        
+        
+        return;
+    }
 
 
     /*************************************** VARIABLES GLOBALES ******************************/
@@ -390,7 +418,7 @@ PUNTUADORES puntuador
 {PALABRA_RESERVADA_CONTROL} {printf("palabra reservada control \n");}
 {PALABRA_RESERVADA_OTRO} {printf("palabra reservada otro \n");}
 
-[a-zA-Z_][a-zA-Z0-9_]* {printf("identificador \n"); contadorIdentificadores++; insertar_identificador(ListaIdentificadores, yytext, contadorIdentificadores);}
+[a-zA-Z_][a-zA-Z0-9_]* { contadorIdentificadores++; ListaIdentificadores = insertar_identificador(ListaIdentificadores, yytext, contadorIdentificadores);}
 
 {ENTERA_DECIMAL}{SUFIJO_ENTERO}? {printf("constante entera decimal \n");}
 {ENTERA_OCTAL}{SUFIJO_ENTERO}? {printf("constante entera octal \n");}
@@ -429,8 +457,9 @@ int main (){
 
     //printf("null: %p \n", NULL);
 
-    
+    yyin = fopen("archivo.c", "r");
     yylex();
+    generarInforme(ListaIdentificadores);
 
     return 0;
 }
