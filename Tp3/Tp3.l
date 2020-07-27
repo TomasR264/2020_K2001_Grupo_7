@@ -67,6 +67,30 @@
     };
     typedef struct nodo_noReconocido nodo_noReconocido;
 
+    /*** contadores ***/
+    int contadorIdentificadores = 0;
+
+    /******************************** declaraciones de funciones **************************************/
+
+
+    nodo_identificador * iniciar_identificador(nodo_identificador *Lista);
+    nodo_literalCadena * iniciar_literalCadena(nodo_literalCadena *Lista);
+    nodo_palabraReservada * iniciar_palabraReservada(nodo_palabraReservada *Lista);
+    nodo_constante * iniciar_constante(nodo_constante *Lista);
+    nodo_operador_caracter * iniciar_operador(nodo_operador_caracter *Lista);
+    nodo_comentario * iniciar_comentario(nodo_comentario *Lista);
+    nodo_noReconocido * iniciar_noReconocido(nodo_noReconocido *Lista);
+
+
+    nodo_identificador *insertar_identificador(nodo_identificador *Lista, char *identificador, int apariciones);
+    nodo_literalCadena *insertar_literalCadena(nodo_literalCadena *Lista, char *literalCadena, int longitud);
+    nodo_palabraReservada *insertar_palabraReservada(nodo_palabraReservada *Lista, char *palabraReservada);
+    nodo_constante *insertar_constante(nodo_constante *Lista, char *constante, char *tipo, int valor, bool caracter);
+    nodo_operador_caracter *insertar_operador_caracter(nodo_operador_caracter *Lista, char *operador_caracter, int apariciones);
+    nodo_comentario *insertar_comentario(nodo_comentario *Lista, char *comentario, bool unaLinea);
+    nodo_noReconocido *insertar_noReconocido(nodo_noReconocido *Lista, char *noReconocido, int linea);
+
+
 
     /********************************* funciones listas *********************/
 
@@ -124,7 +148,7 @@
         if (Lista == NULL){
             Lista = nuevoNodo;
         }else{
-            auxiliar = lista;
+            auxiliar = Lista;
             while(auxiliar->siguiente != NULL){
                 auxiliar = auxiliar->siguiente;
             }
@@ -151,7 +175,7 @@
         if (Lista == NULL){
             Lista = nuevoNodo;
         }else{
-            auxiliar = lista;
+            auxiliar = Lista;
             while(auxiliar->siguiente != NULL){
                 auxiliar = auxiliar->siguiente;
             }
@@ -177,7 +201,7 @@
         if (Lista == NULL){
             Lista = nuevoNodo;
         }else{
-            auxiliar = lista;
+            auxiliar = Lista;
             while(auxiliar->siguiente != NULL){
                 auxiliar = auxiliar->siguiente;
             }
@@ -206,7 +230,7 @@
         if (Lista == NULL){
             Lista = nuevoNodo;
         }else{
-            auxiliar = lista;
+            auxiliar = Lista;
             while(auxiliar->siguiente != NULL){
                 auxiliar = auxiliar->siguiente;
             }
@@ -220,7 +244,7 @@
     }
 
 
-    nodo_operador_caracter *insertar_operador_caracter(nodo_operador_caracter *Lista, char *operador_caracter int apariciones){
+    nodo_operador_caracter *insertar_operador_caracter(nodo_operador_caracter *Lista, char *operador_caracter, int apariciones){
 
         nodo_operador_caracter *nuevoNodo, *auxiliar;
         nuevoNodo = (nodo_operador_caracter*) malloc(sizeof(nodo_operador_caracter));
@@ -233,7 +257,7 @@
         if (Lista == NULL){
             Lista = nuevoNodo;
         }else{
-            auxiliar = lista;
+            auxiliar = Lista;
             while(auxiliar->siguiente != NULL){
                 auxiliar = auxiliar->siguiente;
             }
@@ -247,7 +271,7 @@
     }
 
 
-    nodo_comentario *insertar_comentario(nodo_comentario *Lista, char *comentario bool unaLinea){
+    nodo_comentario *insertar_comentario(nodo_comentario *Lista, char *comentario, bool unaLinea){
 
         nodo_comentario *nuevoNodo, *auxiliar;
         nuevoNodo = (nodo_comentario*) malloc(sizeof(nodo_comentario));
@@ -260,7 +284,7 @@
         if (Lista == NULL){
             Lista = nuevoNodo;
         }else{
-            auxiliar = lista;
+            auxiliar = Lista;
             while(auxiliar->siguiente != NULL){
                 auxiliar = auxiliar->siguiente;
             }
@@ -273,7 +297,8 @@
     
     }
 
-    nodo_noReconocido *insertar_comentario(nodo_noReconocido *Lista, char *noReconocido int linea){
+
+    nodo_noReconocido *insertar_noReconocido(nodo_noReconocido *Lista, char *noReconocido, int linea){
 
         nodo_noReconocido *nuevoNodo, *auxiliar;
         nuevoNodo = (nodo_noReconocido*) malloc(sizeof(nodo_noReconocido));
@@ -286,7 +311,7 @@
         if (Lista == NULL){
             Lista = nuevoNodo;
         }else{
-            auxiliar = lista;
+            auxiliar = Lista;
             while(auxiliar->siguiente != NULL){
                 auxiliar = auxiliar->siguiente;
             }
@@ -298,6 +323,18 @@
         return Lista;
     
     }
+
+
+
+    /*************************************** VARIABLES GLOBALES ******************************/
+    /* inicia listas */
+    nodo_identificador *ListaIdentificadores;
+    nodo_literalCadena *ListaLiteralesCadena;
+    nodo_palabraReservada *ListaPalabrasReservadas;
+    nodo_constante *ListaConstantes;
+    nodo_operador_caracter *ListaOperadores;
+    nodo_comentario *ListaComentarios;
+    nodo_noReconocido *ListaNoReconocidos;
 
 %}
 
@@ -353,7 +390,7 @@ PUNTUADORES puntuador
 {PALABRA_RESERVADA_CONTROL} {printf("palabra reservada control \n");}
 {PALABRA_RESERVADA_OTRO} {printf("palabra reservada otro \n");}
 
-[a-zA-Z_][a-zA-Z0-9_]* {printf("identificador \n");}
+[a-zA-Z_][a-zA-Z0-9_]* {printf("identificador \n"); contadorIdentificadores++; insertar_identificador(ListaIdentificadores, yytext, contadorIdentificadores);}
 
 {ENTERA_DECIMAL}{SUFIJO_ENTERO}? {printf("constante entera decimal \n");}
 {ENTERA_OCTAL}{SUFIJO_ENTERO}? {printf("constante entera octal \n");}
@@ -370,17 +407,29 @@ PUNTUADORES puntuador
 
 
 int main (){
-    nodo_identificador *Lista = iniciar_identificador(Lista);
+
+    /* inicia listas */
+    ListaIdentificadores = iniciar_identificador(ListaIdentificadores);
+    ListaLiteralesCadena = iniciar_literalCadena(ListaLiteralesCadena);
+    ListaPalabrasReservadas = iniciar_palabraReservada(ListaPalabrasReservadas);
+    ListaConstantes = iniciar_constante(ListaConstantes);
+    ListaOperadores = iniciar_operador(ListaOperadores);
+    ListaComentarios = iniciar_comentario(ListaComentarios);
+    ListaNoReconocidos = iniciar_noReconocido(ListaNoReconocidos);
 
     
-    Lista = insertar_identificador (Lista, "un string", 3);
-    printf("lista: %p \n", Lista);
 
-    printf("null: %p \n", NULL);
+    
 
-    if(Lista == NULL){
-        printf("hola");
-    }
+
+
+
+    //Lista = insertar_identificador (Lista, "un string", 3);
+    //printf("lista: %p \n", Lista);
+
+    //printf("null: %p \n", NULL);
+
+    
     yylex();
 
     return 0;
