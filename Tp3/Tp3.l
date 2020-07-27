@@ -66,9 +66,6 @@
     };
     typedef struct nodo_noReconocido nodo_noReconocido;
 
-    /*** contadores ***/
-    int contadorIdentificadores = 0;
-
     /******************************** declaraciones de funciones **************************************/
 
 
@@ -81,7 +78,7 @@
     nodo_noReconocido * iniciar_noReconocido(nodo_noReconocido *Lista);
 
 
-    nodo_identificador *insertar_identificador(nodo_identificador *Lista, char *identificador, int apariciones);
+    nodo_identificador *insertar_identificador(nodo_identificador *Lista, char *identificador);
     nodo_literalCadena *insertar_literalCadena(nodo_literalCadena *Lista, char *literalCadena, int longitud);
     nodo_palabraReservada *insertar_palabraReservada(nodo_palabraReservada *Lista, char *palabraReservada);
     nodo_constante *insertar_constante(nodo_constante *Lista, char *constante, char *tipo, int valor, bool caracter);
@@ -134,26 +131,37 @@
 
     /*** insertar ***/
     
-    nodo_identificador *insertar_identificador(nodo_identificador *Lista, char *identificador, int apariciones){
+    nodo_identificador *insertar_identificador(nodo_identificador *Lista, char *identificador){
         nodo_identificador *nuevoNodo, *auxiliar;
+        bool aparicionPrevia = false;
         nuevoNodo = (nodo_identificador*) malloc(sizeof(nodo_identificador));
+        int comparacion;
         
         nuevoNodo->identificador = (char *) calloc(strlen(identificador), sizeof(char));
         strcpy(nuevoNodo->identificador,identificador);
-        nuevoNodo->apariciones = apariciones;
+        nuevoNodo->apariciones = 0;
         nuevoNodo->siguiente = NULL;
         
-
+        printf("ingreso nodo \n\n");
         if (Lista == NULL){
             Lista = nuevoNodo;
         }else{
             auxiliar = Lista;
-            while(auxiliar->siguiente != NULL){
-                auxiliar = auxiliar->siguiente;
-            }
-
-            auxiliar->siguiente = nuevoNodo;
             
+            while((auxiliar->siguiente != NULL) && !aparicionPrevia){
+                comparacion = strcmp(auxiliar->identificador, identificador);
+                if(comparacion == 0){
+                    auxiliar->apariciones++;
+                    aparicionPrevia == true;
+                }else{
+                    auxiliar = auxiliar->siguiente;
+                }
+            }
+            if(!strcmp(auxiliar->identificador, identificador)){
+                auxiliar->apariciones++;
+            }else{
+                auxiliar->siguiente = nuevoNodo;
+            }
         }
 
         return Lista;
@@ -418,7 +426,7 @@ PUNTUADORES puntuador
 {PALABRA_RESERVADA_CONTROL} {printf("palabra reservada control \n");}
 {PALABRA_RESERVADA_OTRO} {printf("palabra reservada otro \n");}
 
-[a-zA-Z_][a-zA-Z0-9_]* { contadorIdentificadores++; ListaIdentificadores = insertar_identificador(ListaIdentificadores, yytext, contadorIdentificadores);}
+[a-zA-Z_][a-zA-Z0-9_]* {ListaIdentificadores = insertar_identificador(ListaIdentificadores, yytext);}
 
 {ENTERA_DECIMAL}{SUFIJO_ENTERO}? {printf("constante entera decimal \n");}
 {ENTERA_OCTAL}{SUFIJO_ENTERO}? {printf("constante entera octal \n");}
