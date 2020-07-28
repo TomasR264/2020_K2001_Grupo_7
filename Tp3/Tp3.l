@@ -90,6 +90,15 @@
 
     /********************************* funciones listas *********************/
 
+    int longitudListaIdentificador(nodo_identificador *Lista){
+        int contador = 0;
+        while(Lista != NULL){
+            contador ++;
+            Lista = Lista->siguiente;
+        }
+        return contador;
+    }
+
 
     /***inicializar ***/
 
@@ -132,35 +141,54 @@
     /*** insertar ***/
     
     nodo_identificador *insertar_identificador(nodo_identificador *Lista, char *identificador){
-        nodo_identificador *nuevoNodo, *auxiliar;
+        nodo_identificador *nuevoNodo, *auxiliar, *auxiliarAnterior;
         bool aparicionPrevia = false;
-        nuevoNodo = (nodo_identificador*) malloc(sizeof(nodo_identificador));
         int comparacion;
+        bool corte = false;
+        nuevoNodo = (nodo_identificador*) malloc(sizeof(nodo_identificador));
+        
         
         nuevoNodo->identificador = (char *) calloc(strlen(identificador), sizeof(char));
         strcpy(nuevoNodo->identificador,identificador);
-        nuevoNodo->apariciones = 0;
+        nuevoNodo->apariciones = 1;
         nuevoNodo->siguiente = NULL;
         
-        printf("ingreso nodo \n\n");
         if (Lista == NULL){
             Lista = nuevoNodo;
         }else{
             auxiliar = Lista;
+            auxiliarAnterior->siguiente = auxiliar;
             
-            while((auxiliar->siguiente != NULL) && !aparicionPrevia){
+            while(auxiliar->siguiente != NULL && !aparicionPrevia && !corte){
                 comparacion = strcmp(auxiliar->identificador, identificador);
-                if(comparacion == 0){
-                    auxiliar->apariciones++;
-                    aparicionPrevia == true;
+                if(comparacion == 0){ // aca se detecta que no haya otra aparicion previa
+                    aparicionPrevia = true;
                 }else{
-                    auxiliar = auxiliar->siguiente;
+                    if(comparacion > 0){ // aca se detecta que esten ordenados alfabeticamente
+                        corte = true;
+                    }else{
+                        auxiliarAnterior = auxiliar;
+                        auxiliar = auxiliar->siguiente;
+                    }
                 }
             }
-            if(!strcmp(auxiliar->identificador, identificador)){
+            comparacion = strcmp(auxiliar->identificador, identificador);
+
+            if(comparacion == 0){
                 auxiliar->apariciones++;
             }else{
-                auxiliar->siguiente = nuevoNodo;
+                if(comparacion > 0){
+                    
+                    nuevoNodo->siguiente = auxiliarAnterior->siguiente;
+                    auxiliarAnterior->siguiente = nuevoNodo;
+                    if(longitudListaIdentificador(Lista)==1){
+                        printf("Lista de un elemento\n");
+                        Lista = nuevoNodo;
+                    }
+                }else{
+                    auxiliar->siguiente = nuevoNodo;
+                }
+                
             }
         }
 
