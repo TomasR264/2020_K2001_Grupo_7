@@ -68,7 +68,7 @@
 
     /******************************** declaraciones de funciones **************************************/
 
-
+    /*** iniciar lista ***/
     nodo_identificador * iniciar_identificador(nodo_identificador *Lista);
     nodo_literalCadena * iniciar_literalCadena(nodo_literalCadena *Lista);
     nodo_palabraReservada * iniciar_palabraReservada(nodo_palabraReservada *Lista);
@@ -77,7 +77,7 @@
     nodo_comentario * iniciar_comentario(nodo_comentario *Lista);
     nodo_noReconocido * iniciar_noReconocido(nodo_noReconocido *Lista);
 
-
+    /*** insertar nodo ***/
     nodo_identificador *insertar_identificador(nodo_identificador *Lista, char *identificador);
     nodo_literalCadena *insertar_literalCadena(nodo_literalCadena *Lista, char *literalCadena, int longitud);
     nodo_palabraReservada *insertar_palabraReservada(nodo_palabraReservada *Lista, char *palabraReservada);
@@ -90,6 +90,7 @@
 
     /********************************* funciones listas *********************/
 
+    /*** longitud ***/
     int longitudListaIdentificador(nodo_identificador *Lista){
         int contador = 0;
         while(Lista != NULL){
@@ -99,8 +100,7 @@
         return contador;
     }
 
-
-    /***inicializar ***/
+    /*** inicializar ***/
 
     nodo_identificador * iniciar_identificador(nodo_identificador *Lista){
         
@@ -384,8 +384,7 @@
     void generarInforme(nodo_identificador *ListaIdentificadores){
 
         mostrarIdentificadores (ListaIdentificadores);
-        
-        
+
         return;
     }
 
@@ -406,7 +405,6 @@
 PALABRA_RESERVADA_TIPO_DATO (char|double|enum|float|int|long|short|signed|unsigned)
 PALABRA_RESERVADA_CONTROL (break|case|continue|default|do|else|for|goto|if|return|struct|switch|void|while)
 PALABRA_RESERVADA_OTRO (auto|const|extern|register|sizeof|static|typedef|union|volatile)
-
 
 
 
@@ -462,8 +460,6 @@ PUNTUADORES puntuador
 
 \"({CADENA_CARACTERES}|{SECUENCIA_ESCAPE})+\" {printf("literal cadena \n");}
 
-
-
 . {printf("No reconocido: %s \n", yytext);}
 
 
@@ -481,17 +477,7 @@ int main (){
     ListaComentarios = iniciar_comentario(ListaComentarios);
     ListaNoReconocidos = iniciar_noReconocido(ListaNoReconocidos);
 
-    
 
-    
-
-
-
-
-    //Lista = insertar_identificador (Lista, "un string", 3);
-    //printf("lista: %p \n", Lista);
-
-    //printf("null: %p \n", NULL);
 
     yyin = fopen("archivo.c", "r");
     yylex();
