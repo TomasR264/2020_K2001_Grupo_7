@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
+
+int flag_error = 0,  flag_sentDeclaricion = 0, flag_SentCompuesta = 0, flag_sentIteracion = 0, flag_sentControl = 0 , flag_sentExpression = 0;
 %}
 
 %%
