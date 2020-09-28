@@ -89,7 +89,7 @@ then1 : SENTENCIADECONTROL sentCompuesta
 
 /////////////////////////////// SENTENCIAS BUCLES ///////////////////////
 sentIteracion : SENTENCIADEITERACION then2
-;
+;git 
 
 then2 : '(' expresion ')' sentCompuesta                             {if(flag_sentIteracion == 0){ printf("Se declaro una sentencia while")}}
     |sentCompuesta SENTENCIADEITERACION '(' expresion ')' ';'       {if(flag_sentIteracion == 0){ printf("Se declaro una sentencia do while")}}
@@ -108,6 +108,8 @@ expOp :
     expresion
     | /* vacio */
 ;
+
+
 %%
 
 
