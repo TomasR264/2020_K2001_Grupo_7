@@ -62,23 +62,23 @@ CARACTER_PUNTUACION (\[|\]|\(|\)|\{|\}|\.|->|\+\+|--|&|\*|\+|-|!|\/|%|<<|>>|<|>|
 %%
 
 
-'{CARACTER}'/.* {}
+'{CARACTER}'/.* {strcpy(yylval.caracter,yytext); return CCARACTER;}
 
 {CONSTANTE_REAL}/.* {}
 
-{PALABRA_RESERVADA_TIPO_DATO}/.* {}
+{PALABRA_RESERVADA_TIPO_DATO}/.* {strcpy(yylval.cadena,yytext); return TIPODATO;}
 {PALABRA_RESERVADA_CONTROL}/.* {}
 {PALABRA_RESERVADA_OTRO}/.* {}
 
-{IDENTIFICADOR}/.* {}
+{IDENTIFICADOR}/.* {strcpy(yylval.cadena,yytext); return IDENTIFICADOR;}
 
-{ENTERA_DECIMAL}{SUFIJO_ENTERO}?/.* {}
+{ENTERA_DECIMAL}{SUFIJO_ENTERO}?/.* {yylval.entero=atoi(yytext); return NUM; }
 {ENTERA_OCTAL}{SUFIJO_ENTERO}?/.* {}
 {ENTERA_HEXA}{SUFIJO_ENTERO}?/.* {}
 
-\"({CADENA_CARACTERES}|{SECUENCIA_ESCAPE})+\"/.* {}
+\"({CADENA_CARACTERES}|{SECUENCIA_ESCAPE})+\"/.* {strcpy(yylval.cadena,yytext); return LITERALESCADENA;}
 
-(\[|\]|\(|\)|\{|\}|\.|->|\+\+|--|&|\*|\+|-|!|\/|%|<<|>>|<|>|<=|>=|==|!=|\ˆ|\||&&|\|\||=|\*=|\/=|%=|\+=|-=|<<=|>>=|&=|\ˆ=|\|=|\?|:|;|\.\.\.|,|#|##) {}
+(\[|\]|\(|\)|\{|\}|\.|->|\+\+|--|&|\*|\+|-|!|\/|%|<<|>>|<|>|<=|>=|==|!=|\ˆ|\||&&|\|\||=|\*=|\/=|%=|\+=|-=|<<=|>>=|&=|\ˆ=|\|=|\?|:|;|\.\.\.|,|#|##) {return yytext}
 
 \/\/{CARACTERES_UNA_LINEA}*/.* {}
 \/\*{CARACTERES_COMENTARIO_MULTIPLES_LINEAS}*\*\//.* {}
