@@ -67,7 +67,7 @@ CARACTER_PUNTUACION (\[|\]|\(|\)|\{|\}|\.|->|\+\+|--|&|\*|\+|-|!|\/|%|<<|>>|<|>|
 {CONSTANTE_REAL}/.* {}
 
 {PALABRA_RESERVADA_TIPO_DATO}/.* {strcpy(yylval.cadena,yytext); return TIPODATO;}
-{PALABRA_RESERVADA_CONTROL}/.* {strcpy(yylval.cadena,yytext); return TIPODATO;}
+{PALABRA_RESERVADA_CONTROL}/.* {strcpy(yylval.cadena,yytext); return SENTENCIADECONTROL;}
 {PALABRA_RESERVADA_OTRO}/.* {}
 
 {IDENTIFICADOR}/.* {strcpy(yylval.cadena,yytext); return IDENTIFICADOR;}
