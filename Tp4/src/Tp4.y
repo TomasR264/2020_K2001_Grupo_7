@@ -32,7 +32,17 @@ char* cadena;
 
 %token <cadena> LITERALESCADENA
 
-%type <cadena> sentencia
+%token <cadena> TIPODATO
+
+%token <cadena> IDENTIFICADOR
+
+%token <cadena> SENTENCIADECONTROL
+
+%type <cadena> declaVarSimples
+
+%type <cadena> listaVarSimples
+
+%type <cadena> unaVarSimple
 
 
 %%
@@ -137,6 +147,32 @@ expOp :
     expresion
     | /* vacio */
 ;
+
+///////////////////////////  DELARACIONES Y DEFINICIONES ///////////////////////
+
+declaVarSimples : TIPODATO listaVarSimples ';' {printf("De tipo %s \n\n\n\n", $<cadena>1)}
+;
+
+listaVarSimples : unaVarSimple
+                | listaVarSimples ',' unaVarSimple
+;
+
+unaVarSimple : IDENTIFICADOR inicial    {printf("Se declaro e inicializo la variable %s \n", $<cadena>1);}
+            | IDENTIFICADOR             {printf("Se declaro la variable %s \n", $<cadena>1);}
+;
+
+inicial : '=' constante
+;
+
+constante :    NUM                            {}
+              | CCARACTER                     {}
+              | LITERALESCADENA               {}
+              | LITERALESCADENA               {}
+;
+
+
+
+
 
 %%
 
