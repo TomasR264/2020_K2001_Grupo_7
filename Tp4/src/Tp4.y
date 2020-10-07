@@ -50,11 +50,17 @@ char* cadena;
 
 %type <cadena> constante
 
+%type <cadena> sentencia
+
+%type <cadena> sentCompuesta
+
+%type <cadena> sentIteracion
+
 %type <cadena> sentSeleccion
 
 %type <cadena> sentenciaDeclaracion
 
-%type <cadena> sentencia
+
 
 
 %%
