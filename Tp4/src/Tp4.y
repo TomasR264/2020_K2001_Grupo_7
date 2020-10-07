@@ -60,6 +60,7 @@ char* cadena;
 
 %type <cadena> sentenciaDeclaracion
 
+%type <cadena> sentExpresion
 
 
 
