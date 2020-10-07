@@ -106,10 +106,10 @@ expPrimaria :    IDENTIFICADOR
 /////////////////////////////// SENTENCIAS ///////////////////////
 
 sentencia : |  sentCompuesta          {if(flag_SentCompuesta == 0){printf("Se encontro una sentencia compuesta %d \n") ,$1)}}
-            | sentExpresion           {if(flag_sentExpresion = 0){printf("Se encontro una sentencia expresion %d \n") ,$1)}}
-            | sentSeleccion           {if(flag_sentControl = 0){printf("Se encontro una sentencia seleccion%d \n") ,$1)}}
-            | sentIteracion           {if(flag_sentIteracion = 0){printf("Se encontro una sentencia iteracion %d \n") ,$1)}}
-            | sentenciaDeclaracion    {if(flag_sentDeclaracion = 0){printf("Se encontro una sentencia declaracion %d \n") ,$1)}}
+            | sentExpresion           {if(flag_sentExpresion == 0){printf("Se encontro una sentencia expresion %d \n") ,$1)}}
+            | sentSeleccion           {if(flag_sentControl == 0){printf("Se encontro una sentencia seleccion%d \n") ,$1)}}
+            | sentIteracion           {if(flag_sentIteracion == 0){printf("Se encontro una sentencia iteracion %d \n") ,$1)}}
+            | sentenciaDeclaracion    {if(flag_sentDeclaracion == 0){printf("Se encontro una sentencia declaracion %d \n") ,$1)}}
             | RETURN expOp ';'        {if (flag_error ==0){       printf("Se declaro una sentencia de retorno")}} 
 ;
 
