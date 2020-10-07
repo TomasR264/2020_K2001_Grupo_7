@@ -105,7 +105,7 @@ expPrimaria :    IDENTIFICADOR
 
 /////////////////////////////// SENTENCIAS ///////////////////////
 
-sentencia : |  sentCompuesta          {if(flag_SentCompuesta == 0){printf("Se encontro una sentencia compuesta %d \n") ,$1)}}
+sentencia : | sentCompuesta           {if(flag_SentCompuesta == 0){printf("Se encontro una sentencia compuesta %d \n") ,$1)}}
             | sentExpresion           {if(flag_sentExpresion == 0){printf("Se encontro una sentencia expresion %d \n") ,$1)}}
             | sentSeleccion           {if(flag_sentControl == 0){printf("Se encontro una sentencia seleccion%d \n") ,$1)}}
             | sentIteracion           {if(flag_sentIteracion == 0){printf("Se encontro una sentencia iteracion %d \n") ,$1)}}
@@ -115,32 +115,32 @@ sentencia : |  sentCompuesta          {if(flag_SentCompuesta == 0){printf("Se en
 
 /////////////////////////////// SENTENCIAS COMPUESTAS ///////////////////////
 
- sentCompuesta : '{' listaSentencias '}'     { if(flag_SentCompuesta == 0) { printf("Se detecto una sentencia compuesta")}}
+ sentCompuesta : '{' listaSentencias '}'     { printf("Se detecto una sentencia compuesta")}
 ;
 
 listaSentencias :  listaSentencias sentencia
                   | sentencia
                   | /* vacío*/
-                  | error                   { printf("Error al definir una sentencia \n"); flag_SentCompuesta}                  
+                  | error                   { printf("Error al definir una sentencia \n");}                  
 ;
 
 /////////////////////////////// SENTENCIAS EXPRESIONES ///////////////////////
 
  sentExpresion :  expresion ';'
-                 | error ';'             { printf("Error al definir una sentencia de expresion\n"); flag_SentCompuesta }   
+                 | error ';'             { printf("Error al definir una sentencia de expresion\n");}   
 
 ;
-/////////////////////////////// SENTENCIAS CONTROL IF Y ELSE ///////////////////////
-sentSeleccion : SENTENCIADECONTROL '(' expresion ')' sentCompuesta then1         {if(flag_SentCompuesta == 0){printf("Se detecto una sentencia compuesta %d \n") ,$1)}}
-            |  SENTENCIADECONTROL '(' error ')' sentCompuesta then1             {printf("No se pudo reconocer la expresion \n"); flag_SentCompuesta} 
-            |  SENTENCIADECONTROL '(' expresion ')' '{' error '}' then1         {printf("No se pudo reconocer la expresion \n"); flag_SentCompuesta} 
-            |  SENTENCIADECONTROL '(' ')' '{' error '}' sentCompuesta then1     {printf("No se pudo reconocer la expresion \n"); flag_SentCompuesta} 
+/////////////////////////////// SENTENCIAS CONTROL IF, ELSE y Switch ///////////////////////
+sentSeleccion : SENTENCIADECONTROL '(' expresion ')' sentCompuesta then1        {printf("Se detecto una sentencia compuesta %d \n") ,$1)}
+            |  SENTENCIADECONTROL '(' error ')' sentCompuesta then1             {printf("No se pudo reconocer la expresion \n"); } 
+            |  SENTENCIADECONTROL '(' expresion ')' '{' error '}' then1         {printf("No se pudo reconocer la expresion \n"); } 
+            |  SENTENCIADECONTROL '(' ')' '{' error '}' sentCompuesta then1     {printf("No se pudo reconocer la expresion \n"); } 
 ;
 
 then1 : SENTENCIADECONTROL sentCompuesta
     | sentSeleccion
-    | error sentCompuesta                 {flag_SentCompuesta = 1}
-    | SENTENCIADECONTROL '{' error'}'    {printf("No se pudo reconocer la expresion \n"); flag_sentIteracion = 1}
+    | error sentCompuesta                 {printf("Error \n");}
+    | SENTENCIADECONTROL '{' error'}'    {printf("No se pudo reconocer la expresion \n");}
     | /* vacio */
 
 ;
@@ -149,18 +149,18 @@ then1 : SENTENCIADECONTROL sentCompuesta
 sentIteracion : SENTENCIADEITERACION then2
 ;
 
-then2 : '(' expresion ')' sentCompuesta                             {if(flag_sentIteracion == 0){ printf("Se declaro una sentencia while")}}
-    |sentCompuesta SENTENCIADEITERACION '(' expresion ')' ';'       {if(flag_sentIteracion == 0){ printf("Se declaro una sentencia do while")}}
-    | '(' expOrDeclaracion ';' expOp ';' expOp ')' sentCompuesta    {if(flag_sentIteracion == 0){ printf("Se declaro una sentencia for");}}
-    | error                                                         {printf("Error al reconocer la sentencia repetitiva"); flag_sentIteracion =1;}
+then2 : '(' expresion ')' sentCompuesta                             { printf("Se declaro una sentencia while");}
+    |sentCompuesta SENTENCIADEITERACION '(' expresion ')' ';'       { printf("Se declaro una sentencia do while");}
+    | '(' expOrDeclaracion ';' expOp ';' expOp ')' sentCompuesta    { printf("Se declaro una sentencia for");}
+    | error                                                         {printf("Error al reconocer la sentencia repetitiva");}
 
 ;
 
-expOrDeclaracion :   TIPODATO IDENTIFICADOR '=' expresion  {if(flag_sentIteracion == 0){ printf("Se encontro una sentencia iteracion")}}
+expOrDeclaracion :   TIPODATO IDENTIFICADOR '=' expresion  { printf("Se encontro una sentencia iteracion");}
     | expOp                                              
-    | error IDENTIFICADOR '=' expresion                   {printf("No se pudo reconocer el identificador"); flag_sentIteracion =1;}
-    | TIPODATO error '=' expresion                        {printf("No se pudo reconocer el tipo de dato"); flag_sentIteracion =1;}
-    | error                                               {printf("Error al reconocer la sentencia repetitiva"); flag_sentIteracion =1;}
+    | error IDENTIFICADOR '=' expresion                   {printf("No se pudo reconocer el identificador");}
+    | TIPODATO error '=' expresion                        {printf("No se pudo reconocer el tipo de dato");}
+    | error                                               {printf("Error al reconocer la sentencia repetitiva");}
 ;
 expOp :
     expresion
