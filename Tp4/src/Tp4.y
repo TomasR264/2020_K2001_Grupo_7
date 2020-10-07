@@ -13,7 +13,7 @@ void yyerror (char const *s) {
    fprintf (stderr, "%s\n", s);
 }
 
-int flag_error = 0,  flag_sentDeclaricion = 0, flag_SentCompuesta = 0, flag_sentIteracion = 0, flag_sentControl = 0 , flag_sentExpresion = 0;
+int flag_error = 0,  flag_sentDeclaracion = 0, flag_SentCompuesta = 0, flag_sentIteracion = 0, flag_sentControl = 0 , flag_sentExpresion = 0;
 
 %}
 
@@ -38,11 +38,23 @@ char* cadena;
 
 %token <cadena> SENTENCIADECONTROL
 
+%token <cadena> SENTENCIADEITERACION
+
+%token <cadena> RETURN
+
 %type <cadena> declaVarSimples
 
 %type <cadena> listaVarSimples
 
 %type <cadena> unaVarSimple
+
+%type <cadena> constante
+
+%type <cadena> sentSeleccion
+
+%type <cadena> sentenciaDeclaracion
+
+%type <cadena> sentencia
 
 
 %%
@@ -86,12 +98,12 @@ expPrimaria :    IDENTIFICADOR
 
 /////////////////////////////// SENTENCIAS ///////////////////////
 
-sentencia :   SENTENCIA
-            |  sentCompuesta          {if(flag_SentCompuesta == 0){printf("Se encontro una sentencia compuesta %d \n") ,$1)}}
-            | sentExpresion          {if(flag_sentExpresion = 0){printf("Se encontro una sentencia expresion %d \n") ,$1)}}
-            | sentSeleccion          {if(flag_sentControl = 0){printf("Se encontro una sentencia seleccion%d \n") ,$1)}}
-            | sentIteracion          {if(flag_sentIteracion = 0){printf("Se encontro una sentencia iteracion %d \n") ,$1)}}
-            | sentenciaDeclaracion   {if(flag_sentDeclaricion = 0){printf("Se encontro una sentencia declaracion %d \n") ,$1)}}
+sentencia : |  sentCompuesta          {if(flag_SentCompuesta == 0){printf("Se encontro una sentencia compuesta %d \n") ,$1)}}
+            | sentExpresion           {if(flag_sentExpresion = 0){printf("Se encontro una sentencia expresion %d \n") ,$1)}}
+            | sentSeleccion           {if(flag_sentControl = 0){printf("Se encontro una sentencia seleccion%d \n") ,$1)}}
+            | sentIteracion           {if(flag_sentIteracion = 0){printf("Se encontro una sentencia iteracion %d \n") ,$1)}}
+            | sentenciaDeclaracion    {if(flag_sentDeclaracion = 0){printf("Se encontro una sentencia declaracion %d \n") ,$1)}}
+            | RETURN expOp ';'        {if (flag_error ==0){       printf("Se declaro una sentencia de retorno")}} 
 ;
 
 /////////////////////////////// SENTENCIAS COMPUESTAS ///////////////////////
