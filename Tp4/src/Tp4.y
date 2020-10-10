@@ -50,17 +50,6 @@ char* cadena;
 
 %type <cadena> constante
 
-%type <cadena> sentencia
-
-%type <cadena> sentCompuesta
-
-%type <cadena> sentIteracion
-
-%type <cadena> sentSeleccion
-
-%type <cadena> sentenciaDeclaracion
-
-%type <cadena> sentExpresion
 
 
 
@@ -96,20 +85,19 @@ listaDeArgumentos :  expresion
                     | /* Vacio */
 ;
 expPrimaria :    IDENTIFICADOR
-              | NUM                           {printf("numero %d \n") ,$1)}
-              | '(' expresion ')' 
-              | CCARACTER                     {printf("const caracter %c \n") ,$1)}
-              | LITERALESCADENA               {printf("caracter %c \n" ,$1)}
-              | LITERALESCADENA               {printf("palabra %s \n" ,$1)}
+              | NUM                           {printf("numero %d \n") ,$<entero>1);}
+              | '(' expresion ')'              
+              | CCARACTER                     {printf("const caracter %c \n") ,$<caracter>1);}
+              | LITERALESCADENA               {printf("caracter %c \n" ,$<cadena>1);}
+              | LITERALESCADENA               {printf("palabra %s \n" ,$<cadena>1);}
 ;
 
 /////////////////////////////// SENTENCIAS ///////////////////////
 
-sentencia : | sentCompuesta           {if(flag_SentCompuesta == 0){printf("Se encontro una sentencia compuesta %d \n") ,$1)}}
-            | sentExpresion           {if(flag_sentExpresion == 0){printf("Se encontro una sentencia expresion %d \n") ,$1)}}
-            | sentSeleccion           {if(flag_sentControl == 0){printf("Se encontro una sentencia seleccion%d \n") ,$1)}}
-            | sentIteracion           {if(flag_sentIteracion == 0){printf("Se encontro una sentencia iteracion %d \n") ,$1)}}
-            | sentenciaDeclaracion    {if(flag_sentDeclaracion == 0){printf("Se encontro una sentencia declaracion %d \n") ,$1)}}
+sentencia : | sentCompuesta           {if(flag_SentCompuesta == 0){printf("Se encontro una sentencia compuesta  \n"))}}
+            | sentExpresion           {if(flag_sentExpresion == 0){printf("Se encontro una sentencia expresion  \n"))}}
+            | sentSeleccion           {if(flag_sentControl == 0){printf("Se encontro una sentencia seleccion \n"))}}
+            | sentIteracion           {if(flag_sentIteracion == 0){printf("Se encontro una sentencia iteracion  \n"))}}
             | RETURN expOp ';'        {if (flag_error ==0){       printf("Se declaro una sentencia de retorno")}} 
 ;
 
