@@ -87,7 +87,7 @@ expUnaria :    expPostfijo
 incremento :   '+' '+' | '-' '-' ;   // Operadores de incremento y Decremento
 operUnario :   '&' | '*' | '!' ;     // Operadores Unarios
 
-expPostFijo :   expPrimaria
+expPostfijo :   expPrimaria
               | expPostfijo '[' expresion ']'
               | expPostfijo '(' listaDeArgumentos ')'
 ;
