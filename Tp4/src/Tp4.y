@@ -85,9 +85,9 @@ listaDeArgumentos :  expresion
                     | /* Vacio */
 ;
 expPrimaria :    IDENTIFICADOR
-              | NUM                           {printf("numero %d \n") ,$<entero>1);}
+              | NUM                           {printf("numero %d \n" ,$<entero>1);}
               | '(' expresion ')'              
-              | CCARACTER                     {printf("const caracter %c \n") ,$<caracter>1);}
+              | CCARACTER                     {printf("const caracter %c \n" ,$<caracter>1);}
               | LITERALESCADENA               {printf("caracter %c \n" ,$<cadena>1);}
               | LITERALESCADENA               {printf("palabra %s \n" ,$<cadena>1);}
 ;
