@@ -28,6 +28,50 @@ char* cadena;
 
 }
 
+%token INCREMENTO
+
+%token DECREMENTO
+
+%token IGUAL
+
+%token YLOGICO
+
+%token OLOGICO
+
+%token OUTPUT
+
+%token INPUT
+
+%token MAYOIGUAL
+
+%token MENOIGUAL
+
+%token DISTINTO
+
+%token SUMAIGUAL
+
+%token RESTAIGUAL
+
+%token MULTIIGUAL
+
+%token DIVIGUAL
+
+%token RESTOIGUAL
+
+%token POTENIGUAL
+
+%token MOVERBITIZQ
+
+%token MOVERBITDER
+
+%token ASIGYLOGICO
+
+%token ASIGOLOGICO
+
+%token OPERADORCOMBINA
+
+%token PREGUNTA
+
 %token <caracter> CCARACTER
 
 %token <entero> NUM
@@ -64,11 +108,11 @@ expresion :   expUnaria operador expresion      { printf ("Se encontro una expre
             | expUnaria                         { printf ("Se encontro una expresion unaria\n"); }
             | error                             { printf ("Error al declarar la expresion\n"); }
 ;
-operador :     '=' | '+' '=' | '-' '=' | '*' '=' | '/' '=' | '%' '=' | // Operadores de asignasion
-            | '|' '|' | '&' '&' | '=' '=' | '!' '='                    // Operadores Logicos
-            | '<' | '>' | '<' '=' | '>' '='                            // Operadores Relacionales
-            | '+' {printf("encontre +");}| '-'                                                // Operadores Aditivos
-            | '*' | '/' | '%'                                          // Operadores Miltiplicativos
+operador :     '=' | SUMAIGUAL | RESTAIGUAL | MULTIIGUAL | DIVIGUAL | RESTOIGUAL | // Operadores de asignasion
+            | OLOGICO | YLOGICO | IGUAL | DISTINTO                    // Operadores Logicos
+            | '<' | '>' | MENOIGUAL | MAYOIGUAL                            // Operadores Relacionales
+            | '+' | '-'                                                // Operadores Aditivos
+            | '*' | '/' | '%'                                          // Operadores Multiplicativos
 ;
 expUnaria :    expPostfijo
             |  operUnario expUnaria

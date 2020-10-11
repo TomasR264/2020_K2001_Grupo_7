@@ -66,19 +66,41 @@ CARACTER_PUNTUACION (\[|\]|\(|\)|\{|\}|\.|->|\+\+|--|&|\*|\+|-|!|\/|%|<<|>>|<|>|
 
 {CONSTANTE_REAL}/.* {}
 
-{PALABRA_RESERVADA_TIPO_DATO}/.* {strcpy(yylval.cadena,yytext); return TIPODATO;}
-{PALABRA_RESERVADA_CONTROL}/.* {strcpy(yylval.cadena,yytext); return SENTENCIADECONTROL;}
+{PALABRA_RESERVADA_TIPO_DATO}/.* {yylval.cadena = strdup(yytext); return TIPODATO;}
+{PALABRA_RESERVADA_CONTROL}/.* {yylval.cadena = strdup(yytext); return SENTENCIADECONTROL;}
 {PALABRA_RESERVADA_OTRO}/.* {}
 
-{IDENTIFICADOR}/.* {strcpy(yylval.cadena,yytext); return IDENTIFICADOR;}
+{IDENTIFICADOR}/.* {yylval.cadena = strdup(yytext); return IDENTIFICADOR;}
 
 {ENTERA_DECIMAL}{SUFIJO_ENTERO}?/.* {printf("retorne numero %d \n", atoi(yytext));yylval.entero=atoi(yytext); return NUM; }
 {ENTERA_OCTAL}{SUFIJO_ENTERO}?/.* {}
 {ENTERA_HEXA}{SUFIJO_ENTERO}?/.* {}
 
-\"({CADENA_CARACTERES}|{SECUENCIA_ESCAPE})+\"/.* {strcpy(yylval.cadena,yytext); return LITERALESCADENA;}
+\"({CADENA_CARACTERES}|{SECUENCIA_ESCAPE})+\"/.* {yylval.cadena = strdup(yytext); return LITERALESCADENA;}
 
 
+"++" {return INCREMENTO;}
+"--" {return DECREMENTO;}
+"==" {return IGUAL;}
+"&&" {return YLOGICO;}
+"||" {return OLOGICO;}
+"<<" {return OUTPUT;}
+">>" {return INPUT;}
+">=" {return MAYOIGUAL;}
+"<=" {return MENOIGUAL;}
+"!=" {return DISTINTO;}
+"+=" {return SUMAIGUAL;}
+"-=" {return RESTAIGUAL;}
+"*=" {return MULTIIGUAL;}
+"/=" {return DIVIGUAL;}
+"%=" {return RESTOIGUAL;}
+"^=" {return POTENIGUAL;}
+"<<=" {return MOVERBITIZQ;}
+">>=" {return MOVERBITDER;}
+"&=" {return ASIGYLOGICO;}
+"|=" {return ASIGOLOGICO;}
+"##" {return OPERADORCOMBINA;}
+"?:" {return PREGUNTA;}
 "+" {return '+';}
 "#" {return '#';}
 "<" {return '<';}
