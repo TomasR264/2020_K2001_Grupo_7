@@ -8,7 +8,7 @@
     #include <string.h>
     #include <math.h>
     #include <malloc.h>
-    #include "Tp4.tab.y"
+    #include "Tp4.tab.h"
 
 
 %}
@@ -78,7 +78,7 @@ CARACTER_PUNTUACION (\[|\]|\(|\)|\{|\}|\.|->|\+\+|--|&|\*|\+|-|!|\/|%|<<|>>|<|>|
 
 \"({CADENA_CARACTERES}|{SECUENCIA_ESCAPE})+\"/.* {strcpy(yylval.cadena,yytext); return LITERALESCADENA;}
 
-(\[|\]|\(|\)|\{|\}|\.|->|\+\+|--|&|\*|\+|-|!|\/|%|<<|>>|<|>|<=|>=|==|!=|\ˆ|\||&&|\|\||=|\*=|\/=|%=|\+=|-=|<<=|>>=|&=|\ˆ=|\|=|\?|:|;|\.\.\.|,|#|##) {return yytext}
+(\[|\]|\(|\)|\{|\}|\.|->|\+\+|--|&|\*|\+|-|!|\/|%|<<|>>|<|>|<=|>=|==|!=|\ˆ|\||&&|\|\||=|\*=|\/=|%=|\+=|-=|<<=|>>=|&=|\ˆ=|\|=|\?|:|;|\.\.\.|,|#|##) {return yytext;}
 
 \/\/{CARACTERES_UNA_LINEA}*/.* {}
 \/\*{CARACTERES_COMENTARIO_MULTIPLES_LINEAS}*\*\//.* {}
