@@ -4,6 +4,8 @@
 #include <ctype.h>
 #include <string.h>
 
+extern FILE* yyin;
+
 int yylex();
 int yywrap(){
 	return(1);
@@ -58,14 +60,14 @@ char* cadena;
 
 /////////////////////////////// EXPRESIONES Y OPERADORES ///////////////////////
 
-expresion :   expUnaria operador expresion
-            | expUnaria
-            | error                            { printf ("Error al declarar la expresion\n"); }
+expresion :   expUnaria operador expresion      { printf ("Se encontro una expresion\n"); }
+            | expUnaria                         { printf ("Se encontro una expresion unaria\n"); }
+            | error                             { printf ("Error al declarar la expresion\n"); }
 ;
 operador :     '=' | '+' '=' | '-' '=' | '*' '=' | '/' '=' | '%' '=' | // Operadores de asignasion
             | '|' '|' | '&' '&' | '=' '=' | '!' '='                    // Operadores Logicos
             | '<' | '>' | '<' '=' | '>' '='                            // Operadores Relacionales
-            | '+' | '-'                                                // Operadores Aditivos
+            | '+' {printf("encontre +");}| '-'                                                // Operadores Aditivos
             | '*' | '/' | '%'                                          // Operadores Miltiplicativos
 ;
 expUnaria :    expPostfijo
@@ -187,6 +189,15 @@ int main ()
 {
     #ifdef BISON_DEBUG
         yydebug = 1;
-#endif
-  yyparse ();
+    #endif
+    int flag;
+
+    yyin=fopen("entrada.c","r");
+
+    flag=yyparse();
+
+    fclose(yyin);
+
+    getch();
+    return flag;
 }

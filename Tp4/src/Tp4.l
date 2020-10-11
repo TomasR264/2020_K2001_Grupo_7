@@ -9,7 +9,7 @@
     #include <math.h>
     #include <malloc.h>
     #include "Tp4.tab.h"
-
+    extern FILE* yyin;
 
 %}
 
@@ -72,13 +72,27 @@ CARACTER_PUNTUACION (\[|\]|\(|\)|\{|\}|\.|->|\+\+|--|&|\*|\+|-|!|\/|%|<<|>>|<|>|
 
 {IDENTIFICADOR}/.* {strcpy(yylval.cadena,yytext); return IDENTIFICADOR;}
 
-{ENTERA_DECIMAL}{SUFIJO_ENTERO}?/.* {yylval.entero=atoi(yytext); return NUM; }
+{ENTERA_DECIMAL}{SUFIJO_ENTERO}?/.* {printf("retorne numero %d \n", atoi(yytext));yylval.entero=atoi(yytext); return NUM; }
 {ENTERA_OCTAL}{SUFIJO_ENTERO}?/.* {}
 {ENTERA_HEXA}{SUFIJO_ENTERO}?/.* {}
 
 \"({CADENA_CARACTERES}|{SECUENCIA_ESCAPE})+\"/.* {strcpy(yylval.cadena,yytext); return LITERALESCADENA;}
 
-(\[|\]|\(|\)|\{|\}|\.|->|\+\+|--|&|\*|\+|-|!|\/|%|<<|>>|<|>|<=|>=|==|!=|\ˆ|\||&&|\|\||=|\*=|\/=|%=|\+=|-=|<<=|>>=|&=|\ˆ=|\|=|\?|:|;|\.\.\.|,|#|##) {return yytext;}
+
+"+" {return '+';}
+"#" {return '#';}
+"<" {return '<';}
+">" {return '>';}
+"=" {return '=';}
+"[" {return '[';}
+"]" {return ']';}
+"(" {return '(';}
+")" {return ')';}
+"{" {return '{';}
+"}" {return '}';}
+":" {return ':';}
+"," {return ',';}
+";" {return ';';}
 
 \/\/{CARACTERES_UNA_LINEA}*/.* {}
 \/\*{CARACTERES_COMENTARIO_MULTIPLES_LINEAS}*\*\//.* {}
