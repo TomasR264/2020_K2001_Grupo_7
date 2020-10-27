@@ -58,7 +58,10 @@
      ESPECIFICADOR_CLASE_ALMACENAMIENTO = 274,
      CALIFICADOR_TIPO = 275,
      STRUCT_UNION = 276,
-     ENUM = 277
+     ENUM = 277,
+     CONSTANTE_REAL = 278,
+     CONSTANTE_ENTERA = 279,
+     CONSTANTE_CARACTER = 280
    };
 #endif
 
@@ -77,7 +80,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 81 "Tp5.tab.h"
+#line 84 "Tp5.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

@@ -45,6 +45,10 @@ return(1);
 %token CALIFICADOR_TIPO
 %token STRUCT_UNION
 %token ENUM
+%token CONSTANTE_REAL
+%token CONSTANTE_ENTERA
+%token CONSTANTE_CARACTER
+
 
 %start         entrada
 
@@ -58,8 +62,8 @@ entrada:  /* vacio */
 
 linea:  '\n'
         | expresion '\n'  {printf("encontro una expresion y ta todo bn\n");}
-        /*| declaracion '\n'
-        | sentencia '\n'
+        | declaracion '\n' {printf("encontro una Declaracion y ta todo bn\n");}
+        /*| sentencia '\n'
         | definicionesExternas '\n'       
         | sentenciasPreprocesador '\n'    */
 ;
@@ -157,7 +161,7 @@ listaArgumentos:      expresionAsignacion
 ;
 
 expresionPrimaria:      IDENTIFICADOR       /* definir bien todos estos */
-                      | ENTERA_DECIMAL      /* esto seria una constante */
+                      | constante      /* esto seria una constante */
                       | '(' expresion ')'
                       
 ;
@@ -165,12 +169,28 @@ expresionPrimaria:      IDENTIFICADOR       /* definir bien todos estos */
 
 ////////////////////////////////  DECLARACIONES //////////////////////////////////////
 
+declaracion:        TIPODATO listaVarSimples ';'
+;
 
+listaVarSimples:      unaVarSimple
+                    | listaVarSimples ',' unaVarSimple
+;
 
+unaVarSimple:     IDENTIFICADOR
+                | IDENTIFICADOR inicial
+;
 
+inicial:      OPERADOR_ASIGNACION constante
+;
 
+constante:      CONSTANTE_REAL
+              | CONSTANTE_ENTERA
+              | constanteEnumeracion
+              | CONSTANTE_CARACTER
+;
 
-
+constanteEnumeracion:     IDENTIFICADOR
+;
 
 %%
 int yyerror (char *mensaje)  /* Fucion de error */
