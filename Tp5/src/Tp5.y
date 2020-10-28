@@ -175,7 +175,22 @@ expresionPrimaria:      IDENTIFICADOR       /* definir bien todos estos */
 
 ////////////////////////////////  DECLARACIONES //////////////////////////////////////
 
-declaracion:        TIPODATO listaVarSimples ';'
+declaracion:      declaracionVarSimples
+                | declaracionFunciones
+;
+
+declaracionVarSimples:        TIPODATO listaVarSimples ';'
+;
+
+declaracionFunciones:     TIPODATO IDENTIFICADOR '(' listaParametros ')' sentenciaCompuesta
+;
+
+listaParametros:      /*vacio*/
+                    | listaParametros
+;
+
+listaParametros:      IDENTIFICADOR
+                    | listaParametros ',' IDENTIFICADOR
 ;
 
 listaVarSimples:      unaVarSimple
@@ -209,6 +224,7 @@ sentencia:      sentenciaCompuesta
 ;
 
 sentenciaCompuesta:     '{' listaDeclaraciones listaSentencias '}'
+                      | '{' listaSentencias listaDeclaraciones '}'
                       | '{' listaDeclaraciones '}'
                       | '{' listaSentencias '}'
                       | '{' '}'
