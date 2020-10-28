@@ -1,1 +1,4 @@
-int holaEsUnIdentificador = 3;
+{
+    int a;
+    a = 2 + 3;
+}

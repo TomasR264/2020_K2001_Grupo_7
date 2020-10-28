@@ -38,17 +38,23 @@ return(1);
 
 %token SIZEOF
 %token OPERADOR_ASIGNACION
-%token ENTERA_DECIMAL
 %token IDENTIFICADOR
 %token TIPODATO
-%token ESPECIFICADOR_CLASE_ALMACENAMIENTO
-%token CALIFICADOR_TIPO
-%token STRUCT_UNION
-%token ENUM
 %token CONSTANTE_REAL
 %token CONSTANTE_ENTERA
 %token CONSTANTE_CARACTER
-
+%token IF
+%token ELSE
+%token RETURN
+%token SWITCH
+%token DEFAULT
+%token GOTO
+%token WHILE
+%token DO
+%token CASE
+%token FOR
+%token BREAK
+%token CONTINUE
 
 %start         entrada
 
@@ -63,8 +69,8 @@ entrada:  /* vacio */
 linea:  '\n'
         | expresion '\n'  {printf("encontro una expresion y ta todo bn\n");}
         | declaracion '\n' {printf("encontro una Declaracion y ta todo bn\n");}
-        /*| sentencia '\n'
-        | definicionesExternas '\n'       
+        | sentencia '\n'  {printf("encontro una sentencia y ta todo bn\n");}
+        /*| definicionesExternas '\n'       
         | sentenciasPreprocesador '\n'    */
 ;
 
@@ -191,6 +197,66 @@ constante:      CONSTANTE_REAL
 
 constanteEnumeracion:     IDENTIFICADOR
 ;
+
+////////////////////////////////  SENTENCIAS //////////////////////////////////////
+
+sentencia:      sentenciaCompuesta
+              | sentenciaExpresion
+              | sentenciaSeleccion
+              | sentenciaIteracion
+              | sentenciaSalto
+              | sentenciaEtiquetada
+;
+
+sentenciaCompuesta:     '{' listaDeclaraciones listaSentencias '}'
+                      | '{' listaDeclaraciones '}'
+                      | '{' listaSentencias '}'
+                      | '{' '}'
+;
+
+listaDeclaraciones:     declaracion
+                      | listaDeclaraciones declaracion
+;
+
+listaSentencias:      sentencia
+                    | listaSentencias sentencia
+;
+
+sentenciaExpresion:     expresion ';'
+;
+
+sentenciaSeleccion:     IF '(' expresion ')' sentencia
+                      | IF '(' expresion ')' sentencia ELSE sentencia
+                      | SWITCH '(' expresion ')' sentencia
+;
+
+sentenciaIteracion:     WHILE '(' expresion ')' sentencia
+                      | DO sentencia WHILE '(' expresion ')' ';'
+                      | FOR '(' expresion ';' expresion ';' expresion ')' sentencia
+                      | FOR '('  ';' expresion ';' expresion ')' sentencia
+                      | FOR '(' expresion ';'  ';' expresion ')' sentencia
+                      | FOR '('  ';'  ';' expresion ')' sentencia
+                      | FOR '(' expresion ';' expresion ';'  ')' sentencia
+                      | FOR '('  ';' expresion ';'  ')' sentencia
+                      | FOR '(' expresion ';'  ';'  ')' sentencia
+                      | FOR '('  ';'  ';'  ')' sentencia
+;
+
+sentenciaSalto:     CONTINUE ';'
+                  | BREAK ';'
+                  | RETURN expresion ';'
+                  | RETURN ';'
+                  | GOTO IDENTIFICADOR ';'
+;
+
+sentenciaEtiquetada:      CASE expresionCondicional ':' sentencia
+                        | DEFAULT ':' sentencia
+                        | IDENTIFICADOR ':' sentencia
+;
+
+
+
+
 
 %%
 int yyerror (char *mensaje)  /* Fucion de error */

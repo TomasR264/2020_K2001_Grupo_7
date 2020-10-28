@@ -52,16 +52,23 @@
      FLECHA = 268,
      SIZEOF = 269,
      OPERADOR_ASIGNACION = 270,
-     ENTERA_DECIMAL = 271,
-     IDENTIFICADOR = 272,
-     TIPODATO = 273,
-     ESPECIFICADOR_CLASE_ALMACENAMIENTO = 274,
-     CALIFICADOR_TIPO = 275,
-     STRUCT_UNION = 276,
-     ENUM = 277,
-     CONSTANTE_REAL = 278,
-     CONSTANTE_ENTERA = 279,
-     CONSTANTE_CARACTER = 280
+     IDENTIFICADOR = 271,
+     TIPODATO = 272,
+     CONSTANTE_REAL = 273,
+     CONSTANTE_ENTERA = 274,
+     CONSTANTE_CARACTER = 275,
+     IF = 276,
+     ELSE = 277,
+     RETURN = 278,
+     SWITCH = 279,
+     DEFAULT = 280,
+     GOTO = 281,
+     WHILE = 282,
+     DO = 283,
+     CASE = 284,
+     FOR = 285,
+     BREAK = 286,
+     CONTINUE = 287
    };
 #endif
 
@@ -80,7 +87,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 84 "Tp5.tab.h"
+#line 91 "Tp5.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

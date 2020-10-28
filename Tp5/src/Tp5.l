@@ -51,6 +51,19 @@ ESCAPE_HEXA \\x[0-9a-fA-F]{1,2}
 {TIPODATO} {printf("encontro un tipoDato\n\n");return TIPODATO;}
 
 "sizeof" {return SIZEOF;}
+"if" {return IF;}
+"else" {return ELSE;}
+"switch" {return SWITCH;}
+"return" {return RETURN;}
+"default" {return DEFAULT;}
+"goto" {return GOTO;}
+"while" {return WHILE;}
+"do" {return DO;}
+"case" {return CASE;}
+"for" {return FOR;}
+"break" {return BREAK;}
+"continue" {return CONTINUE;}
+
 
 {OPERADOR_ASIGNACION} {return OPERADOR_ASIGNACION;}
 
