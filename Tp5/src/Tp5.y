@@ -66,12 +66,12 @@ entrada:  /* vacio */
           |entrada linea
 ;
 
-linea:  '\n'
-        | expresion '\n'  {printf("encontro una expresion y ta todo bn\n");}
-        | declaracion '\n' {printf("encontro una Declaracion y ta todo bn\n");}
-        | sentencia '\n'  {printf("encontro una sentencia y ta todo bn\n");}
-        /*| definicionesExternas '\n'       
-        | sentenciasPreprocesador '\n'    */
+linea:  
+        | expresion   {printf("encontro una expresion y ta todo bn\n");}
+        | declaracion  {printf("encontro una Declaracion y ta todo bn\n");}
+        | sentencia   {printf("encontro una sentencia y ta todo bn\n");}
+        /*| definicionesExternas        
+        | sentenciasPreprocesador     */
 ;
 
 ////////////////////////////////  EXPRESIONES //////////////////////////////////////
@@ -200,12 +200,12 @@ constanteEnumeracion:     IDENTIFICADOR
 
 ////////////////////////////////  SENTENCIAS //////////////////////////////////////
 
-sentencia:      sentenciaCompuesta
-              | sentenciaExpresion
-              | sentenciaSeleccion
-              | sentenciaIteracion
-              | sentenciaSalto
-              | sentenciaEtiquetada
+sentencia:      sentenciaCompuesta  
+              | sentenciaExpresion  
+              | sentenciaSeleccion  
+              | sentenciaIteracion  
+              | sentenciaSalto  
+              | sentenciaEtiquetada 
 ;
 
 sentenciaCompuesta:     '{' listaDeclaraciones listaSentencias '}'
