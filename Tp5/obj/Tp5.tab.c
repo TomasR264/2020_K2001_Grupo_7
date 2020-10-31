@@ -73,6 +73,8 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include "Tp5-struct.h"
+#include "Tp5-funciones.h"
 
 extern FILE* yyin;
 
@@ -88,11 +90,11 @@ return(1);
 
 
 /* Line 189 of yacc.c  */
-#line 92 "Tp5.tab.c"
+#line 94 "Tp5.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 1
+# define YYDEBUG 0
 #endif
 
 /* Enabling verbose error messages.  */
@@ -155,7 +157,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 20 "../src/Tp5.y"
+#line 22 "../src/Tp5.y"
 
 
 
@@ -163,7 +165,7 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 167 "Tp5.tab.c"
+#line 169 "Tp5.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -175,7 +177,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 179 "Tp5.tab.c"
+#line 181 "Tp5.tab.c"
 
 #ifdef short
 # undef short
@@ -514,19 +516,19 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    65,    65,    66,    69,    70,    71,    72,    80,    81,
-      84,    85,    88,    89,    92,    93,    96,    97,   100,   101,
-     104,   105,   108,   109,   112,   113,   114,   117,   118,   119,
-     120,   121,   124,   125,   126,   129,   130,   131,   134,   135,
-     136,   137,   140,   141,   144,   145,   146,   147,   148,   149,
-     152,   152,   152,   152,   152,   152,   155,   156,   157,   158,
-     159,   160,   161,   162,   165,   166,   169,   170,   171,   178,
-     179,   182,   185,   188,   189,   192,   193,   196,   197,   200,
-     201,   204,   207,   208,   209,   210,   213,   218,   219,   220,
-     221,   222,   223,   226,   227,   228,   229,   230,   233,   234,
-     237,   238,   241,   244,   245,   246,   249,   250,   251,   252,
-     253,   254,   255,   256,   257,   258,   261,   262,   263,   264,
-     265,   268,   269,   270
+       0,    67,    67,    68,    71,    72,    73,    74,    82,    83,
+      86,    87,    90,    91,    94,    95,    98,    99,   102,   103,
+     106,   107,   110,   111,   114,   115,   116,   119,   120,   121,
+     122,   123,   126,   127,   128,   131,   132,   133,   136,   137,
+     138,   139,   142,   143,   146,   147,   148,   149,   150,   151,
+     154,   154,   154,   154,   154,   154,   157,   158,   159,   160,
+     161,   162,   163,   164,   167,   168,   171,   172,   173,   180,
+     181,   184,   187,   190,   191,   194,   195,   198,   199,   202,
+     203,   206,   209,   210,   211,   212,   215,   220,   221,   222,
+     223,   224,   225,   228,   229,   230,   231,   232,   235,   236,
+     239,   240,   243,   246,   247,   248,   251,   252,   253,   254,
+     255,   256,   257,   258,   259,   260,   263,   264,   265,   266,
+     267,   270,   271,   272
 };
 #endif
 
@@ -1703,28 +1705,28 @@ yyreduce:
         case 5:
 
 /* Line 1455 of yacc.c  */
-#line 70 "../src/Tp5.y"
-    {printf("encontro una expresion y ta todo bn\n");;}
+#line 72 "../src/Tp5.y"
+    {printf("encontro una expresion y ta todo bn\n"); funcion_de_prueba();}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 71 "../src/Tp5.y"
+#line 73 "../src/Tp5.y"
     {printf("encontro una Declaracion y ta todo bn\n");;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 72 "../src/Tp5.y"
+#line 74 "../src/Tp5.y"
     {printf("encontro una sentencia y ta todo bn\n");;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1728 "Tp5.tab.c"
+#line 1730 "Tp5.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1936,7 +1938,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 277 "../src/Tp5.y"
+#line 279 "../src/Tp5.y"
 
 int yyerror (char *mensaje)  /* Fucion de error */
 {

@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include "Tp5-struct.h"
+#include "Tp5-funciones.h"
 
 extern FILE* yyin;
 
@@ -67,7 +69,7 @@ entrada:  /* vacio */
 ;
 
 linea:  
-        | expresion   {printf("encontro una expresion y ta todo bn\n");}
+        | expresion   {printf("encontro una expresion y ta todo bn\n"); funcion_de_prueba()}
         | declaracion  {printf("encontro una Declaracion y ta todo bn\n");}
         | sentencia   {printf("encontro una sentencia y ta todo bn\n");}
         /*| definicionesExternas        
@@ -167,7 +169,7 @@ listaArgumentos:      expresionAsignacion
 ;
 
 expresionPrimaria:      IDENTIFICADOR       /* definir bien todos estos */
-                      | constante      /* esto seria una constante */
+                      | constante      
                       | '(' expresion ')'
                       
 ;
