@@ -47,9 +47,9 @@ ESCAPE_HEXA \\x[0-9a-fA-F]{1,2}
 
 %%
 
-'{CARACTER}' {return CONSTANTE_CARACTER;}
+'{CARACTER}' {yylval.constante = yytext[1]; return CONSTANTE_CARACTER;}
 
-{TIPODATO} {printf("encontro un tipoDato\n\n");return TIPODATO;}
+{TIPODATO} {yylval.identificador=strdup(yytext);return TIPODATO;}
 
 "sizeof" {return SIZEOF;}
 "if" {return IF;}
@@ -69,12 +69,12 @@ ESCAPE_HEXA \\x[0-9a-fA-F]{1,2}
 {OPERADOR_ASIGNACION} {return OPERADOR_ASIGNACION;}
 
 
-{CONSTANTE_REAL} {return CONSTANTE_REAL;}
-{ENTERA_DECIMAL}{SUFIJO_ENTERO}? {printf("encontro una enteraDecimal\n\n");return CONSTANTE_ENTERA;}
-{ENTERA_OCTAL}{SUFIJO_ENTERO}? {return CONSTANTE_ENTERA;}
-{ENTERA_HEXA}{SUFIJO_ENTERO}? {return CONSTANTE_ENTERA;}
+{CONSTANTE_REAL} {yylval.constante = atof(yytext); return CONSTANTE_REAL;}
+{ENTERA_DECIMAL}{SUFIJO_ENTERO}? {yylval.constante = atof(yytext); return CONSTANTE_ENTERA;}
+{ENTERA_OCTAL}{SUFIJO_ENTERO}? {yylval.constante = atof(yytext); return CONSTANTE_ENTERA;}
+{ENTERA_HEXA}{SUFIJO_ENTERO}? {yylval.constante = atof(yytext); return CONSTANTE_ENTERA;}
 
-{IDENTIFICADOR} {printf("encontro un Identificadorx\n\n");return IDENTIFICADOR;}
+{IDENTIFICADOR} {yylval.identificador=strdup(yytext);return IDENTIFICADOR;}
 
 
 

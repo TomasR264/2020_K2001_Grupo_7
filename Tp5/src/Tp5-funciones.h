@@ -15,9 +15,10 @@ symrec *putsym (char const *sym_name, int sym_type)
   ptr->name = (char *) malloc (strlen (sym_name) + 1);
   strcpy (ptr->name,sym_name);
   ptr->type = sym_type;
-  ptr->value.entero = 0;
+  ptr->value.real_doble = 0;
   ptr->next = (struct symrec *)sym_table;
   sym_table = ptr;
+  
   return ptr;
 }
 
@@ -33,9 +34,48 @@ symrec *getsym (char const *sym_name)
   return 0;
 }
 
-void tiparDeclaraciones (char* nombre) {
+void tiparDeclaraciones (char* tipo) {
+    symrec *aux = sym_table;
+    int tipoVariable = TYP_AUXILIAR;
+    if(strcmp (tipo, "int") == 0){
+        tipoVariable = TYP_INT;
+    }
+    if(strcmp (tipo, "char") == 0){
+        tipoVariable = TYP_CHAR;
+    }
+    if(strcmp (tipo, "float") == 0){
+        tipoVariable = TYP_FLOAT;
+    }
+    if(strcmp (tipo, "double") == 0){
+        tipoVariable = TYP_DOUBLE;
+    }
+    if(strcmp (tipo, "void") == 0){
+        tipoVariable = TYP_VOID;
+    }
+    while (aux)
+    {
+        if(aux->type == TYP_AUXILIAR){
+            aux->type = tipoVariable;
+        }
+        aux=aux->next;
+    }
 
+    return;
+}
 
+void mostrarLista(){ // funcion provisional para debuggear
+    symrec *aux = sym_table;
+    while (aux)
+    {
+        printf("variable definida: %s \n", aux->name);
+        int a = aux->value.real_doble;
+        printf("valor: %d \n", a);
+        printf("tipo: %d \n", aux->type);
+        aux=aux->next;
+
+    }
+    
+    
     return;
 }
 

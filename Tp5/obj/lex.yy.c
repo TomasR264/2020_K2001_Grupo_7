@@ -749,12 +749,12 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 50 "../src/Tp5.l"
-{return CONSTANTE_CARACTER;}
+{yylval.constante = yytext[1]; return CONSTANTE_CARACTER;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 52 "../src/Tp5.l"
-{printf("encontro un tipoDato\n\n");return TIPODATO;}
+{yylval.identificador=strdup(yytext);return TIPODATO;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
@@ -829,27 +829,27 @@ YY_RULE_SETUP
 case 17:
 YY_RULE_SETUP
 #line 72 "../src/Tp5.l"
-{return CONSTANTE_REAL;}
+{yylval.constante = atof(yytext); return CONSTANTE_REAL;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 73 "../src/Tp5.l"
-{printf("encontro una enteraDecimal\n\n");return CONSTANTE_ENTERA;}
+{yylval.constante = atof(yytext); return CONSTANTE_ENTERA;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 74 "../src/Tp5.l"
-{return CONSTANTE_ENTERA;}
+{yylval.constante = atof(yytext); return CONSTANTE_ENTERA;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 75 "../src/Tp5.l"
-{return CONSTANTE_ENTERA;}
+{yylval.constante = atof(yytext); return CONSTANTE_ENTERA;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 77 "../src/Tp5.l"
-{printf("encontro un Identificadorx\n\n");return IDENTIFICADOR;}
+{yylval.identificador=strdup(yytext);return IDENTIFICADOR;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP

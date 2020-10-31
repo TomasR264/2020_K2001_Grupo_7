@@ -35,11 +35,14 @@ listaDeclaracionesMultiples* lista_declaraciones = NULL;*/
 
 %union {
   char* identificador;
+  double constante;
+  char caracter;
   //listaDeclaracionesMultiples* listaDeclaraciones;
 }
 
 
-
+%type <constante> constante
+%type <constante> inicial
 
 %token OLOGICO
 %token YLOGICO
@@ -55,10 +58,10 @@ listaDeclaracionesMultiples* lista_declaraciones = NULL;*/
 %token SIZEOF
 %token OPERADOR_ASIGNACION
 %token <identificador> IDENTIFICADOR
-%token TIPODATO
-%token CONSTANTE_REAL
-%token CONSTANTE_ENTERA
-%token CONSTANTE_CARACTER
+%token <identificador> TIPODATO
+%token <constante> CONSTANTE_REAL
+%token <constante> CONSTANTE_ENTERA
+%token <constante> CONSTANTE_CARACTER
 %token IF
 %token ELSE
 %token RETURN
@@ -82,12 +85,9 @@ entrada:  /* vacio */
           |entrada linea
 ;
 
-linea:  
-        | expresion   {printf("encontro una expresion y ta todo bn\n"); funcion_de_prueba()}
+linea:    expresion   {printf("encontro una expresion y ta todo bn\n");}
         | declaracion  {printf("encontro una Declaracion y ta todo bn\n");}
         | sentencia   {printf("encontro una sentencia y ta todo bn\n");}
-        /*| definicionesExternas        
-        | sentenciasPreprocesador     */
 ;
 
 ////////////////////////////////  EXPRESIONES //////////////////////////////////////
@@ -191,19 +191,16 @@ expresionPrimaria:      IDENTIFICADOR       /* definir bien todos estos */
 
 ////////////////////////////////  DECLARACIONES //////////////////////////////////////
 
-declaracion:      declaracionVarSimples
+declaracion:      declaracionVarSimples 
                 | declaracionFunciones
 ;
 
-declaracionVarSimples:        TIPODATO listaVarSimples ';'
+declaracionVarSimples:        TIPODATO listaVarSimples ';'  {tiparDeclaraciones($<identificador>1);}
 ;
 
 declaracionFunciones:     TIPODATO IDENTIFICADOR '(' listaParametros ')' sentenciaCompuesta
 ;
 
-listaParametros:      /*vacio*/
-                    | listaParametros
-;
 
 listaParametros:      IDENTIFICADOR                     
                     | listaParametros ',' IDENTIFICADOR
@@ -213,20 +210,16 @@ listaVarSimples:      unaVarSimple
                     | listaVarSimples ',' unaVarSimple
 ;
 
-unaVarSimple:     IDENTIFICADOR           { aux=getsym($<identificador>1); if (aux) { printf("Redeclaracion de variable!!");} else {  aux=putsym(strdup($<identificador>1),TYP_AUXILIAR);}
-                | IDENTIFICADOR inicial   { aux=getsym($<identificador>1); if (aux) { printf("Redeclaracion de variable!!");} else {  aux=putsym(strdup($<identificador>1),TYP_AUXILIAR);(aux->value.double)=$2 }
+unaVarSimple:     IDENTIFICADOR           {aux=getsym($<identificador>1); if (aux) { printf("\n\n*******************Redeclaracion de variable: %s!!*****************\n\n", $<identificador>1);} else {  aux=putsym(strdup($<identificador>1),TYP_AUXILIAR);}}
+                | IDENTIFICADOR inicial   { aux=getsym($<identificador>1); if (aux) { printf("\n\n*******************Redeclaracion de variable!!*****************\n\n");} else {  aux=putsym(strdup($<identificador>1),TYP_AUXILIAR);(aux->value.real_doble)=$<constante>2 ;}}
 ;
 
-inicial:      OPERADOR_ASIGNACION constante {}
+inicial:      OPERADOR_ASIGNACION constante {$$ = $<constante>2;}  /* cambiar operador asignacion por igual solo y revisar donde mas cambiar*/
 ;
 
-constante:      CONSTANTE_REAL        {$$ = $1;}
-              | CONSTANTE_ENTERA      {$$ = $1;}
-              | constanteEnumeracion  {$$ = $1;}
-              | CONSTANTE_CARACTER    {$$ = $1;}
-;
-
-constanteEnumeracion:     IDENTIFICADOR
+constante:      CONSTANTE_REAL        {$$ = $<constante>1;}
+              | CONSTANTE_ENTERA      {$$ = $<constante>1; }
+              | CONSTANTE_CARACTER    {$$ = $<constante>1;}
 ;
 
 ////////////////////////////////  SENTENCIAS //////////////////////////////////////
@@ -309,10 +302,10 @@ int main ()
 
     flag=yyparse();
 
-    printf("fin del programa %d", flag);
+    mostrarLista();
+    printf("\n\n\nfin del programa %d", flag);
 
     fclose(yyin);
 
-    
     return flag;
 }

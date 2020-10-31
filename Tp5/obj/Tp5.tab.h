@@ -79,15 +79,17 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 22 "../src/Tp5.y"
+#line 36 "../src/Tp5.y"
 
-
-
+  char* identificador;
+  double constante;
+  char caracter;
+  //listaDeclaracionesMultiples* listaDeclaraciones;
 
 
 
 /* Line 1676 of yacc.c  */
-#line 91 "Tp5.tab.h"
+#line 93 "Tp5.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
