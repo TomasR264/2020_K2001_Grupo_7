@@ -14,15 +14,32 @@ int yyerror (char*);
 int yywrap(){
 return(1);
 }
+symrec *aux;
 
+
+/*
+struct listaDeclaracionesMultiples {
+    char* nombre;
+    union
+    {
+
+    }valor
+    struct listaDeclaracionesMultiples* siguiente;
+} listaDeclaracionesMultiples;
+
+//declaracion de la lista de variables a declarar
+listaDeclaracionesMultiples* lista_declaraciones = NULL;*/
 
 
 %}
 
 %union {
-
-
+  char* identificador;
+  //listaDeclaracionesMultiples* listaDeclaraciones;
 }
+
+
+
 
 %token OLOGICO
 %token YLOGICO
@@ -35,12 +52,9 @@ return(1);
 %token INCREMENTO
 %token DECREMENTO
 %token FLECHA
-
-
-
 %token SIZEOF
 %token OPERADOR_ASIGNACION
-%token IDENTIFICADOR
+%token <identificador> IDENTIFICADOR
 %token TIPODATO
 %token CONSTANTE_REAL
 %token CONSTANTE_ENTERA
@@ -84,7 +98,7 @@ expresion:    expresionAsignacion
 ;
 
 expresionAsignacion:    expresionCondicional
-                      | expresionUnaria OPERADOR_ASIGNACION expresionAsignacion
+                      | expresionUnaria OPERADOR_ASIGNACION expresionAsignacion 
 ;
 
 expresionCondicional:     expresionOLogico
@@ -191,25 +205,25 @@ listaParametros:      /*vacio*/
                     | listaParametros
 ;
 
-listaParametros:      IDENTIFICADOR
+listaParametros:      IDENTIFICADOR                     
                     | listaParametros ',' IDENTIFICADOR
 ;
 
-listaVarSimples:      unaVarSimple
+listaVarSimples:      unaVarSimple                      
                     | listaVarSimples ',' unaVarSimple
 ;
 
-unaVarSimple:     IDENTIFICADOR
-                | IDENTIFICADOR inicial
+unaVarSimple:     IDENTIFICADOR           { aux=getsym($<identificador>1); if (aux) { printf("Redeclaracion de variable!!");} else {  aux=putsym(strdup($<identificador>1),TYP_AUXILIAR);}
+                | IDENTIFICADOR inicial   { aux=getsym($<identificador>1); if (aux) { printf("Redeclaracion de variable!!");} else {  aux=putsym(strdup($<identificador>1),TYP_AUXILIAR);(aux->value.double)=$2 }
 ;
 
-inicial:      OPERADOR_ASIGNACION constante
+inicial:      OPERADOR_ASIGNACION constante {}
 ;
 
-constante:      CONSTANTE_REAL
-              | CONSTANTE_ENTERA
-              | constanteEnumeracion
-              | CONSTANTE_CARACTER
+constante:      CONSTANTE_REAL        {$$ = $1;}
+              | CONSTANTE_ENTERA      {$$ = $1;}
+              | constanteEnumeracion  {$$ = $1;}
+              | CONSTANTE_CARACTER    {$$ = $1;}
 ;
 
 constanteEnumeracion:     IDENTIFICADOR
@@ -288,6 +302,8 @@ int main ()
         yydebug = 1;
   #endif
     int flag;
+
+
 
     yyin=fopen("entrada.c","r");
 

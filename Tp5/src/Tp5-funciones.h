@@ -1,15 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef TP5_FUNCIONES
+#define TP5_FUNCIONES
+
+
 #include "Tp5-struct.h"
-
-
-
-void funcion_de_prueba () {
-    printf("Esto es una prueba\n\n");
-    return;
-}
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,7 +15,7 @@ symrec *putsym (char const *sym_name, int sym_type)
   ptr->name = (char *) malloc (strlen (sym_name) + 1);
   strcpy (ptr->name,sym_name);
   ptr->type = sym_type;
-  ptr->value.var = 0;
+  ptr->value.entero = 0;
   ptr->next = (struct symrec *)sym_table;
   sym_table = ptr;
   return ptr;
@@ -39,3 +32,14 @@ symrec *getsym (char const *sym_name)
       return ptr;
   return 0;
 }
+
+void tiparDeclaraciones (char* nombre) {
+
+
+    return;
+}
+
+
+
+
+#endif

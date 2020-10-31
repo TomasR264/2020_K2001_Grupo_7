@@ -1723,10 +1723,17 @@ yyreduce:
     {printf("encontro una sentencia y ta todo bn\n");;}
     break;
 
+  case 11:
+
+/* Line 1455 of yacc.c  */
+#line 87 "../src/Tp5.y"
+    {printf("Asigno a una variable\n\n");;}
+    break;
+
 
 
 /* Line 1455 of yacc.c  */
-#line 1730 "Tp5.tab.c"
+#line 1737 "Tp5.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1951,6 +1958,8 @@ int main ()
         yydebug = 1;
   #endif
     int flag;
+
+
 
     yyin=fopen("entrada.c","r");
 
