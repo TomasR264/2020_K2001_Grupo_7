@@ -36,7 +36,7 @@ typedef struct symrec
     int entero;       // valores
     float real;
     double real_doble;
-    symrec *lista_parametros;
+    struct symrec *lista_parametros;
   } value;
 
   struct symrec *next; //Puntero al siguiente nodo de la lista

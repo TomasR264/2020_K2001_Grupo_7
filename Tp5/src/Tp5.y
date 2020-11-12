@@ -37,7 +37,7 @@ listaDeclaracionesMultiples* lista_declaraciones = NULL;*/
   char* identificador;
   double constante;
   char caracter;
-  symrec listaDeParametros;
+  struct symrec *listaDeParametros;
   //listaDeclaracionesMultiples* listaDeclaraciones;
 }
 
@@ -200,12 +200,12 @@ declaracion:      declaracionVarSimples
 declaracionVarSimples:        TIPODATO listaVarSimples ';'  {tiparDeclaraciones($<identificador>1);}
 ;
 
-declaracionFunciones:     TIPODATO IDENTIFICADOR '(' listaParametros ')' sentenciaCompuesta {aux=getsym($<identificador>2, sym_tabla_parametros_aux); if (aux) { printf("\n\n****Cantidad o tipado de parametros incorrecto %s!!****\n\n", $<listaParametros>1);} else {  aux=putsym(strdup($<identificador>2),TYP_AUXILIAR);};tiparDeclaraciones($<identificador>1); aux->value.lista_parametros = sym_tabla_parametros_aux; sym_tabla_parametros_aux = NULL;}
+declaracionFunciones:     TIPODATO IDENTIFICADOR '(' listaParametros ')' sentenciaCompuesta {aux=getsym($<identificador>2, sym_tabla_parametros_aux); if (aux) { printf("\n\n****Cantidad o tipado de parametros incorrecto %s!!****\n\n", $<listaDeParametros>1);} else {  aux=putsym(strdup($<identificador>2),TYP_AUXILIAR, sym_table);};tiparDeclaraciones($<identificador>1); aux->value.lista_parametros = sym_tabla_parametros_aux; sym_tabla_parametros_aux = NULL;}
 ;
 
 
-listaParametros:      IDENTIFICADOR                   {aux=getsym($<listaParametros>1, sym_tabla_parametros_aux); if (aux) { printf("\n\n*******************Cantidad o tipado de parametros incorrecto!!*****************\n\n");} else {  aux=putsym(strdup($<listaParametros>1,),TYP_AUXILIAR, sym_tabla_parametros_aux);}}   
-                    | listaParametros ',' IDENTIFICADOR  {aux=getsym($<listaParametros>3, sym_tabla_parametros_aux); if (aux) { printf("\n\n*******************Cantidad o tipado de parametros incorrecto!!*****************\n\n");} else {  aux=putsym(strdup($<listaParametros>3,),TYP_AUXILIAR, sym_tabla_parametros_aux);}}
+listaParametros:      IDENTIFICADOR                   {aux=getsym($<identificador>1, sym_tabla_parametros_aux); if (aux) { printf("\n\n*******************Cantidad o tipado de parametros incorrecto!!*****************\n\n");} else {  aux=putsym(strdup($<identificador>1),TYP_AUXILIAR, sym_tabla_parametros_aux);}}   
+                    | listaParametros ',' IDENTIFICADOR  {aux=getsym($<identificador>3, sym_tabla_parametros_aux); if (aux) { printf("\n\n*******************Cantidad o tipado de parametros incorrecto!!*****************\n\n");} else {  aux=putsym(strdup($<identificador>3),TYP_AUXILIAR, sym_tabla_parametros_aux);}}
 ;
 
 listaVarSimples:      unaVarSimple                      

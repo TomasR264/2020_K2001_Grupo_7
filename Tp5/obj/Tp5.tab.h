@@ -84,12 +84,13 @@ typedef union YYSTYPE
   char* identificador;
   double constante;
   char caracter;
+  struct symrec *listaDeParametros;
   //listaDeclaracionesMultiples* listaDeclaraciones;
 
 
 
 /* Line 1676 of yacc.c  */
-#line 93 "Tp5.tab.h"
+#line 94 "Tp5.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
