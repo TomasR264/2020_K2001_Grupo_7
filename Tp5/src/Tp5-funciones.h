@@ -9,25 +9,27 @@
 
 //Definición de la función putsym
 
-symrec *putsym (char const *sym_name, int sym_type)
+symrec *putsym (char const *sym_name, int sym_type, symrec *listaAUtilizar)
 {
   symrec *ptr = (symrec *) malloc (sizeof (symrec));
   ptr->name = (char *) malloc (strlen (sym_name) + 1);
   strcpy (ptr->name,sym_name);
   ptr->type = sym_type;
   ptr->value.real_doble = 0;
-  ptr->next = (struct symrec *)sym_table;
-  sym_table = ptr;
+  ptr->next = (struct symrec *)listaAUtilizar;
+  listaAUtilizar = ptr;
   
   return ptr;
 }
 
+
+
 //Definición de la función getsym
 
-symrec *getsym (char const *sym_name)
+symrec *getsym (char const *sym_name, symrec *listaAUtilizar)
 {
   symrec *ptr;
-  for (ptr = sym_table; ptr != (symrec *) 0;
+  for (ptr = listaAUtilizar; ptr != (symrec *) 0;
        ptr = (symrec *)ptr->next)
     if (strcmp (ptr->name, sym_name) == 0)
       return ptr;
@@ -78,6 +80,8 @@ void mostrarLista(){ // funcion provisional para debuggear
     
     return;
 }
+
+
 
 
 
