@@ -1,5 +1,5 @@
-int a=3;
+int a(int b, int c){
+    return b;
+}
 
-char b;
-
-float c;
+int a(b,c);

@@ -116,7 +116,7 @@ ESCAPE_HEXA \\x[0-9a-fA-F]{1,2}
 
 
 
-" " {printf("encontro un espacio \n");}
+" " 
 
 \n {}
 
