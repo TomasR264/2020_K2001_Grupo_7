@@ -46,6 +46,12 @@ typedef struct symrec
 symrec *sym_table = NULL;
 symrec *sym_tabla_parametros_aux = NULL;
 
+//Estructura para el manejo de errores:
+typedef struct Error {
+    char* error;
+    struct Error *sig;
+} Error;
 
+Error *arrayErrores = NULL;
 
 #endif

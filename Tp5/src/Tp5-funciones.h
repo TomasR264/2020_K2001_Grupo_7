@@ -81,9 +81,23 @@ void mostrarLista(){ // funcion provisional para debuggear
     return;
 }
 
-
-
-
-
+void agregarError(Error** arrayErrores, char* error) {
+    Error* nuevoError = (Error*)malloc(sizeof(Error));
+    nuevoError->error = strdup(error);
+    nuevoError->sig = NULL;
+    
+    //caso base
+    if(*arrayErrores == NULL){
+        *arrayErrores = nuevoError;
+    }
+    else{
+        //Busco el ultimo error que su siguiente sea null
+        Error* aux = *arrayErrores;
+        while(aux->sig != NULL){
+            aux = aux->sig;
+        }
+        aux->sig = nuevoError;
+    }
+}
 
 #endif
