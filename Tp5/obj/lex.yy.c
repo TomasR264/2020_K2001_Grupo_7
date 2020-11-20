@@ -282,11 +282,11 @@ static void yy_fatal_error YY_PROTO(( yyconst char msg[] ));
 	*yy_cp = '\0'; \
 	yy_c_buf_p = yy_cp;
 
-#define YY_NUM_RULES 57
-#define YY_END_OF_BUFFER 58
+#define YY_NUM_RULES 58
+#define YY_END_OF_BUFFER 59
 static yyconst short int yy_accept[173] =
     {   0,
-        0,    0,   58,   57,   56,   55,   57,   31,   36,   28,
+        0,    0,   59,   57,   56,   55,   57,   31,   36,   28,
        57,   40,   39,   34,   29,   23,   30,   43,   35,   19,
        18,   24,   25,   32,   16,   33,   22,   21,   41,   42,
        26,   21,   21,   21,   21,   21,   21,   21,   21,   21,
@@ -1019,7 +1019,7 @@ YY_RULE_SETUP
 case 55:
 YY_RULE_SETUP
 #line 119 "../src/Tp5.l"
-{printf("encontro un espacio \n");}
+
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
@@ -1028,10 +1028,15 @@ YY_RULE_SETUP
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 126 "../src/Tp5.l"
+#line 122 "../src/Tp5.l"
+{fprintf(yyout, "\n La cadena %s es lexicamente invalida", yytext);}
+	YY_BREAK
+case 58:
+YY_RULE_SETUP
+#line 123 "../src/Tp5.l"
 ECHO;
 	YY_BREAK
-#line 1035 "lex.yy.c"
+#line 1040 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1917,5 +1922,4 @@ int main()
 	return 0;
 	}
 #endif
-#line 126 "../src/Tp5.l"
-
+#line 123 "../src/Tp5.l"
