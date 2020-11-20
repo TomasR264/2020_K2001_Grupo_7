@@ -14,10 +14,10 @@ symrec *putsym (char const *sym_name, int sym_type, symrec *listaAUtilizar)
 {
   symrec *ptr = (symrec *) malloc (sizeof (symrec));
   ptr->name = (char *) malloc (strlen (sym_name) + 1);
-  strcpy (ptr->name,sym_name);
+  strcpy (ptr->name, sym_name);
   ptr->type = sym_type;
   ptr->value.real_doble = 0;
-  ptr->next = (struct symrec *)listaAUtilizar;
+  ptr->next = (struct symrec *) listaAUtilizar;
   listaAUtilizar = ptr;
   
   return ptr;
