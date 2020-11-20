@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 
 //Definición de la función putsym
 
@@ -81,9 +82,21 @@ void mostrarLista(){ // funcion provisional para debuggear
     return;
 }
 
-void agregarError(Error** arrayErrores, char* error) {
+void agregarError(Error** arrayErrores, char* error, ...) {
+    
+    char* errorDesarrollado;
+    
+    va_list p; 
+    va_start(p, error); 
+    char *arg;
+
+    while (arg = va_arg(p, char*)) {
+        strcat(errorDesarrollado, arg);
+    } 
+    va_end(p); 
+    
     Error* nuevoError = (Error*)malloc(sizeof(Error));
-    nuevoError->error = strdup(error);
+    nuevoError->error = strdup(errorDesarrollado);
     nuevoError->sig = NULL;
     
     //caso base

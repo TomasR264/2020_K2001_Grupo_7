@@ -6,6 +6,7 @@
 #include "Tp5-struct.h"
 #include "Tp5-funciones.h"
 
+
 extern FILE* yyin;
 
 int yylex();
