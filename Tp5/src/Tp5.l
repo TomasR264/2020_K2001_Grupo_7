@@ -120,7 +120,6 @@ ESCAPE_HEXA \\x[0-9a-fA-F]{1,2}
 
 \n {}
 
-
-
+. {fprintf(yyout, "\n La cadena %s es lexicamente invalida, yytext);}
 
 %%
