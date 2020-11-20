@@ -204,7 +204,7 @@ declaracionVarSimples:        TIPODATO listaVarSimples ';'  {tiparDeclaraciones(
 ;
 
 
-declaracionFunciones:     TIPODATO IDENTIFICADOR '(' listaParametrosDeclaracion ')' sentenciaCompuesta {aux=getsym($<identificador>2, sym_tabla_parametros_aux); if (aux) { printf("\n\n****Cantidad o tipado de parametros incorrecto %s!!****\n\n", $<listaDeParametros>1);} else {  aux=putsym(strdup($<identificador>2),TYP_AUXILIAR, sym_table);};tiparDeclaraciones($<identificador>1); aux->value.lista_parametros = sym_tabla_parametros_aux; sym_tabla_parametros_aux = NULL;}
+declaracionFunciones:     TIPODATO IDENTIFICADOR '(' listaParametrosDeclaracion ')' sentenciaCompuesta {aux=getsym($<identificador>2, sym_tabla_parametros_aux); if (aux) { agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!", $<listaDeParametros>1 );} else {  aux=putsym(strdup($<identificador>2),TYP_AUXILIAR, sym_table);};tiparDeclaraciones($<identificador>1); aux->value.lista_parametros = sym_tabla_parametros_aux; sym_tabla_parametros_aux = NULL;}
 ;
 
 invocacionFunciones:     TIPODATO IDENTIFICADOR '(' listaParametrosInvocacion ')'
@@ -222,8 +222,8 @@ listaVarSimples:      unaVarSimple
                     | listaVarSimples ',' unaVarSimple
 ;
 
-unaVarSimple:     IDENTIFICADOR           {aux=getsym($<identificador>1, sym_table); if (aux) { printf("\n\n*******************Redeclaracion de variable: %s!!*****************\n\n", $<identificador>1);} else {  aux=putsym(strdup($<identificador>1),TYP_AUXILIAR, sym_table);}}
-                | IDENTIFICADOR inicial   { aux=getsym($<identificador>1, sym_table); if (aux) { printf("\n\n*******************Redeclaracion de variable!!*****************\n\n");} else {  aux=putsym(strdup($<identificador>1),TYP_AUXILIAR, sym_table);(aux->value.real_doble)=$<constante>2 ;}}
+unaVarSimple:     IDENTIFICADOR           {aux=getsym($<identificador>1, sym_table); if (aux) { agregarError(&arrayErrores, "Redeclaracion de variable", $<identificador>1);} else {  aux=putsym(strdup($<identificador>1),TYP_AUXILIAR, sym_table);}}
+                | IDENTIFICADOR inicial   { aux=getsym($<identificador>1, sym_table); if (aux) { agregarError(&arrayErrores, "Redeclaracion de variable");} else {  aux=putsym(strdup($<identificador>1),TYP_AUXILIAR, sym_table);(aux->value.real_doble)=$<constante>2 ;}}
 ;
 
 inicial:      OPERADOR_ASIGNACION constante {$$ = $<constante>2;}  /* cambiar operador asignacion por igual solo y revisar donde mas cambiar*/
