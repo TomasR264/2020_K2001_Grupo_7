@@ -10,7 +10,7 @@
 
 //Definición de la función putsym
 
-symrec *putsym (char const *sym_name, int sym_type, symrec *listaAUtilizar)
+symrec *putsym (char const *sym_name, int sym_type, symrec** listaAUtilizar)
 {
   symrec *ptr = (symrec *) malloc (sizeof (symrec));
   ptr->name = (char *) malloc (strlen (sym_name) + 1);
