@@ -1029,7 +1029,7 @@ YY_RULE_SETUP
 case 57:
 YY_RULE_SETUP
 #line 122 "../src/Tp5.l"
-{fprintf(yyout, "\n La cadena %s es lexicamente invalida", yytext);}
+{printf( "\n La cadena %s es lexicamente invalida", yytext); return ERROR_LEXICO;}
 	YY_BREAK
 case 58:
 YY_RULE_SETUP

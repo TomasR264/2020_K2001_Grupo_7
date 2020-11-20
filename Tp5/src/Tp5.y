@@ -78,6 +78,7 @@ listaDeclaracionesMultiples* lista_declaraciones = NULL;*/
 %token FOR
 %token BREAK
 %token CONTINUE
+%token ERROR_LEXICO
 
 %start         entrada
 
@@ -89,9 +90,10 @@ entrada:  /* vacio */
           |entrada linea
 ;
 
-linea:    expresion   {printf("encontro una expresion y ta todo bn\n");}
+linea:    expresion   ';'{printf("encontro una expresion y ta todo bn\n");}
         | declaracion  {printf("encontro una Declaracion y ta todo bn\n");}
         | sentencia   {printf("encontro una sentencia y ta todo bn\n");}
+        | ERROR_LEXICO  '\n' {printf("encontro un error lexico bn\n");}
 ;
 
 ////////////////////////////////  EXPRESIONES //////////////////////////////////////
@@ -204,7 +206,7 @@ declaracionVarSimples:        TIPODATO listaVarSimples ';'  {tiparDeclaraciones(
 ;
 
 
-declaracionFunciones:     TIPODATO IDENTIFICADOR '(' listaParametrosDeclaracion ')' sentenciaCompuesta {aux=getsym($<identificador>2, sym_tabla_parametros_aux); if (aux) { agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!", $<listaDeParametros>1 );} else {  aux=putsym(strdup($<identificador>2),TYP_AUXILIAR, sym_table);};tiparDeclaraciones($<identificador>1); aux->value.lista_parametros = sym_tabla_parametros_aux; sym_tabla_parametros_aux = NULL;}
+declaracionFunciones:     TIPODATO IDENTIFICADOR '(' listaParametrosDeclaracion ')' sentenciaCompuesta {aux=getsym($<identificador>2, &sym_tabla_parametros_aux); if (aux) { agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!", $<listaDeParametros>1 );} else {  aux=putsym(strdup($<identificador>2),TYP_AUXILIAR, sym_table);};tiparDeclaraciones($<identificador>1); aux->value.lista_parametros = sym_tabla_parametros_aux; sym_tabla_parametros_aux = NULL;}
 ;
 
 invocacionFunciones:     TIPODATO IDENTIFICADOR '(' listaParametrosInvocacion ')'

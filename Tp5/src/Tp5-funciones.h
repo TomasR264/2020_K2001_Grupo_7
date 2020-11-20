@@ -27,10 +27,10 @@ symrec *putsym (char const *sym_name, int sym_type, symrec *listaAUtilizar)
 
 //Definición de la función getsym
 
-symrec *getsym (char const *sym_name, symrec *listaAUtilizar)
+symrec *getsym (char const *sym_name, symrec **listaAUtilizar)
 {
   symrec *ptr;
-  for (ptr = listaAUtilizar; ptr != (symrec *) 0;
+  for (ptr = *listaAUtilizar; ptr != (symrec *) 0;
        ptr = (symrec *)ptr->next)
     if (strcmp (ptr->name, sym_name) == 0)
       return ptr;

@@ -68,7 +68,8 @@
      CASE = 284,
      FOR = 285,
      BREAK = 286,
-     CONTINUE = 287
+     CONTINUE = 287,
+     ERROR_LEXICO = 288
    };
 #endif
 
@@ -90,7 +91,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 94 "Tp5.tab.h"
+#line 95 "Tp5.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
