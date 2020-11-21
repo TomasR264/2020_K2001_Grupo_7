@@ -1,5 +1,4 @@
-int a(int b, int c){
-    return b;
-}
+int a;
 
-int a(b,c);
+
+int a;

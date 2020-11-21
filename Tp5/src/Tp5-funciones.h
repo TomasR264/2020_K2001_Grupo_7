@@ -10,15 +10,28 @@
 
 //Definición de la función putsym
 
-symrec *putsym (char const *sym_name, int sym_type, symrec** listaAUtilizar)
+symrec *putsym (char const *sym_name, int sym_type)
 {
   symrec *ptr = (symrec *) malloc (sizeof (symrec));
   ptr->name = (char *) malloc (strlen (sym_name) + 1);
-  strcpy (ptr->name, sym_name);
+  strcpy (ptr->name,sym_name);
   ptr->type = sym_type;
   ptr->value.real_doble = 0;
-  ptr->next = (struct symrec *) listaAUtilizar;
-  listaAUtilizar = ptr;
+  ptr->next = (struct symrec *)sym_table;
+  sym_table = ptr;
+  
+  return ptr;
+}
+
+symrec *putsym_tabla_parametros_aux (char const *sym_name, int sym_type)
+{
+  symrec *ptr = (symrec *) malloc (sizeof (symrec));
+  ptr->name = (char *) malloc (strlen (sym_name) + 1);
+  strcpy (ptr->name,sym_name);
+  ptr->type = sym_type;
+  ptr->value.real_doble = 0;
+  ptr->next = (struct symrec *)sym_tabla_parametros_aux;
+  sym_tabla_parametros_aux = ptr;
   
   return ptr;
 }
@@ -27,10 +40,21 @@ symrec *putsym (char const *sym_name, int sym_type, symrec** listaAUtilizar)
 
 //Definición de la función getsym
 
-symrec *getsym (char const *sym_name, symrec **listaAUtilizar)
+symrec *getsym (char const *sym_name)
 {
   symrec *ptr;
-  for (ptr = *listaAUtilizar; ptr != (symrec *) 0;
+  for (ptr = sym_table; ptr != (symrec *) 0;
+       ptr = (symrec *)ptr->next)
+    if (strcmp (ptr->name, sym_name) == 0)
+      return ptr;
+  return 0;
+}
+
+
+symrec *getsym_tabla_parametros_aux (char const *sym_name)
+{
+  symrec *ptr;
+  for (ptr = sym_tabla_parametros_aux; ptr != (symrec *) 0;
        ptr = (symrec *)ptr->next)
     if (strcmp (ptr->name, sym_name) == 0)
       return ptr;
