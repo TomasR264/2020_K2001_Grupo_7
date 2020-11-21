@@ -41,6 +41,23 @@ symrec *aux;
 %type <listaDeParametros> listaParametrosDeclaracion
 %type <listaDeParametros> listaArgumentos
 %type <argumentoFunciones> argumento2
+%type <entero> expresionPrimaria
+%type <entero> expresionSufijo
+%type <entero> expresionUnaria
+%type <entero> expresionConversion
+%type <entero> expresionMultiplicativa
+%type <entero> expresionAditiva
+%type <entero> expresionCorrimiento
+%type <entero> expresionRelacional
+%type <entero> expresionIgualdad
+%type <entero> expresionY
+%type <entero> expresionOExcluyente
+%type <entero> expresionOInclusivo
+%type <entero> expresionYLogico
+%type <entero> expresionOLogico
+%type <entero> expresionCondicional
+%type <entero> expresionAsignacion
+%type <entero> expresion
 
 %token OLOGICO
 %token YLOGICO
