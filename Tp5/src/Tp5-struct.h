@@ -36,15 +36,28 @@ typedef struct symrec
     int entero;       // valores
     float real;
     double real_doble;
+    char caracter;
     struct symrec *lista_parametros;
   } value;
 
   struct symrec *next; //Puntero al siguiente nodo de la lista
 } symrec;
 
-// declaracion de la tabla
-symrec *sym_table = NULL;
-symrec *sym_tabla_parametros_aux = NULL;
+typedef struct argumento
+{ 
+  union
+    {
+      int entero;       // valores
+      float real;
+      char caracter;
+  } value;
+  
+  int type; // tipos de datos (TYP_INT etc)
+  
+
+  
+} argumento;
+
 
 //Estructura para el manejo de errores:
 typedef struct Error {
@@ -52,6 +65,6 @@ typedef struct Error {
     struct Error *sig;
 } Error;
 
-Error *arrayErrores = NULL;
+
 
 #endif

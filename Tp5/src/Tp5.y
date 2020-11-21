@@ -1,9 +1,11 @@
-
+%code requires {
+  #include "Tp5-struct.h"
+}
 %{
+
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
-#include "Tp5-struct.h"
 #include "Tp5-funciones.h"
 
 
@@ -18,18 +20,7 @@ return(1);
 symrec *aux;
 
 
-/*
-struct listaDeclaracionesMultiples {
-    char* nombre;
-    union
-    {
 
-    }valor
-    struct listaDeclaracionesMultiples* siguiente;
-} listaDeclaracionesMultiples;
-
-//declaracion de la lista de variables a declarar
-listaDeclaracionesMultiples* lista_declaraciones = NULL;*/
 
 
 %}
@@ -38,15 +29,16 @@ listaDeclaracionesMultiples* lista_declaraciones = NULL;*/
   char* identificador;
   double constante;
   char caracter;
+  argumento argumentoFunciones;
   struct symrec *listaDeParametros;
-  //listaDeclaracionesMultiples* listaDeclaraciones;
 }
 
 
 %type <constante> constante
 %type <constante> inicial
 %type <listaDeParametros> listaParametrosDeclaracion
-%type <listaDeParametros> listaParametrosInvocacion
+%type <listaDeParametros> listaArgumentos
+%type <argumentoFunciones> argumento2
 
 %token OLOGICO
 %token YLOGICO
@@ -181,7 +173,7 @@ operadorUnario:     '&' | '*' | '+' | '-' | '~' | '!'
 
 expresionSufijo:      expresionPrimaria
                     | expresionSufijo '[' expresion ']'
-                    | expresionSufijo '(' listaArgumentos ')'
+                    | IDENTIFICADOR '(' listaArgumentos ')' { aux = getsym($<identificador>1); if (aux) { printf("esta todo bien \n"); compararParametros(aux);} else { printf("Se quiere invocar una funcion que no está declarada"); }}
                     | expresionSufijo '(' ')'
                     | expresionSufijo '.' IDENTIFICADOR /* definir bien IDENTIFICADOR */
                     | expresionSufijo FLECHA IDENTIFICADOR
@@ -189,8 +181,13 @@ expresionSufijo:      expresionPrimaria
                     | expresionSufijo DECREMENTO
 ;
 
-listaArgumentos:      expresionAsignacion
-                    | listaArgumentos ',' expresionAsignacion
+listaArgumentos:      argumento2                     { aux = putsym_tabla_parametros_aux(strdup($<identificador>1),$<argumentoFunciones>1.type); printf("llega acá"); $<listaDeParametros>$ = aux; insertarParametro(aux, $<argumentoFunciones>1);}
+                    | listaArgumentos ',' argumento2 { aux = putsym_tabla_parametros_aux(strdup($<identificador>3),$<argumentoFunciones>3.type); printf("llega acá");$<listaDeParametros>$ = aux; insertarParametro(aux, $<argumentoFunciones>1);}
+;
+
+argumento2:      CONSTANTE_REAL        {$$.value.real = $<constante>1; $$.type = 3}
+              | CONSTANTE_ENTERA      {$$.value.entero = $<constante>1; $$.type = 0 }
+              | CONSTANTE_CARACTER    {$$.value.caracter = $<constante>1; $$.type = 1}
 ;
 
 expresionPrimaria:      IDENTIFICADOR       /* definir bien todos estos */
@@ -210,18 +207,16 @@ declaracionVarSimples:        TIPODATO listaVarSimples ';'  {tiparDeclaraciones(
 ;
 
 
-declaracionFunciones:     TIPODATO IDENTIFICADOR '(' listaParametrosDeclaracion ')' sentenciaCompuesta {aux=getsym($<identificador>2); if (aux) { printf("redeclaracion de variable \n"); agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!", $<listaDeParametros>1 );} else {  aux=putsym(strdup($<identificador>2),TYP_AUXILIAR);};tiparDeclaraciones($<identificador>1); aux->value.lista_parametros = sym_tabla_parametros_aux; sym_tabla_parametros_aux = NULL;}
+declaracionFunciones:     TIPODATO IDENTIFICADOR '(' listaParametrosDeclaracion ')' sentenciaCompuesta {aux=getsym($<identificador>2); if (aux) { printf("redeclaracion de variable \n"); agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!", $<listaDeParametros>2 );} else {  aux=putsym(strdup($<identificador>2),TYP_AUXILIAR);};tiparDeclaraciones($<identificador>1); aux->value.lista_parametros = sym_tabla_parametros_aux; sym_tabla_parametros_aux = NULL;}
 ;
 
 
 
-listaParametrosDeclaracion:      TIPODATO IDENTIFICADOR                   {aux=getsym_tabla_parametros_aux($<identificador>1);  if (aux) { agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!");} else {  aux=putsym_tabla_parametros_aux(strdup($<identificador>1),TYP_AUXILIAR);}}   
+listaParametrosDeclaracion:      TIPODATO IDENTIFICADOR                   {aux=getsym_tabla_parametros_aux($<identificador>2);  if (aux) { agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!");} else {  aux=putsym_tabla_parametros_aux(strdup($<identificador>2),TYP_AUXILIAR);}}   
                     | listaParametrosDeclaracion ',' TIPODATO IDENTIFICADOR  {aux=getsym_tabla_parametros_aux($<identificador>4); if (aux) { agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!");} else {  aux=putsym_tabla_parametros_aux(strdup($<identificador>4),TYP_AUXILIAR); }}
 ;
 
-listaParametrosInvocacion:      IDENTIFICADOR
-                    |  listaParametrosInvocacion ',' IDENTIFICADOR
-; 
+
 
 listaVarSimples:      unaVarSimple                      
                     | listaVarSimples ',' unaVarSimple
@@ -321,8 +316,8 @@ int main ()
 
     mostrarLista();
     mostrarErrores(&arrayErrores);
-
-    symrec *aux = getsym("unafuncion");
+    
+    symrec *aux = getsym("unafuncion")->value.lista_parametros;
     while (aux)
     {
         printf("variable definida: %s \n", aux->name);

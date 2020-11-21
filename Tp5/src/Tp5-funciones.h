@@ -7,6 +7,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+// declaracion de la tabla
+symrec *sym_table = NULL;
+symrec *sym_tabla_parametros_aux = NULL;
+Error *arrayErrores = NULL;
+
+
 
 //Definición de la función putsym
 
@@ -106,6 +112,54 @@ void mostrarLista(){ // funcion provisional para debuggear
     return;
 }
 
+void compararParametros(symrec *funcionAInvocar) {
+    symrec *aux = sym_tabla_parametros_aux;
+    symrec *aux2 = funcionAInvocar->value.lista_parametros;
+
+    while (aux)
+    {   if (!aux2) {
+            printf("Se estan invocando menos parametros de los que deberian \n");
+        }
+        if(aux2->type == aux->type) {
+            printf("los tipos estan bien\n");
+        } else {
+            printf("hay error de tipos\n");
+        }
+        
+        aux=aux->next;
+        aux2=aux2->next;
+
+    }
+    if (aux2)
+        {
+            printf("Se estan invocando mas parametros de los que deberian \n");
+        }
+    
+    return;
+}
+
+void insertarParametro(symrec *funcionAInvocar, argumento argumentoAinsertar) {
+
+    switch (argumentoAinsertar.type)
+    {
+    case 0:
+        funcionAInvocar->value.entero = argumentoAinsertar.value.entero;
+        break;
+    case 1:
+        funcionAInvocar->value.caracter = argumentoAinsertar.value.caracter;
+        break;
+    case 3:
+        funcionAInvocar->value.real = argumentoAinsertar.value.real;
+        break;
+    
+    default:
+        break;
+    }
+
+    return;
+}
+
+
 void agregarError(Error** arrayErrores, char* error, ...) {
     
     char* errorDesarrollado;
@@ -142,12 +196,13 @@ void mostrarErrores(Error** arrayErrores) {
     if(aux){
         printf("Lista de errores");
     }else{
-       printf("No hay errores");
+       printf("No hay errores\n");
     }
     while (aux != NULL){
         printf("%s", aux->error);
         aux = aux->sig;
     }
 }
+
 
 #endif
