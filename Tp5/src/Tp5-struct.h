@@ -43,21 +43,6 @@ typedef struct symrec
   struct symrec *next; //Puntero al siguiente nodo de la lista
 } symrec;
 
-typedef struct argumento
-{ 
-  union
-    {
-      int entero;       // valores
-      float real;
-      char caracter;
-  } value;
-  
-  int type; // tipos de datos (TYP_INT etc)
-  
-
-  
-} argumento;
-
 
 //Estructura para el manejo de errores:
 typedef struct Error {
