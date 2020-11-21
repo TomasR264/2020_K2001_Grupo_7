@@ -204,21 +204,19 @@ expresionPrimaria:      IDENTIFICADOR       /* definir bien todos estos */
 
 declaracion:      declaracionVarSimples 
                 | declaracionFunciones
-                | invocacionFunciones
 ;
 
 declaracionVarSimples:        TIPODATO listaVarSimples ';'  {tiparDeclaraciones($<identificador>1);}
 ;
 
 
-declaracionFunciones:     TIPODATO IDENTIFICADOR '(' listaParametrosDeclaracion ')' sentenciaCompuesta {aux=getsym_tabla_parametros_aux($<identificador>2); if (aux) { agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!", $<listaDeParametros>1 );} else {  aux=putsym(strdup($<identificador>2),TYP_AUXILIAR);};tiparDeclaraciones($<identificador>1); aux->value.lista_parametros = sym_tabla_parametros_aux; sym_tabla_parametros_aux = NULL;}
+declaracionFunciones:     TIPODATO IDENTIFICADOR '(' listaParametrosDeclaracion ')' sentenciaCompuesta {aux=getsym($<identificador>2); if (aux) { printf("redeclaracion de variable \n"); agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!", $<listaDeParametros>1 );} else {  aux=putsym(strdup($<identificador>2),TYP_AUXILIAR);};tiparDeclaraciones($<identificador>1); aux->value.lista_parametros = sym_tabla_parametros_aux; sym_tabla_parametros_aux = NULL;}
 ;
 
-invocacionFunciones:     TIPODATO IDENTIFICADOR '(' listaParametrosInvocacion ')'
-;
 
-listaParametrosDeclaracion:      TIPODATO IDENTIFICADOR                   {aux=getsym_tabla_parametros_aux($<identificador>1); if (aux) { agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!");} else {  aux=putsym_tabla_parametros_aux(strdup($<identificador>1),TYP_AUXILIAR);}}   
-                    | listaParametrosDeclaracion ',' TIPODATO IDENTIFICADOR  {aux=getsym_tabla_parametros_aux($<identificador>3); if (aux) { agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!");} else {  aux=putsym_tabla_parametros_aux(strdup($<identificador>3),TYP_AUXILIAR);}}
+
+listaParametrosDeclaracion:      TIPODATO IDENTIFICADOR                   {aux=getsym_tabla_parametros_aux($<identificador>1);  if (aux) { agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!");} else {  aux=putsym_tabla_parametros_aux(strdup($<identificador>1),TYP_AUXILIAR);}}   
+                    | listaParametrosDeclaracion ',' TIPODATO IDENTIFICADOR  {aux=getsym_tabla_parametros_aux($<identificador>4); if (aux) { agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!");} else {  aux=putsym_tabla_parametros_aux(strdup($<identificador>4),TYP_AUXILIAR); }}
 ;
 
 listaParametrosInvocacion:      IDENTIFICADOR
@@ -229,8 +227,8 @@ listaVarSimples:      unaVarSimple
                     | listaVarSimples ',' unaVarSimple
 ;
 
-unaVarSimple:     IDENTIFICADOR           {aux=getsym($<identificador>1); if (aux) { agregarError(&arrayErrores, "Redeclaracion de variable", $<identificador>1);} else {  aux=putsym(strdup($<identificador>1),TYP_AUXILIAR);}}
-                | IDENTIFICADOR inicial   { aux=getsym($<identificador>1); if (aux) { agregarError(&arrayErrores, "Redeclaracion de variable");} else {  aux=putsym(strdup($<identificador>1),TYP_AUXILIAR);(aux->value.real_doble)=$<constante>2 ;}}
+unaVarSimple:     IDENTIFICADOR           {aux=getsym($<identificador>1); if (aux) { printf("redeclaracion de variable \n"); agregarError(&arrayErrores, "Redeclaracion de variable", $<identificador>1);} else {  aux=putsym(strdup($<identificador>1),TYP_AUXILIAR);}}
+                | IDENTIFICADOR inicial   { aux=getsym($<identificador>1); if (aux) { printf("redeclaracion de variable \n"); agregarError(&arrayErrores, "Redeclaracion de variable");} else {  aux=putsym(strdup($<identificador>1),TYP_AUXILIAR);(aux->value.real_doble)=$<constante>2 ;}}
 ;
 
 inicial:      OPERADOR_ASIGNACION constante {$$ = $<constante>2;}  /* cambiar operador asignacion por igual solo y revisar donde mas cambiar*/
@@ -322,6 +320,18 @@ int main ()
     flag=yyparse();
 
     mostrarLista();
+    mostrarErrores(&arrayErrores);
+
+    symrec *aux = getsym("unafuncion");
+    while (aux)
+    {
+        printf("variable definida: %s \n", aux->name);
+        int a = aux->value.real_doble;
+        printf("valor: %d \n", a);
+        printf("tipo: %d \n", aux->type);
+        aux=aux->next;
+
+    }
     printf("\n\n\nfin del programa %d", flag);
 
     fclose(yyin);

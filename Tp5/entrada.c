@@ -1,4 +1,2 @@
-int a;
+int unafuncion(int a, int b){}
 
-
-int a;

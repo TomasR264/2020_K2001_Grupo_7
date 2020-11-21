@@ -137,4 +137,17 @@ void agregarError(Error** arrayErrores, char* error, ...) {
     }
 }
 
+void mostrarErrores(Error** arrayErrores) {
+    Error* aux = *arrayErrores;
+    if(aux){
+        printf("Lista de errores");
+    }else{
+       printf("No hay errores");
+    }
+    while (aux != NULL){
+        printf("%s", aux->error);
+        aux = aux->sig;
+    }
+}
+
 #endif
