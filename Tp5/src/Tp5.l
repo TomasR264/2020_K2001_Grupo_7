@@ -45,6 +45,7 @@ ESCAPE_SIMPLE (\\'|\\\"|\\\?|\\\\|\\a|\\b|\\f|\\n|\\r|\\t|\\v)
 ESCAPE_OCTAL \\[0-7]{1,3}
 ESCAPE_HEXA \\x[0-9a-fA-F]{1,2}
 
+
 %%
 
 '{CARACTER}' {yylval.constante = yytext[1]; return CONSTANTE_CARACTER;}
@@ -119,7 +120,5 @@ ESCAPE_HEXA \\x[0-9a-fA-F]{1,2}
 " " 
 
 "\n" {return '\n';}
-
-
 
 %%

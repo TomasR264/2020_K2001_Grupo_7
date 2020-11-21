@@ -131,10 +131,10 @@ void mostrarLista(){ // funcion provisional para debuggear
     symrec *aux = sym_table;
     while (aux)
     {
-        printf("variable definida: %s \n", aux->name);
+        printf("Se definio la variable: %s ", aux->name);
         int a = aux->value.real_doble;
-        printf("valor: %d \n", a);
-        printf("tipo: %d \n", aux->type);
+        printf(", con valor: %d", a);
+        printf(", de tipo: %d \n", aux->type);
         aux=aux->next;
 
     }
@@ -147,10 +147,10 @@ void mostrarTablaAux(symrec *aux){
     
     while (aux)
     {
-        printf("variable definida: %s \n", aux->name);
+        printf("Se definio la variable: %s ", aux->name);
         int a = aux->value.entero;
-        printf("valor: %d \n", a);
-        printf("tipo: %d \n", aux->type);
+        printf(", con valor: %d", a);
+        printf(", de tipo: %d \n", aux->type);
         aux=aux->next;
 
     }
@@ -168,14 +168,14 @@ void compararParametros(symrec *funcionAInvocar) {
 
     while (aux)
     {   if (!aux2) {
-            printf("Se estan invocando menos parametros de los que deberian \n");
+            printf("Se estan invocando menos parametros de los que se deberian \n");
         }
         if(aux2->type == aux->type) {
-            printf("los tipos estan bien\n");
+            printf("El tipo de los parametros es correcto\n");
         } else {
-            printf("hay error de tipos\n");
-            printf("tipo declarado : %d ", aux2->type);
-            printf("tipo declarado : %d ", aux->type);
+            printf("El tipo de los parametros no es correcto\n");
+            printf("Tipo declarado : %d ", aux2->type);
+            printf("Tipo declarado : %d ", aux->type);
 
         }
         
@@ -184,7 +184,7 @@ void compararParametros(symrec *funcionAInvocar) {
 
     }
     if (aux2) {
-            printf("Se estan invocando mas parametros de los que deberian \n");
+            printf("Se estan invocando mas parametros de los que se deberian \n");
     }
     
     return;

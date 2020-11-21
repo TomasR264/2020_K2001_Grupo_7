@@ -102,11 +102,11 @@ entrada:  /* vacio */
           |entrada '\n'
 ;
 
-linea:    expresion   ';' {printf("encontro una expresion y ta todo bn\n");}
-        | declaracion  {printf("encontro una Declaracion y ta todo bn\n");}
-        | sentencia   {printf("encontro una sentencia y ta todo bn\n");}
-        | ERROR_LEXICO finDeLinea ';' {printf("encontro un error lexico bn\n");}
-        | ERROR_LEXICO finDeLinea '\n' {printf("encontro un error lexico bn\n");}
+linea:    expresion   ';' {printf("Se encontro una expresion\n");}
+        | declaracion  {printf("Se encontro una declaracion\n");}
+        | sentencia   {printf("Se encontro una sentencia\n");}
+        | ERROR_LEXICO finDeLinea ';' {printf("Se encontro un error lexico\n");}
+        | ERROR_LEXICO finDeLinea '\n' {printf("Se encontro un error lexico\n");}
 ;
 
 finDeLinea: /* vacio */
@@ -346,7 +346,7 @@ int main ()
         aux=aux->next;
 
     }*/
-    printf("\n\n\nfin del programa %d", flag);
+    printf("\n\n\nFinal del programa, codigo: %d", flag);
 
     fclose(yyin);
 
