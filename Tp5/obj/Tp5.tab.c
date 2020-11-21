@@ -178,13 +178,15 @@ typedef union YYSTYPE
   char* identificador;
   double constante;
   char caracter;
+  int entero;
+  float real;
   argumento argumentoFunciones;
   struct symrec *listaDeParametros;
 
 
 
 /* Line 214 of yacc.c  */
-#line 188 "Tp5.tab.c"
+#line 190 "Tp5.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -196,7 +198,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 200 "Tp5.tab.c"
+#line 202 "Tp5.tab.c"
 
 #ifdef short
 # undef short
@@ -536,19 +538,19 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    81,    81,    82,    83,    86,    87,    88,    89,    90,
-      93,    94,    99,   100,   103,   104,   107,   108,   111,   112,
-     115,   116,   119,   120,   123,   124,   127,   128,   131,   132,
-     133,   136,   137,   138,   139,   140,   143,   144,   145,   148,
-     149,   150,   153,   154,   155,   156,   159,   160,   163,   164,
-     165,   166,   167,   168,   171,   171,   171,   171,   171,   171,
-     174,   175,   176,   177,   178,   179,   180,   181,   184,   185,
-     188,   189,   190,   193,   194,   195,   202,   203,   206,   210,
-     215,   216,   221,   222,   225,   226,   229,   232,   233,   234,
-     239,   240,   241,   242,   243,   244,   247,   248,   249,   250,
-     251,   254,   255,   258,   259,   262,   265,   266,   267,   270,
-     271,   272,   273,   274,   275,   276,   277,   278,   279,   282,
-     283,   284,   285,   286,   289,   290,   291
+       0,    83,    83,    84,    85,    88,    89,    90,    91,    92,
+      95,    96,   101,   102,   105,   106,   109,   110,   113,   114,
+     117,   118,   121,   122,   125,   126,   129,   130,   133,   134,
+     135,   138,   139,   140,   141,   142,   145,   146,   147,   150,
+     151,   152,   155,   156,   157,   158,   161,   162,   165,   166,
+     167,   168,   169,   170,   173,   173,   173,   173,   173,   173,
+     176,   177,   178,   179,   180,   181,   182,   183,   186,   187,
+     190,   191,   192,   195,   196,   197,   204,   205,   208,   212,
+     217,   218,   223,   224,   227,   228,   231,   234,   235,   236,
+     241,   242,   243,   244,   245,   246,   249,   250,   251,   252,
+     253,   256,   257,   260,   261,   264,   267,   268,   269,   272,
+     273,   274,   275,   276,   277,   278,   279,   280,   281,   284,
+     285,   286,   287,   288,   291,   292,   293
 };
 #endif
 
@@ -1728,154 +1730,154 @@ yyreduce:
         case 5:
 
 /* Line 1455 of yacc.c  */
-#line 86 "../src/Tp5.y"
+#line 88 "../src/Tp5.y"
     {printf("encontro una expresion y ta todo bn\n");;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 87 "../src/Tp5.y"
+#line 89 "../src/Tp5.y"
     {printf("encontro una Declaracion y ta todo bn\n");;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 88 "../src/Tp5.y"
+#line 90 "../src/Tp5.y"
     {printf("encontro una sentencia y ta todo bn\n");;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 89 "../src/Tp5.y"
+#line 91 "../src/Tp5.y"
     {printf("encontro un error lexico bn\n");;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 90 "../src/Tp5.y"
+#line 92 "../src/Tp5.y"
     {printf("encontro un error lexico bn\n");;}
     break;
 
   case 62:
 
 /* Line 1455 of yacc.c  */
-#line 176 "../src/Tp5.y"
+#line 178 "../src/Tp5.y"
     { aux = getsym((yyvsp[(1) - (4)].identificador)); if (aux) { printf("esta todo bien \n"); compararParametros(aux);} else { printf("Se quiere invocar una funcion que no está declarada"); };}
     break;
 
   case 68:
 
 /* Line 1455 of yacc.c  */
-#line 184 "../src/Tp5.y"
-    { aux = putsym_tabla_parametros_aux(strdup((yyvsp[(1) - (1)].identificador)),(yyvsp[(1) - (1)].argumentoFunciones).type); printf("llega acá"); (yyval.listaDeParametros) = aux; insertarParametro(aux, (yyvsp[(1) - (1)].argumentoFunciones));;}
+#line 186 "../src/Tp5.y"
+    {;}
     break;
 
   case 69:
 
 /* Line 1455 of yacc.c  */
-#line 185 "../src/Tp5.y"
-    { aux = putsym_tabla_parametros_aux(strdup((yyvsp[(3) - (3)].identificador)),(yyvsp[(3) - (3)].argumentoFunciones).type); printf("llega acá");(yyval.listaDeParametros) = aux; insertarParametro(aux, (yyvsp[(1) - (3)].argumentoFunciones));;}
+#line 187 "../src/Tp5.y"
+    {;}
     break;
 
   case 70:
 
 /* Line 1455 of yacc.c  */
-#line 188 "../src/Tp5.y"
-    {(yyval.argumentoFunciones).value.real = (yyvsp[(1) - (1)].constante); (yyval.argumentoFunciones).type = 3;}
+#line 190 "../src/Tp5.y"
+    {aux = putsym_tabla_parametros_aux(strdup("temp"),TYP_FLOAT); aux->value.real = (yyvsp[(1) - (1)].constante); ;}
     break;
 
   case 71:
 
 /* Line 1455 of yacc.c  */
-#line 189 "../src/Tp5.y"
-    {(yyval.argumentoFunciones).value.entero = (yyvsp[(1) - (1)].constante); (yyval.argumentoFunciones).type = 0 ;}
+#line 191 "../src/Tp5.y"
+    {aux = putsym_tabla_parametros_aux(strdup("temp"),TYP_INT); (aux->value.entero) = (yyvsp[(1) - (1)].constante);;}
     break;
 
   case 72:
 
 /* Line 1455 of yacc.c  */
-#line 190 "../src/Tp5.y"
-    {(yyval.argumentoFunciones).value.caracter = (yyvsp[(1) - (1)].constante); (yyval.argumentoFunciones).type = 1;}
+#line 192 "../src/Tp5.y"
+    {aux = putsym_tabla_parametros_aux(strdup("temp"),TYP_CHAR); aux->value.caracter = (yyvsp[(1) - (1)].constante); ;}
     break;
 
   case 78:
 
 /* Line 1455 of yacc.c  */
-#line 206 "../src/Tp5.y"
+#line 208 "../src/Tp5.y"
     {tiparDeclaraciones((yyvsp[(1) - (3)].identificador));;}
     break;
 
   case 79:
 
 /* Line 1455 of yacc.c  */
-#line 210 "../src/Tp5.y"
+#line 212 "../src/Tp5.y"
     {aux=getsym((yyvsp[(2) - (6)].identificador)); if (aux) { printf("redeclaracion de variable \n"); agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!", (yyvsp[(2) - (6)].listaDeParametros) );} else {  aux=putsym(strdup((yyvsp[(2) - (6)].identificador)),TYP_AUXILIAR);};tiparDeclaraciones((yyvsp[(1) - (6)].identificador)); aux->value.lista_parametros = sym_tabla_parametros_aux; sym_tabla_parametros_aux = NULL;;}
     break;
 
   case 80:
 
 /* Line 1455 of yacc.c  */
-#line 215 "../src/Tp5.y"
-    {aux=getsym_tabla_parametros_aux((yyvsp[(2) - (2)].identificador));  if (aux) { agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!");} else {  aux=putsym_tabla_parametros_aux(strdup((yyvsp[(2) - (2)].identificador)),TYP_AUXILIAR);};}
+#line 217 "../src/Tp5.y"
+    {aux=getsym_tabla_parametros_aux((yyvsp[(2) - (2)].identificador));  if (aux) { agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!");} else {  aux=putsym_tabla_parametros_aux(strdup((yyvsp[(2) - (2)].identificador)),TYP_AUXILIAR); tiparDeclaracionesAux((yyvsp[(1) - (2)].identificador));} ;}
     break;
 
   case 81:
 
 /* Line 1455 of yacc.c  */
-#line 216 "../src/Tp5.y"
-    {aux=getsym_tabla_parametros_aux((yyvsp[(4) - (4)].identificador)); if (aux) { agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!");} else {  aux=putsym_tabla_parametros_aux(strdup((yyvsp[(4) - (4)].identificador)),TYP_AUXILIAR); };}
+#line 218 "../src/Tp5.y"
+    {aux=getsym_tabla_parametros_aux((yyvsp[(4) - (4)].identificador)); if (aux) { agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!");} else {  aux=putsym_tabla_parametros_aux(strdup((yyvsp[(4) - (4)].identificador)),TYP_AUXILIAR); tiparDeclaracionesAux((yyvsp[(3) - (4)].identificador));};}
     break;
 
   case 84:
 
 /* Line 1455 of yacc.c  */
-#line 225 "../src/Tp5.y"
+#line 227 "../src/Tp5.y"
     {aux=getsym((yyvsp[(1) - (1)].identificador)); if (aux) { printf("redeclaracion de variable \n"); agregarError(&arrayErrores, "Redeclaracion de variable", (yyvsp[(1) - (1)].identificador));} else {  aux=putsym(strdup((yyvsp[(1) - (1)].identificador)),TYP_AUXILIAR);};}
     break;
 
   case 85:
 
 /* Line 1455 of yacc.c  */
-#line 226 "../src/Tp5.y"
+#line 228 "../src/Tp5.y"
     { aux=getsym((yyvsp[(1) - (2)].identificador)); if (aux) { printf("redeclaracion de variable \n"); agregarError(&arrayErrores, "Redeclaracion de variable");} else {  aux=putsym(strdup((yyvsp[(1) - (2)].identificador)),TYP_AUXILIAR);(aux->value.real_doble)=(yyvsp[(2) - (2)].constante) ;};}
     break;
 
   case 86:
 
 /* Line 1455 of yacc.c  */
-#line 229 "../src/Tp5.y"
+#line 231 "../src/Tp5.y"
     {(yyval.constante) = (yyvsp[(2) - (2)].constante);;}
     break;
 
   case 87:
 
 /* Line 1455 of yacc.c  */
-#line 232 "../src/Tp5.y"
+#line 234 "../src/Tp5.y"
     {(yyval.constante) = (yyvsp[(1) - (1)].constante);;}
     break;
 
   case 88:
 
 /* Line 1455 of yacc.c  */
-#line 233 "../src/Tp5.y"
+#line 235 "../src/Tp5.y"
     {(yyval.constante) = (yyvsp[(1) - (1)].constante); ;}
     break;
 
   case 89:
 
 /* Line 1455 of yacc.c  */
-#line 234 "../src/Tp5.y"
+#line 236 "../src/Tp5.y"
     {(yyval.constante) = (yyvsp[(1) - (1)].constante);;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1879 "Tp5.tab.c"
+#line 1881 "Tp5.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2087,7 +2089,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 298 "../src/Tp5.y"
+#line 300 "../src/Tp5.y"
 
 int yyerror (char *mensaje)  /* Fucion de error */
 {
@@ -2107,7 +2109,7 @@ int main ()
 
     flag=yyparse();
 
-    mostrarLista();
+   /* mostrarLista();
     mostrarErrores(&arrayErrores);
     
     symrec *aux = getsym("unafuncion")->value.lista_parametros;
@@ -2119,7 +2121,7 @@ int main ()
         printf("tipo: %d \n", aux->type);
         aux=aux->next;
 
-    }
+    }*/
     printf("\n\n\nfin del programa %d", flag);
 
     fclose(yyin);

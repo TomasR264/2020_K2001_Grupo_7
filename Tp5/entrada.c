@@ -1,5 +1,3 @@
 int unafuncion(int a, int b){}
 
-
-
-unafuncion(1, 2, 3);
+unafuncion(1,1);

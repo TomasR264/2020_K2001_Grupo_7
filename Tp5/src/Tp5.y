@@ -29,6 +29,8 @@ symrec *aux;
   char* identificador;
   double constante;
   char caracter;
+  int entero;
+  float real;
   argumento argumentoFunciones;
   struct symrec *listaDeParametros;
 }
@@ -181,13 +183,13 @@ expresionSufijo:      expresionPrimaria
                     | expresionSufijo DECREMENTO
 ;
 
-listaArgumentos:      argumento2                     { aux = putsym_tabla_parametros_aux(strdup($<identificador>1),$<argumentoFunciones>1.type); printf("llega acá"); $<listaDeParametros>$ = aux; insertarParametro(aux, $<argumentoFunciones>1);}
-                    | listaArgumentos ',' argumento2 { aux = putsym_tabla_parametros_aux(strdup($<identificador>3),$<argumentoFunciones>3.type); printf("llega acá");$<listaDeParametros>$ = aux; insertarParametro(aux, $<argumentoFunciones>1);}
+listaArgumentos:      argumento2                     {}
+                    | listaArgumentos ',' argumento2 {}
 ;
 
-argumento2:      CONSTANTE_REAL        {$$.value.real = $<constante>1; $$.type = 3}
-              | CONSTANTE_ENTERA      {$$.value.entero = $<constante>1; $$.type = 0 }
-              | CONSTANTE_CARACTER    {$$.value.caracter = $<constante>1; $$.type = 1}
+argumento2:      CONSTANTE_REAL        {aux = putsym_tabla_parametros_aux(strdup("temp"),TYP_FLOAT); aux->value.real = $1; }
+              | CONSTANTE_ENTERA      {aux = putsym_tabla_parametros_aux(strdup("temp"),TYP_INT); (aux->value.entero) = $1;}
+              | CONSTANTE_CARACTER    {aux = putsym_tabla_parametros_aux(strdup("temp"),TYP_CHAR); aux->value.caracter = $1; }
 ;
 
 expresionPrimaria:      IDENTIFICADOR       /* definir bien todos estos */
@@ -212,8 +214,8 @@ declaracionFunciones:     TIPODATO IDENTIFICADOR '(' listaParametrosDeclaracion 
 
 
 
-listaParametrosDeclaracion:      TIPODATO IDENTIFICADOR                   {aux=getsym_tabla_parametros_aux($<identificador>2);  if (aux) { agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!");} else {  aux=putsym_tabla_parametros_aux(strdup($<identificador>2),TYP_AUXILIAR);}}   
-                    | listaParametrosDeclaracion ',' TIPODATO IDENTIFICADOR  {aux=getsym_tabla_parametros_aux($<identificador>4); if (aux) { agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!");} else {  aux=putsym_tabla_parametros_aux(strdup($<identificador>4),TYP_AUXILIAR); }}
+listaParametrosDeclaracion:      TIPODATO IDENTIFICADOR                   {aux=getsym_tabla_parametros_aux($<identificador>2);  if (aux) { agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!");} else {  aux=putsym_tabla_parametros_aux(strdup($<identificador>2),TYP_AUXILIAR); tiparDeclaracionesAux($<identificador>1);} }   
+                    | listaParametrosDeclaracion ',' TIPODATO IDENTIFICADOR  {aux=getsym_tabla_parametros_aux($<identificador>4); if (aux) { agregarError(&arrayErrores, "Cantidad o tipado de parametros incorrecto!!");} else {  aux=putsym_tabla_parametros_aux(strdup($<identificador>4),TYP_AUXILIAR); tiparDeclaracionesAux($<identificador>3);}}
 ;
 
 
@@ -314,7 +316,7 @@ int main ()
 
     flag=yyparse();
 
-    mostrarLista();
+   /* mostrarLista();
     mostrarErrores(&arrayErrores);
     
     symrec *aux = getsym("unafuncion")->value.lista_parametros;
@@ -326,7 +328,7 @@ int main ()
         printf("tipo: %d \n", aux->type);
         aux=aux->next;
 
-    }
+    }*/
     printf("\n\n\nfin del programa %d", flag);
 
     fclose(yyin);

@@ -29,6 +29,8 @@ symrec *putsym (char const *sym_name, int sym_type)
   return ptr;
 }
 
+
+
 symrec *putsym_tabla_parametros_aux (char const *sym_name, int sym_type)
 {
   symrec *ptr = (symrec *) malloc (sizeof (symrec));
@@ -96,6 +98,35 @@ void tiparDeclaraciones (char* tipo) {
     return;
 }
 
+void tiparDeclaracionesAux (char* tipo) {
+    symrec *aux = sym_tabla_parametros_aux;
+    int tipoVariable = TYP_AUXILIAR;
+    if(strcmp (tipo, "int") == 0){
+        tipoVariable = TYP_INT;
+    }
+    if(strcmp (tipo, "char") == 0){
+        tipoVariable = TYP_CHAR;
+    }
+    if(strcmp (tipo, "float") == 0){
+        tipoVariable = TYP_FLOAT;
+    }
+    if(strcmp (tipo, "double") == 0){
+        tipoVariable = TYP_DOUBLE;
+    }
+    if(strcmp (tipo, "void") == 0){
+        tipoVariable = TYP_VOID;
+    }
+    while (aux)
+    {
+        if(aux->type == TYP_AUXILIAR){
+            aux->type = tipoVariable;
+        }
+        aux=aux->next;
+    }
+
+    return;
+}
+
 void mostrarLista(){ // funcion provisional para debuggear
     symrec *aux = sym_table;
     while (aux)
@@ -112,9 +143,28 @@ void mostrarLista(){ // funcion provisional para debuggear
     return;
 }
 
+void mostrarTablaAux(symrec *aux){
+    
+    while (aux)
+    {
+        printf("variable definida: %s \n", aux->name);
+        int a = aux->value.entero;
+        printf("valor: %d \n", a);
+        printf("tipo: %d \n", aux->type);
+        aux=aux->next;
+
+    }
+    
+    
+    return;
+}
+
 void compararParametros(symrec *funcionAInvocar) {
     symrec *aux = sym_tabla_parametros_aux;
     symrec *aux2 = funcionAInvocar->value.lista_parametros;
+
+
+
 
     while (aux)
     {   if (!aux2) {
@@ -124,38 +174,19 @@ void compararParametros(symrec *funcionAInvocar) {
             printf("los tipos estan bien\n");
         } else {
             printf("hay error de tipos\n");
+            printf("tipo declarado : %d ", aux2->type);
+            printf("tipo declarado : %d ", aux->type);
+
         }
         
         aux=aux->next;
         aux2=aux2->next;
 
     }
-    if (aux2)
-        {
+    if (aux2) {
             printf("Se estan invocando mas parametros de los que deberian \n");
-        }
-    
-    return;
-}
-
-void insertarParametro(symrec *funcionAInvocar, argumento argumentoAinsertar) {
-
-    switch (argumentoAinsertar.type)
-    {
-    case 0:
-        funcionAInvocar->value.entero = argumentoAinsertar.value.entero;
-        break;
-    case 1:
-        funcionAInvocar->value.caracter = argumentoAinsertar.value.caracter;
-        break;
-    case 3:
-        funcionAInvocar->value.real = argumentoAinsertar.value.real;
-        break;
-    
-    default:
-        break;
     }
-
+    
     return;
 }
 
