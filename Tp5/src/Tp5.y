@@ -189,7 +189,7 @@ operadorUnario:     '&' | '*' | '+' | '-' | '~' | '!'
 
 expresionSufijo:      expresionPrimaria   {$$ = $<entero>1}
                     | expresionSufijo '[' expresion ']' {$$ = $<entero>1}
-                    | IDENTIFICADOR '(' listaArgumentos ')' { aux = getsym($<identificador>1); if (aux) { printf("esta todo bien \n"); compararParametros(aux);} else { printf("Se quiere invocar una funcion que no está declarada"); }}
+                    | IDENTIFICADOR '(' listaArgumentos ')' { aux = getsym($<identificador>1); if (aux) {compararParametros(aux);} else { agregarError(&arrayErrores, 0, "Se quiere invocar una funcion que no está declarada"); }}
                     | expresionSufijo '(' ')'     {$$ = $<entero>1}
                     | expresionSufijo '.' IDENTIFICADOR {$$ = $<entero>1}
                     | expresionSufijo FLECHA IDENTIFICADOR    {$$ = $<entero>1}
@@ -278,7 +278,7 @@ sentenciaCompuesta:     '{'  entrada  '}'
 ;
 
 
-listaDeclaraciones:     declaracion  {printf("pasa por acá\n\n\n\n\n\n");}
+listaDeclaraciones:     declaracion
                       | listaDeclaraciones declaracion 
 ;
 
