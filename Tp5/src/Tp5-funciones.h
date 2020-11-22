@@ -184,20 +184,16 @@ void compararParametros(symrec *funcionAInvocar) {
     symrec *aux = sym_tabla_parametros_aux;
     symrec *aux2 = funcionAInvocar->value.lista_parametros;
 
-
-
-
     while (aux)
     {   if (!aux2) {
-            printf("Se estan invocando menos parametros de los que se deberian \n");
+            agregarError(&arrayErrores, 0, "Se estan invocando menos parametros de los que se deberian \n");
         }
         if(aux2->type == aux->type) {
             printf("El tipo de los parametros es correcto\n");
         } else {
-            printf("El tipo de los parametros no es correcto\n");
-            printf("Tipo declarado : %d ", aux2->type);
-            printf("Tipo declarado : %d ", aux->type);
-
+            char* error1= "Tipo declarado : " + aux2->type;
+            char* error2= "Tipo declarado : " + aux->type;
+            agregarError(&arrayErrores, 2, "El tipo de los parametros no es correcto \n", error1, error2);
         }
         
         aux=aux->next;
@@ -205,24 +201,24 @@ void compararParametros(symrec *funcionAInvocar) {
 
     }
     if (aux2) {
-            printf("Se estan invocando mas parametros de los que se deberian \n");
+            agregarError(&arrayErrores, 0, "Se estan invocando mas parametros de los que se deberian \n");
     }
     
     return;
 }
 
 
-void agregarError(Error** arrayErrores, char* error, ...) {
+void agregarError(Error** arrayErrores, int cantidadParametros, char* error, ...) {
     
-    char* errorDesarrollado;
-    
+    char errorDesarrollado[400] = "";
+    strcat(errorDesarrollado, error); 
     va_list p; 
     va_start(p, error); 
     char *arg;
 
-    while (arg = va_arg(p, char*)) {
+    for (int i=0; i < cantidadParametros; i++){
         strcat(errorDesarrollado, arg);
-    } 
+    }
     va_end(p); 
     
     Error* nuevoError = (Error*)malloc(sizeof(Error));
