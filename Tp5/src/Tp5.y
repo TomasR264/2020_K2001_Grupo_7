@@ -106,7 +106,8 @@ linea:    expresion   ';' {printf("Se encontro una expresion\n");}
 ;
 
 finDeLinea: /* vacio */
-            | finDeLinea ERROR_LEXICO
+            | finDeLinea ERROR_LEXICO ';'
+            | finDeLinea ERROR_LEXICO 
 
 ////////////////////////////////  EXPRESIONES //////////////////////////////////////
 
@@ -205,7 +206,7 @@ argumento2:     CONSTANTE_REAL        {aux = putsym_tabla_parametros_aux(strdup(
               | CONSTANTE_CARACTER    {aux = putsym_tabla_parametros_aux(strdup("temp"),TYP_CHAR); aux->value.caracter = $1; $$ = TYP_CHAR;}
 ;
 
-expresionPrimaria:      IDENTIFICADOR       {aux = getsym($<identificador>1); if (aux) { $$ = aux->type;} else { printf("Se quiere utilizar una variable que no está declarada");}}
+expresionPrimaria:      IDENTIFICADOR       {aux = getsym($<identificador>1); if (aux) { $$ = aux->type;} else { agregarError(&arrayErrores, 0, "Se quiere usar una variable que no esta declarada");} }               
                       | argumento2          {$$ = $<entero>1}
                       | '(' expresion ')'   {$$ = $<entero>1}
                       
@@ -214,18 +215,30 @@ expresionPrimaria:      IDENTIFICADOR       {aux = getsym($<identificador>1); if
 
 ////////////////////////////////  DECLARACIONES //////////////////////////////////////
 
-declaracion:      declaracionVarSimples 
-                | declaracionFunciones
+declaracion:      declaracionVarSimples ';'
+                | declaracionFunciones   
 ;
 
-declaracionVarSimples:          TIPODATO listaVarSimples ';'  {tiparDeclaraciones($<identificador>1); }
-                              | TIPODATO ';'  { }
-                              | TIPODATO listaVarSimples  { }
+declaracionVarSimples:          TIPODATO listaVarSimples   {tiparDeclaraciones($<identificador>1); }
+                              | TIPODATO '*' listaVarSimples   {tiparDeclaraciones($<identificador>1); }
+                              | TIPODATO   
 ;
 
 
-declaracionFunciones:     TIPODATO IDENTIFICADOR '(' listaParametrosDeclaracion ')' sentenciaCompuesta {aux=getsym($<identificador>2); if (aux) { printf("redeclaracion de variable \n"); agregarError(&arrayErrores, 1, "Cantidad o tipado de parametros incorrecto!!", $<listaDeParametros>2 );} else {  aux=putsym(strdup($<identificador>2),TYP_AUXILIAR);};tiparDeclaraciones($<identificador>1); aux->value.lista_parametros = sym_tabla_parametros_aux; sym_tabla_parametros_aux = NULL;}
-                          
+declaracionFunciones:     TIPODATO IDENTIFICADOR '(' listaParametrosDeclaracion ')' sentenciaCompuesta {
+                                                            aux = getsym($<identificador>2); 
+                                                            if (aux) { agregarError(&arrayErrores, 1, "Redeclaracion de funcion!!", $<listaDeParametros>2 );} 
+                                                            else {  aux=putsym(strdup($<identificador>2),TYP_AUXILIAR);}
+                                                            tiparDeclaraciones($<identificador>1);
+                                                            aux->value.lista_parametros = sym_tabla_parametros_aux;
+                                                            sym_tabla_parametros_aux = NULL;}
+                          | TIPODATO IDENTIFICADOR '('  ')' sentenciaCompuesta {
+                                                            aux = getsym($<identificador>2); 
+                                                            if (aux) { agregarError(&arrayErrores, 1, "Redeclaracion de funcion!!", $<listaDeParametros>2 );} 
+                                                            else {  aux=putsym(strdup($<identificador>2),TYP_AUXILIAR);}
+                                                            tiparDeclaraciones($<identificador>1);
+                                                            aux->value.lista_parametros = sym_tabla_parametros_aux;
+                                                            sym_tabla_parametros_aux = NULL;}
 ;
 
 
@@ -260,22 +273,17 @@ sentencia:      sentenciaCompuesta
               | sentenciaEtiquetada 
 ;
 
-sentenciaCompuesta:     '{'  listaDeclaraciones listaSentencias  '}' 
-                      | '{'  listaSentencias listaDeclaraciones  '}'
-                      | '{'  listaDeclaraciones  '}'
-                      | '{'  listaSentencias  '}'
-                      | '{' '}'
+sentenciaCompuesta:     '{'  entrada  '}' 
+                        | '{'  entrada  {agregarError(&arrayErrores, 0, "Se esperaba /} para cerrar el bloque");}
 ;
-
-
 
 
 listaDeclaraciones:     declaracion  {printf("pasa por acá\n\n\n\n\n\n");}
                       | listaDeclaraciones declaracion 
 ;
 
-listaSentencias:      sentencia ';'
-                    | listaSentencias sentencia ';'
+listaSentencias:      sentencia 
+                    | listaSentencias sentencia 
 ;
 
 sentenciaExpresion:     expresion ';'
@@ -288,15 +296,16 @@ sentenciaSeleccion:     IF '(' expresion ')' sentencia
 
 sentenciaIteracion:     WHILE '(' expresion ')' sentencia
                       | DO sentencia WHILE '(' expresion ')' ';'
-                      | FOR '(' expresion ';' expresion ';' expresion ')' sentencia
-                      | FOR '('  ';' expresion ';' expresion ')' sentencia
-                      | FOR '(' expresion ';'  ';' expresion ')' sentencia
-                      | FOR '('  ';'  ';' expresion ')' sentencia
-                      | FOR '(' expresion ';' expresion ';'  ')' sentencia
-                      | FOR '('  ';' expresion ';'  ')' sentencia
-                      | FOR '(' expresion ';'  ';'  ')' sentencia
-                      | FOR '('  ';'  ';'  ')' sentencia
+                      | FOR '(' declaracionExpresionOpcional ';' expresionOpcional ';' expresionOpcional ')' sentencia
+
+declaracionExpresionOpcional: /*vacio*/
+                    | declaracionVarSimples
+                    | expresion
 ;
+
+expresionOpcional:    /*vacio*/
+                    | expresion
+
 
 sentenciaSalto:     CONTINUE ';'
                   | BREAK ';'
@@ -333,8 +342,7 @@ int main ()
 
     flag=yyparse();
 
-   /* mostrarLista();
-    mostrarErrores(&arrayErrores);
+   /* 
     
     symrec *aux = getsym("unafuncion")->value.lista_parametros;
     while (aux)
@@ -346,6 +354,9 @@ int main ()
         aux=aux->next;
 
     }*/
+
+    mostrarLista();
+    mostrarErrores(&arrayErrores);
     printf("\n\n\nFinal del programa, codigo: %d", flag);
 
     fclose(yyin);

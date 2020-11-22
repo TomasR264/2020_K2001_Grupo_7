@@ -137,10 +137,9 @@ void tiparDeclaracionesAux (char* tipo) {
 
 int compararTipos(int tipo1, int tipo2){
     if(tipo1 == tipo2){
-        printf("mismo tipo todo bn\n\n\n");
         return tipo1;
     }else{
-        printf("intento usar tipos distintos\n\n\n");
+        agregarError(&arrayErrores, 0, "intento usar tipos distintos\n\n\n");
         return TYP_AUXILIAR;
     }
 }
@@ -153,8 +152,6 @@ void mostrarLista(){ // funcion provisional para debuggear
     while (aux)
     {
         printf("Se definio la variable: %s ", aux->name);
-        int a = aux->value.real_doble;
-        printf(", con valor: %d", a);
         printf(", de tipo: %d \n", aux->type);
         aux=aux->next;
 
@@ -242,12 +239,12 @@ void agregarError(Error** arrayErrores, int cantidadParametros, char* error, ...
 void mostrarErrores(Error** arrayErrores) {
     Error* aux = *arrayErrores;
     if(aux){
-        printf("Lista de errores");
+        printf("Lista de errores: \n\n");
     }else{
        printf("No hay errores\n");
     }
     while (aux != NULL){
-        printf("%s", aux->error);
+        printf("%s \n", aux->error);
         aux = aux->sig;
     }
 }
