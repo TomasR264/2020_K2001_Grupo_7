@@ -214,10 +214,10 @@ void agregarError(Error** arrayErrores, int cantidadParametros, char* error, ...
     strcat(errorDesarrollado, error); 
     va_list p; 
     va_start(p, error); 
-    char *arg;
+    
 
     for (int i=0; i < cantidadParametros; i++){
-        strcat(errorDesarrollado, arg);
+        strcat(errorDesarrollado, va_arg(p, char *));
     }
     va_end(p); 
     
