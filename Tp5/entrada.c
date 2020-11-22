@@ -1,3 +1,4 @@
-int unafuncion(int a, int b){}
+char a = 0;
+int b = 1;
 
-unafuncion(1,1);
+a+b;

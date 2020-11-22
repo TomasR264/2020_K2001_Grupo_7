@@ -98,13 +98,12 @@ typedef union YYSTYPE
   char caracter;
   int entero;
   float real;
-  argumento argumentoFunciones;
   struct symrec *listaDeParametros;
 
 
 
 /* Line 1676 of yacc.c  */
-#line 108 "Tp5.tab.h"
+#line 107 "Tp5.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

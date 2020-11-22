@@ -31,7 +31,6 @@ symrec *aux;
   char caracter;
   int entero;
   float real;
-  argumento argumentoFunciones;
   struct symrec *listaDeParametros;
 }
 
@@ -40,7 +39,7 @@ symrec *aux;
 %type <constante> inicial
 %type <listaDeParametros> listaParametrosDeclaracion
 %type <listaDeParametros> listaArgumentos
-%type <argumentoFunciones> argumento2
+%type <entero> argumento2
 %type <entero> expresionPrimaria
 %type <entero> expresionSufijo
 %type <entero> expresionUnaria
@@ -115,103 +114,103 @@ finDeLinea: /* vacio */
 ////////////////////////////////  EXPRESIONES //////////////////////////////////////
 
 
-expresion:    expresionAsignacion                 
-            | expresion ',' expresionAsignacion   
+expresion:    expresionAsignacion                  {$$ = $<entero>1}
+            | expresion ',' expresionAsignacion    {$$ = $<entero>1}
 ;
 
-expresionAsignacion:    expresionCondicional
-                      | expresionUnaria OPERADOR_ASIGNACION expresionAsignacion 
+expresionAsignacion:    expresionCondicional                                      {$$ = $<entero>1}
+                      | expresionUnaria OPERADOR_ASIGNACION expresionAsignacion   {$$ = $<entero>1}
 ;
 
-expresionCondicional:     expresionOLogico
-                        | expresionOLogico '?' expresion ':' expresionCondicional
+expresionCondicional:     expresionOLogico                                        {$$ = $<entero>1}
+                        | expresionOLogico '?' expresion ':' expresionCondicional {$$ = $<entero>1}
 ;
 
-expresionOLogico:     expresionYLogico
-                    | expresionYLogico OLOGICO expresionYLogico
+expresionOLogico:     expresionYLogico                            {$$ = $<entero>1}
+                    | expresionYLogico OLOGICO expresionYLogico   {$$ = $<entero>1}
 ;
 
-expresionYLogico:     expresionOInclusivo
-                    | expresionYLogico YLOGICO expresionOInclusivo
+expresionYLogico:     expresionOInclusivo                           {$$ = $<entero>1}
+                    | expresionYLogico YLOGICO expresionOInclusivo  {$$ = $<entero>1}
 ;
 
-expresionOInclusivo:      expresionOExcluyente
-                        | expresionOInclusivo '|' expresionOExcluyente
+expresionOInclusivo:      expresionOExcluyente                          {$$ = $<entero>1}
+                        | expresionOInclusivo '|' expresionOExcluyente  {$$ = $<entero>1}
 ;
 
-expresionOExcluyente:     expresionY
-                        | expresionOExcluyente '^' expresionY
+expresionOExcluyente:     expresionY                            {$$ = $<entero>1}
+                        | expresionOExcluyente '^' expresionY   {$$ = $<entero>1}
 ;
 
-expresionY:     expresionIgualdad
-              | expresionY '&' expresionIgualdad
+expresionY:     expresionIgualdad                   {$$ = $<entero>1}
+              | expresionY '&' expresionIgualdad    {$$ = $<entero>1}
 ;
 
-expresionIgualdad:      expresionRelacional
-                      | expresionIgualdad IGUAL expresionRelacional
-                      | expresionIgualdad DESIGUAL expresionRelacional
+expresionIgualdad:      expresionRelacional                             {$$ = $<entero>1}
+                      | expresionIgualdad IGUAL expresionRelacional     {$$ = $<entero>1}
+                      | expresionIgualdad DESIGUAL expresionRelacional  {$$ = $<entero>1}
 ;
 
-expresionRelacional:      expresionCorrimiento
-                        | expresionRelacional '<' expresionCorrimiento
-                        | expresionRelacional '>' expresionCorrimiento
-                        | expresionRelacional MENOIGUAL expresionCorrimiento
-                        | expresionRelacional MAYOIGUAL expresionCorrimiento
+expresionRelacional:      expresionCorrimiento                                  {$$ = $<entero>1}
+                        | expresionRelacional '<' expresionCorrimiento          {$$ = $<entero>1}
+                        | expresionRelacional '>' expresionCorrimiento          {$$ = $<entero>1}
+                        | expresionRelacional MENOIGUAL expresionCorrimiento    {$$ = $<entero>1}
+                        | expresionRelacional MAYOIGUAL expresionCorrimiento    {$$ = $<entero>1}
 ;
 
-expresionCorrimiento:     expresionAditiva
-                        | expresionCorrimiento OUTPUT expresionAditiva
-                        | expresionCorrimiento INPUT expresionAditiva
+expresionCorrimiento:     expresionAditiva                            {$$ = $<entero>1}
+                        | expresionCorrimiento OUTPUT expresionAditiva {$$ = $<entero>1}
+                        | expresionCorrimiento INPUT expresionAditiva {$$ = $<entero>1}
+;
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+expresionAditiva:     expresionMultiplicativa                       {$$ = $<entero>1}
+                    | expresionAditiva '+' expresionMultiplicativa  {$$ = compararTipos($<entero>1, $<entero>3);}
+                    | expresionAditiva '-' expresionMultiplicativa  {$$ = compararTipos($<entero>1, $<entero>3);}
 ;
 
-expresionAditiva:     expresionMultiplicativa
-                    | expresionAditiva '+' expresionMultiplicativa
-                    | expresionAditiva '-' expresionMultiplicativa
+expresionMultiplicativa:      expresionConversion                               {$$ = $<entero>1}
+                            | expresionMultiplicativa '*' expresionConversion   {$$ = compararTipos($<entero>1, $<entero>3);}
+                            | expresionMultiplicativa '/' expresionConversion   {$$ = compararTipos($<entero>1, $<entero>3);}
+                            | expresionMultiplicativa '%' expresionConversion   {$$ = compararTipos($<entero>1, $<entero>3);}
 ;
 
-expresionMultiplicativa:      expresionConversion
-                            | expresionMultiplicativa '*' expresionConversion
-                            | expresionMultiplicativa '/' expresionConversion
-                            | expresionMultiplicativa '%' expresionConversion
+expresionConversion:      expresionUnaria                       {$$ = $<entero>1}
+                        | '(' TIPODATO ')' expresionConversion  {$$ = conversionExpresiones($<identificador>2);}
 ;
 
-expresionConversion:      expresionUnaria
-                        | '(' TIPODATO ')' expresionConversion /* poner el ( en flex */
-;
-
-expresionUnaria:      expresionSufijo
-                    | INCREMENTO expresionUnaria
-                    | DECREMENTO expresionUnaria
-                    | operadorUnario expresionConversion
-                    | SIZEOF expresionUnaria
-                    | SIZEOF '(' TIPODATO ')' /* ver bien la definicion de tipodato despues*/
+expresionUnaria:      expresionSufijo         {$$ = $<entero>1}
+                    | INCREMENTO expresionUnaria  {$$ = $<entero>2}
+                    | DECREMENTO expresionUnaria  {$$ = $<entero>2}
+                    | operadorUnario expresionConversion  {$$ = $<entero>2}
+                    | SIZEOF expresionUnaria  {$$ = TYP_INT}
+                    | SIZEOF '(' TIPODATO ')' {$$ = TYP_INT}
 ;
 
 operadorUnario:     '&' | '*' | '+' | '-' | '~' | '!'
 ;
 
-expresionSufijo:      expresionPrimaria
-                    | expresionSufijo '[' expresion ']'
+expresionSufijo:      expresionPrimaria   {$$ = $<entero>1}
+                    | expresionSufijo '[' expresion ']' {$$ = $<entero>1}
                     | IDENTIFICADOR '(' listaArgumentos ')' { aux = getsym($<identificador>1); if (aux) { printf("esta todo bien \n"); compararParametros(aux);} else { printf("Se quiere invocar una funcion que no está declarada"); }}
-                    | expresionSufijo '(' ')'
-                    | expresionSufijo '.' IDENTIFICADOR /* definir bien IDENTIFICADOR */
-                    | expresionSufijo FLECHA IDENTIFICADOR
-                    | expresionSufijo INCREMENTO
-                    | expresionSufijo DECREMENTO
+                    | expresionSufijo '(' ')'     {$$ = $<entero>1}
+                    | expresionSufijo '.' IDENTIFICADOR {$$ = $<entero>1}
+                    | expresionSufijo FLECHA IDENTIFICADOR    {$$ = $<entero>1}
+                    | expresionSufijo INCREMENTO    {$$ = $<entero>1}
+                    | expresionSufijo DECREMENTO    {$$ = $<entero>1}
 ;
 
 listaArgumentos:      argumento2                     {}
                     | listaArgumentos ',' argumento2 {}
 ;
 
-argumento2:      CONSTANTE_REAL        {aux = putsym_tabla_parametros_aux(strdup("temp"),TYP_FLOAT); aux->value.real = $1; }
-              | CONSTANTE_ENTERA      {aux = putsym_tabla_parametros_aux(strdup("temp"),TYP_INT); (aux->value.entero) = $1;}
-              | CONSTANTE_CARACTER    {aux = putsym_tabla_parametros_aux(strdup("temp"),TYP_CHAR); aux->value.caracter = $1; }
+argumento2:      CONSTANTE_REAL        {aux = putsym_tabla_parametros_aux(strdup("temp"),TYP_FLOAT); aux->value.real = $1; $$ = TYP_FLOAT;}
+              | CONSTANTE_ENTERA      {aux = putsym_tabla_parametros_aux(strdup("temp"),TYP_INT); (aux->value.entero) = $1; $$ = TYP_INT;}
+              | CONSTANTE_CARACTER    {aux = putsym_tabla_parametros_aux(strdup("temp"),TYP_CHAR); aux->value.caracter = $1; $$ = TYP_CHAR;}
 ;
 
-expresionPrimaria:      IDENTIFICADOR       /* definir bien todos estos */
-                      | constante      
-                      | '(' expresion ')'
+expresionPrimaria:      IDENTIFICADOR       {aux = getsym($<identificador>1); if (aux) { $$ = aux->type;} else { printf("Se quiere utilizar una variable que no está declarada");}}
+                      | argumento2          {$$ = $<entero>1}
+                      | '(' expresion ')'   {$$ = $<entero>1}
                       
 ;
 
@@ -245,7 +244,8 @@ unaVarSimple:     IDENTIFICADOR           {aux=getsym($<identificador>1); if (au
                 | IDENTIFICADOR inicial   { aux=getsym($<identificador>1); if (aux) { printf("redeclaracion de variable \n"); agregarError(&arrayErrores, "Redeclaracion de variable");} else {  aux=putsym(strdup($<identificador>1),TYP_AUXILIAR);(aux->value.real_doble)=$<constante>2 ;}}
 ;
 
-inicial:      OPERADOR_ASIGNACION constante {$$ = $<constante>2;}  /* cambiar operador asignacion por igual solo y revisar donde mas cambiar*/
+inicial:        OPERADOR_ASIGNACION constante {$$ = $<constante>2;}  /* cambiar operador asignacion por igual solo y revisar donde mas cambiar*/
+              | OPERADOR_ASIGNACION expresionAsignacion;
 ;
 
 constante:      CONSTANTE_REAL        {$$ = $<constante>1;}

@@ -69,8 +69,8 @@ symrec *getsym_tabla_parametros_aux (char const *sym_name)
   return 0;
 }
 
-void tiparDeclaraciones (char* tipo) {
-    symrec *aux = sym_table;
+int conversionExpresiones(char* tipo){
+
     int tipoVariable = TYP_AUXILIAR;
     if(strcmp (tipo, "int") == 0){
         tipoVariable = TYP_INT;
@@ -87,6 +87,14 @@ void tiparDeclaraciones (char* tipo) {
     if(strcmp (tipo, "void") == 0){
         tipoVariable = TYP_VOID;
     }
+    return tipoVariable;
+}
+
+void tiparDeclaraciones (char* tipo) {
+
+    symrec *aux = sym_table;
+    int tipoVariable = conversionExpresiones(tipo);
+
     while (aux)
     {
         if(aux->type == TYP_AUXILIAR){
@@ -127,6 +135,19 @@ void tiparDeclaracionesAux (char* tipo) {
     return;
 }
 
+int compararTipos(int tipo1, int tipo2){
+    if(tipo1 == tipo2){
+        printf("mismo tipo todo bn\n\n\n");
+        return tipo1;
+    }else{
+        printf("intento usar tipos distintos\n\n\n");
+        return TYP_AUXILIAR;
+    }
+}
+
+
+
+
 void mostrarLista(){ // funcion provisional para debuggear
     symrec *aux = sym_table;
     while (aux)
@@ -143,7 +164,7 @@ void mostrarLista(){ // funcion provisional para debuggear
     return;
 }
 
-void mostrarTablaAux(symrec *aux){
+void mostrarTablaAux(symrec *aux){ // funcion provisional para debuggear
     
     while (aux)
     {
