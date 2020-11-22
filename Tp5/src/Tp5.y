@@ -35,8 +35,7 @@ symrec *aux;
 }
 
 
-%type <constante> constante
-%type <constante> inicial
+%type <entero> inicial
 %type <listaDeParametros> listaParametrosDeclaracion
 %type <listaDeParametros> listaArgumentos
 %type <entero> argumento2
@@ -97,15 +96,13 @@ symrec *aux;
 
 
 entrada:  /* vacio */
-          |entrada linea 
-          |entrada '\n'
+          |entrada linea
 ;
 
 linea:    expresion   ';' {printf("Se encontro una expresion\n");}
         | declaracion  {printf("Se encontro una declaracion\n");}
         | sentencia   {printf("Se encontro una sentencia\n");}
-        | ERROR_LEXICO finDeLinea ';' {printf("Se encontro un error lexico\n");}
-        | ERROR_LEXICO finDeLinea '\n' {printf("Se encontro un error lexico\n");}
+        | ERROR_LEXICO finDeLinea  {printf("Se encontro un error lexico\n");}
 ;
 
 finDeLinea: /* vacio */
@@ -203,7 +200,7 @@ listaArgumentos:      argumento2                     {}
                     | listaArgumentos ',' argumento2 {}
 ;
 
-argumento2:      CONSTANTE_REAL        {aux = putsym_tabla_parametros_aux(strdup("temp"),TYP_FLOAT); aux->value.real = $1; $$ = TYP_FLOAT;}
+argumento2:     CONSTANTE_REAL        {aux = putsym_tabla_parametros_aux(strdup("temp"),TYP_FLOAT); aux->value.real = $1; $$ = TYP_FLOAT;}
               | CONSTANTE_ENTERA      {aux = putsym_tabla_parametros_aux(strdup("temp"),TYP_INT); (aux->value.entero) = $1; $$ = TYP_INT;}
               | CONSTANTE_CARACTER    {aux = putsym_tabla_parametros_aux(strdup("temp"),TYP_CHAR); aux->value.caracter = $1; $$ = TYP_CHAR;}
 ;
@@ -221,11 +218,14 @@ declaracion:      declaracionVarSimples
                 | declaracionFunciones
 ;
 
-declaracionVarSimples:        TIPODATO listaVarSimples ';'  {tiparDeclaraciones($<identificador>1);}
+declaracionVarSimples:          TIPODATO listaVarSimples ';'  {tiparDeclaraciones($<identificador>1); }
+                              | TIPODATO ';'  { }
+                              | TIPODATO listaVarSimples  { }
 ;
 
 
 declaracionFunciones:     TIPODATO IDENTIFICADOR '(' listaParametrosDeclaracion ')' sentenciaCompuesta {aux=getsym($<identificador>2); if (aux) { printf("redeclaracion de variable \n"); agregarError(&arrayErrores, 1, "Cantidad o tipado de parametros incorrecto!!", $<listaDeParametros>2 );} else {  aux=putsym(strdup($<identificador>2),TYP_AUXILIAR);};tiparDeclaraciones($<identificador>1); aux->value.lista_parametros = sym_tabla_parametros_aux; sym_tabla_parametros_aux = NULL;}
+                          
 ;
 
 
@@ -241,17 +241,14 @@ listaVarSimples:      unaVarSimple
 ;
 
 unaVarSimple:     IDENTIFICADOR           {aux=getsym($<identificador>1); if (aux) { printf("redeclaracion de variable \n"); agregarError(&arrayErrores, 1, "Redeclaracion de variable", $<identificador>1);} else {  aux=putsym(strdup($<identificador>1),TYP_AUXILIAR);}}
-                | IDENTIFICADOR inicial   { aux=getsym($<identificador>1); if (aux) { printf("redeclaracion de variable \n"); agregarError(&arrayErrores, 0, "Redeclaracion de variable");} else {  aux=putsym(strdup($<identificador>1),TYP_AUXILIAR);(aux->value.real_doble)=$<constante>2 ;}}
+                | IDENTIFICADOR inicial   { aux=getsym($<identificador>1); if (aux) { printf("redeclaracion de variable \n"); agregarError(&arrayErrores, 0, "Redeclaracion de variable");} else {  aux=putsym(strdup($<identificador>1),TYP_AUXILIAR);(aux->value.real_doble)=$<entero>2 ;}}
 ;
 
-inicial:        OPERADOR_ASIGNACION constante {$$ = $<constante>2;}  /* cambiar operador asignacion por igual solo y revisar donde mas cambiar*/
+inicial:        OPERADOR_ASIGNACION argumento2 {$$ = $<entero>2;} 
               | OPERADOR_ASIGNACION expresionAsignacion;
 ;
 
-constante:      CONSTANTE_REAL        {$$ = $<constante>1;}
-              | CONSTANTE_ENTERA      {$$ = $<constante>1; }
-              | CONSTANTE_CARACTER    {$$ = $<constante>1;}
-;
+
 
 ////////////////////////////////  SENTENCIAS //////////////////////////////////////
 
@@ -263,19 +260,22 @@ sentencia:      sentenciaCompuesta
               | sentenciaEtiquetada 
 ;
 
-sentenciaCompuesta:     '{' listaDeclaraciones listaSentencias '}'
-                      | '{' listaSentencias listaDeclaraciones '}'
-                      | '{' listaDeclaraciones '}'
-                      | '{' listaSentencias '}'
+sentenciaCompuesta:     '{'  listaDeclaraciones listaSentencias  '}' 
+                      | '{'  listaSentencias listaDeclaraciones  '}'
+                      | '{'  listaDeclaraciones  '}'
+                      | '{'  listaSentencias  '}'
                       | '{' '}'
 ;
 
-listaDeclaraciones:     declaracion
-                      | listaDeclaraciones declaracion
+
+
+
+listaDeclaraciones:     declaracion  {printf("pasa por acá\n\n\n\n\n\n");}
+                      | listaDeclaraciones declaracion 
 ;
 
-listaSentencias:      sentencia
-                    | listaSentencias sentencia
+listaSentencias:      sentencia ';'
+                    | listaSentencias sentencia ';'
 ;
 
 sentenciaExpresion:     expresion ';'

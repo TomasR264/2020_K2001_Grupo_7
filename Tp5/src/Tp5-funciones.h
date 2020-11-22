@@ -11,7 +11,7 @@
 symrec *sym_table = NULL;
 symrec *sym_tabla_parametros_aux = NULL;
 Error *arrayErrores = NULL;
-
+void agregarError(Error** arrayErrores, int cantidadParametros, char* error, ...);
 
 
 //Definición de la función putsym

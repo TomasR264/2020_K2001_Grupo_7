@@ -1056,11 +1056,11 @@ YY_RULE_SETUP
 case 56:
 YY_RULE_SETUP
 #line 122 "../src/Tp5.l"
-{return '\n';}
+{}
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 124 "../src/Tp5.l"
+#line 126 "../src/Tp5.l"
 ECHO;
 	YY_BREAK
 #line 1067 "lex.yy.c"
@@ -1949,4 +1949,4 @@ int main()
 	return 0;
 	}
 #endif
-#line 124 "../src/Tp5.l"
+#line 126 "../src/Tp5.l"
