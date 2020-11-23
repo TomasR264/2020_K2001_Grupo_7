@@ -1,7 +1,5 @@
-int funcion(int a, char b){
-    int d;
-    double x;
-    char l = 'a';
-}
+int a;
 
-funcion(1,1);
+char b;
+
+a - b;

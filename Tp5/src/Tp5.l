@@ -115,12 +115,10 @@ ESCAPE_HEXA \\x[0-9a-fA-F]{1,2}
 "--" {return DECREMENTO;}
 "->" {return FLECHA;}
 
-
-
 " " 
 
 "\n" {}
 
-[^\n ;\(\)\{\}]+/(\n|;) {printf("Se encontro un error lexico, con la cadena no reconocida:   \"%s\"  \n\n\n\n", yytext);}
+. {printf("Se encontro un error lexico, con la cadena no reconocida:   \"%s\"  \n\n\n\n", yytext);}
 
 %%

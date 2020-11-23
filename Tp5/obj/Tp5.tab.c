@@ -98,7 +98,7 @@ symrec *aux;
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 
 /* Enabling verbose error messages.  */
@@ -1669,7 +1669,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 105 "../src/Tp5.y"
-    { yyerrok; yyerror(""); agregarError(&arrayErrores, 0, "Se encontro un error lexico");;}
+    { yyerrok; yyerror(""); agregarError(&arrayErrores, 0, "Se encontro un error sintactico");;}
     break;
 
   case 8:

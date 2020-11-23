@@ -139,7 +139,7 @@ int compararTipos(int tipo1, int tipo2){
     if(tipo1 == tipo2){
         return tipo1;
     }else{
-        agregarError(&arrayErrores, 0, "intento usar tipos distintos\n\n\n");
+        agregarError(&arrayErrores, 0, "WARNING intento operar con tipos distintos\n\n\n");
         return TYP_AUXILIAR;
     }
 }

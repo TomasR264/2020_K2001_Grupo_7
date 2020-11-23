@@ -102,7 +102,7 @@ entrada:  /* vacio */
 linea:    expresion   ';' {printf("Se encontro una expresion\n");}
         | declaracion  {printf("Se encontro una declaracion\n");}
         | sentencia   {printf("Se encontro una sentencia\n");}
-        | error   ';'{ yyerrok; yyerror(""); agregarError(&arrayErrores, 0, "Se encontro un error lexico");}
+        | error   ';'{ yyerrok; yyerror(""); agregarError(&arrayErrores, 0, "Se encontro un error sintactico");}
 ;
 
 ////////////////////////////////  EXPRESIONES //////////////////////////////////////
