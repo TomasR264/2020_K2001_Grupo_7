@@ -4,27 +4,31 @@ Nonterminals useless in grammar
    listaSentencias
 
 
+Terminals unused in grammar
+
+   ERROR_LEXICO
+
+
 Rules useless in grammar
 
-  117 listaDeclaraciones: declaracion
-  118                   | listaDeclaraciones declaracion
+  114 listaDeclaraciones: declaracion
+  115                   | listaDeclaraciones declaracion
 
-  119 listaSentencias: sentencia
-  120                | listaSentencias sentencia
+  116 listaSentencias: sentencia
+  117                | listaSentencias sentencia
 
 
 Rules useless in parser due to conflicts
 
-   87 inicial: OPERADOR_ASIGNACION argumento2
+   84 inicial: OPERADOR_ASIGNACION argumento2
 
 
-State 6 conflicts: 1 shift/reduce
-State 61 conflicts: 1 shift/reduce
-State 87 conflicts: 1 shift/reduce
+State 7 conflicts: 1 shift/reduce
+State 62 conflicts: 1 shift/reduce
 State 90 conflicts: 29 shift/reduce
 State 91 conflicts: 31 reduce/reduce
-State 177 conflicts: 2 reduce/reduce
-State 197 conflicts: 1 shift/reduce
+State 176 conflicts: 2 reduce/reduce
+State 195 conflicts: 1 shift/reduce
 
 
 Grammar
@@ -37,214 +41,210 @@ Grammar
     3 linea: expresion ';'
     4      | declaracion
     5      | sentencia
-    6      | ERROR_LEXICO finDeLinea
+    6      | error ';'
 
-    7 finDeLinea: /* empty */
-    8           | finDeLinea ERROR_LEXICO ';'
-    9           | finDeLinea ERROR_LEXICO
+    7 expresion: expresionAsignacion
+    8          | expresion ',' expresionAsignacion
 
-   10 expresion: expresionAsignacion
-   11          | expresion ',' expresionAsignacion
+    9 expresionAsignacion: expresionCondicional
+   10                    | expresionUnaria OPERADOR_ASIGNACION expresionAsignacion
 
-   12 expresionAsignacion: expresionCondicional
-   13                    | expresionUnaria OPERADOR_ASIGNACION expresionAsignacion
+   11 expresionCondicional: expresionOLogico
+   12                     | expresionOLogico '?' expresion ':' expresionCondicional
 
-   14 expresionCondicional: expresionOLogico
-   15                     | expresionOLogico '?' expresion ':' expresionCondicional
+   13 expresionOLogico: expresionYLogico
+   14                 | expresionYLogico OLOGICO expresionYLogico
 
-   16 expresionOLogico: expresionYLogico
-   17                 | expresionYLogico OLOGICO expresionYLogico
+   15 expresionYLogico: expresionOInclusivo
+   16                 | expresionYLogico YLOGICO expresionOInclusivo
 
-   18 expresionYLogico: expresionOInclusivo
-   19                 | expresionYLogico YLOGICO expresionOInclusivo
+   17 expresionOInclusivo: expresionOExcluyente
+   18                    | expresionOInclusivo '|' expresionOExcluyente
 
-   20 expresionOInclusivo: expresionOExcluyente
-   21                    | expresionOInclusivo '|' expresionOExcluyente
+   19 expresionOExcluyente: expresionY
+   20                     | expresionOExcluyente '^' expresionY
 
-   22 expresionOExcluyente: expresionY
-   23                     | expresionOExcluyente '^' expresionY
+   21 expresionY: expresionIgualdad
+   22           | expresionY '&' expresionIgualdad
 
-   24 expresionY: expresionIgualdad
-   25           | expresionY '&' expresionIgualdad
+   23 expresionIgualdad: expresionRelacional
+   24                  | expresionIgualdad IGUAL expresionRelacional
+   25                  | expresionIgualdad DESIGUAL expresionRelacional
 
-   26 expresionIgualdad: expresionRelacional
-   27                  | expresionIgualdad IGUAL expresionRelacional
-   28                  | expresionIgualdad DESIGUAL expresionRelacional
+   26 expresionRelacional: expresionCorrimiento
+   27                    | expresionRelacional '<' expresionCorrimiento
+   28                    | expresionRelacional '>' expresionCorrimiento
+   29                    | expresionRelacional MENOIGUAL expresionCorrimiento
+   30                    | expresionRelacional MAYOIGUAL expresionCorrimiento
 
-   29 expresionRelacional: expresionCorrimiento
-   30                    | expresionRelacional '<' expresionCorrimiento
-   31                    | expresionRelacional '>' expresionCorrimiento
-   32                    | expresionRelacional MENOIGUAL expresionCorrimiento
-   33                    | expresionRelacional MAYOIGUAL expresionCorrimiento
+   31 expresionCorrimiento: expresionAditiva
+   32                     | expresionCorrimiento OUTPUT expresionAditiva
+   33                     | expresionCorrimiento INPUT expresionAditiva
 
-   34 expresionCorrimiento: expresionAditiva
-   35                     | expresionCorrimiento OUTPUT expresionAditiva
-   36                     | expresionCorrimiento INPUT expresionAditiva
+   34 expresionAditiva: expresionMultiplicativa
+   35                 | expresionAditiva '+' expresionMultiplicativa
+   36                 | expresionAditiva '-' expresionMultiplicativa
 
-   37 expresionAditiva: expresionMultiplicativa
-   38                 | expresionAditiva '+' expresionMultiplicativa
-   39                 | expresionAditiva '-' expresionMultiplicativa
+   37 expresionMultiplicativa: expresionConversion
+   38                        | expresionMultiplicativa '*' expresionConversion
+   39                        | expresionMultiplicativa '/' expresionConversion
+   40                        | expresionMultiplicativa '%' expresionConversion
 
-   40 expresionMultiplicativa: expresionConversion
-   41                        | expresionMultiplicativa '*' expresionConversion
-   42                        | expresionMultiplicativa '/' expresionConversion
-   43                        | expresionMultiplicativa '%' expresionConversion
+   41 expresionConversion: expresionUnaria
+   42                    | '(' TIPODATO ')' expresionConversion
 
-   44 expresionConversion: expresionUnaria
-   45                    | '(' TIPODATO ')' expresionConversion
+   43 expresionUnaria: expresionSufijo
+   44                | INCREMENTO expresionUnaria
+   45                | DECREMENTO expresionUnaria
+   46                | operadorUnario expresionConversion
+   47                | SIZEOF expresionUnaria
+   48                | SIZEOF '(' TIPODATO ')'
 
-   46 expresionUnaria: expresionSufijo
-   47                | INCREMENTO expresionUnaria
-   48                | DECREMENTO expresionUnaria
-   49                | operadorUnario expresionConversion
-   50                | SIZEOF expresionUnaria
-   51                | SIZEOF '(' TIPODATO ')'
+   49 operadorUnario: '&'
+   50               | '*'
+   51               | '+'
+   52               | '-'
+   53               | '~'
+   54               | '!'
 
-   52 operadorUnario: '&'
-   53               | '*'
-   54               | '+'
-   55               | '-'
-   56               | '~'
-   57               | '!'
+   55 expresionSufijo: expresionPrimaria
+   56                | expresionSufijo '[' expresion ']'
+   57                | IDENTIFICADOR '(' listaArgumentos ')'
+   58                | expresionSufijo '(' ')'
+   59                | expresionSufijo '.' IDENTIFICADOR
+   60                | expresionSufijo FLECHA IDENTIFICADOR
+   61                | expresionSufijo INCREMENTO
+   62                | expresionSufijo DECREMENTO
 
-   58 expresionSufijo: expresionPrimaria
-   59                | expresionSufijo '[' expresion ']'
-   60                | IDENTIFICADOR '(' listaArgumentos ')'
-   61                | expresionSufijo '(' ')'
-   62                | expresionSufijo '.' IDENTIFICADOR
-   63                | expresionSufijo FLECHA IDENTIFICADOR
-   64                | expresionSufijo INCREMENTO
-   65                | expresionSufijo DECREMENTO
+   63 listaArgumentos: argumento2
+   64                | listaArgumentos ',' argumento2
 
-   66 listaArgumentos: argumento2
-   67                | listaArgumentos ',' argumento2
+   65 argumento2: CONSTANTE_REAL
+   66           | CONSTANTE_ENTERA
+   67           | CONSTANTE_CARACTER
 
-   68 argumento2: CONSTANTE_REAL
-   69           | CONSTANTE_ENTERA
-   70           | CONSTANTE_CARACTER
+   68 expresionPrimaria: IDENTIFICADOR
+   69                  | argumento2
+   70                  | '(' expresion ')'
 
-   71 expresionPrimaria: IDENTIFICADOR
-   72                  | argumento2
-   73                  | '(' expresion ')'
+   71 declaracion: declaracionVarSimples ';'
+   72            | declaracionFunciones
 
-   74 declaracion: declaracionVarSimples ';'
-   75            | declaracionFunciones
+   73 declaracionVarSimples: TIPODATO listaVarSimples
+   74                      | TIPODATO '*' listaVarSimples
+   75                      | TIPODATO
 
-   76 declaracionVarSimples: TIPODATO listaVarSimples
-   77                      | TIPODATO '*' listaVarSimples
-   78                      | TIPODATO
+   76 declaracionFunciones: TIPODATO IDENTIFICADOR '(' listaParametrosDeclaracion ')' sentenciaCompuesta
+   77                     | TIPODATO IDENTIFICADOR '(' ')' sentenciaCompuesta
 
-   79 declaracionFunciones: TIPODATO IDENTIFICADOR '(' listaParametrosDeclaracion ')' sentenciaCompuesta
-   80                     | TIPODATO IDENTIFICADOR '(' ')' sentenciaCompuesta
+   78 listaParametrosDeclaracion: TIPODATO IDENTIFICADOR
+   79                           | listaParametrosDeclaracion ',' TIPODATO IDENTIFICADOR
 
-   81 listaParametrosDeclaracion: TIPODATO IDENTIFICADOR
-   82                           | listaParametrosDeclaracion ',' TIPODATO IDENTIFICADOR
+   80 listaVarSimples: unaVarSimple
+   81                | listaVarSimples ',' unaVarSimple
 
-   83 listaVarSimples: unaVarSimple
-   84                | listaVarSimples ',' unaVarSimple
+   82 unaVarSimple: IDENTIFICADOR
+   83             | IDENTIFICADOR inicial
 
-   85 unaVarSimple: IDENTIFICADOR
-   86             | IDENTIFICADOR inicial
+   84 inicial: OPERADOR_ASIGNACION argumento2
+   85        | OPERADOR_ASIGNACION expresionAsignacion
 
-   87 inicial: OPERADOR_ASIGNACION argumento2
-   88        | OPERADOR_ASIGNACION expresionAsignacion
+   86 sentencia: sentenciaCompuesta
+   87          | sentenciaExpresion
+   88          | sentenciaSeleccion
+   89          | sentenciaIteracion
+   90          | sentenciaSalto
+   91          | sentenciaEtiquetada
 
-   89 sentencia: sentenciaCompuesta
-   90          | sentenciaExpresion
-   91          | sentenciaSeleccion
-   92          | sentenciaIteracion
-   93          | sentenciaSalto
-   94          | sentenciaEtiquetada
+   92 sentenciaCompuesta: '{' entrada '}'
+   93                   | '{' entrada
 
-   95 sentenciaCompuesta: '{' entrada '}'
-   96                   | '{' entrada
+   94 sentenciaExpresion: expresion ';'
 
-   97 sentenciaExpresion: expresion ';'
+   95 sentenciaSeleccion: IF '(' expresion ')' sentencia
+   96                   | IF '(' expresion ')' sentencia ELSE sentencia
+   97                   | SWITCH '(' expresion ')' sentencia
 
-   98 sentenciaSeleccion: IF '(' expresion ')' sentencia
-   99                   | IF '(' expresion ')' sentencia ELSE sentencia
-  100                   | SWITCH '(' expresion ')' sentencia
+   98 sentenciaIteracion: WHILE '(' expresion ')' sentencia
+   99                   | DO sentencia WHILE '(' expresion ')' ';'
+  100                   | FOR '(' declaracionExpresionOpcional ';' expresionOpcional ';' expresionOpcional ')' sentencia
 
-  101 sentenciaIteracion: WHILE '(' expresion ')' sentencia
-  102                   | DO sentencia WHILE '(' expresion ')' ';'
-  103                   | FOR '(' declaracionExpresionOpcional ';' expresionOpcional ';' expresionOpcional ')' sentencia
+  101 declaracionExpresionOpcional: /* empty */
+  102                             | declaracionVarSimples
+  103                             | expresion
 
-  104 declaracionExpresionOpcional: /* empty */
-  105                             | declaracionVarSimples
-  106                             | expresion
+  104 expresionOpcional: /* empty */
+  105                  | expresion
 
-  107 expresionOpcional: /* empty */
-  108                  | expresion
+  106 sentenciaSalto: CONTINUE ';'
+  107               | BREAK ';'
+  108               | RETURN expresion ';'
+  109               | RETURN ';'
+  110               | GOTO IDENTIFICADOR ';'
 
-  109 sentenciaSalto: CONTINUE ';'
-  110               | BREAK ';'
-  111               | RETURN expresion ';'
-  112               | RETURN ';'
-  113               | GOTO IDENTIFICADOR ';'
-
-  114 sentenciaEtiquetada: CASE expresionCondicional ':' sentencia
-  115                    | DEFAULT ':' sentencia
-  116                    | IDENTIFICADOR ':' sentencia
+  111 sentenciaEtiquetada: CASE expresionCondicional ':' sentencia
+  112                    | DEFAULT ':' sentencia
+  113                    | IDENTIFICADOR ':' sentencia
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
-'!' (33) 57
-'%' (37) 43
-'&' (38) 25 52
-'(' (40) 45 51 60 61 73 79 80 98 99 100 101 102 103
-')' (41) 45 51 60 61 73 79 80 98 99 100 101 102 103
-'*' (42) 41 53 77
-'+' (43) 38 54
-',' (44) 11 67 82 84
-'-' (45) 39 55
-'.' (46) 62
-'/' (47) 42
-':' (58) 15 114 115 116
-';' (59) 3 8 74 97 102 103 109 110 111 112 113
-'<' (60) 30
-'>' (62) 31
-'?' (63) 15
-'[' (91) 59
-']' (93) 59
-'^' (94) 23
-'{' (123) 95 96
-'|' (124) 21
-'}' (125) 95
-'~' (126) 56
-error (256)
-OLOGICO (258) 17
-YLOGICO (259) 19
-IGUAL (260) 27
-DESIGUAL (261) 28
-MAYOIGUAL (262) 33
-MENOIGUAL (263) 32
-OUTPUT (264) 35
-INPUT (265) 36
-INCREMENTO (266) 47 64
-DECREMENTO (267) 48 65
-FLECHA (268) 63
-SIZEOF (269) 50 51
-OPERADOR_ASIGNACION (270) 13 87 88
-IDENTIFICADOR (271) 60 62 63 71 79 80 81 82 85 86 113 116
-TIPODATO (272) 45 51 76 77 78 79 80 81 82
-CONSTANTE_REAL (273) 68
-CONSTANTE_ENTERA (274) 69
-CONSTANTE_CARACTER (275) 70
-IF (276) 98 99
-ELSE (277) 99
-RETURN (278) 111 112
-SWITCH (279) 100
-DEFAULT (280) 115
-GOTO (281) 113
-WHILE (282) 101 102
-DO (283) 102
-CASE (284) 114
-FOR (285) 103
-BREAK (286) 110
-CONTINUE (287) 109
-ERROR_LEXICO (288) 6 8 9
+'!' (33) 54
+'%' (37) 40
+'&' (38) 22 49
+'(' (40) 42 48 57 58 70 76 77 95 96 97 98 99 100
+')' (41) 42 48 57 58 70 76 77 95 96 97 98 99 100
+'*' (42) 38 50 74
+'+' (43) 35 51
+',' (44) 8 64 79 81
+'-' (45) 36 52
+'.' (46) 59
+'/' (47) 39
+':' (58) 12 111 112 113
+';' (59) 3 6 71 94 99 100 106 107 108 109 110
+'<' (60) 27
+'>' (62) 28
+'?' (63) 12
+'[' (91) 56
+']' (93) 56
+'^' (94) 20
+'{' (123) 92 93
+'|' (124) 18
+'}' (125) 92
+'~' (126) 53
+error (256) 6
+OLOGICO (258) 14
+YLOGICO (259) 16
+IGUAL (260) 24
+DESIGUAL (261) 25
+MAYOIGUAL (262) 30
+MENOIGUAL (263) 29
+OUTPUT (264) 32
+INPUT (265) 33
+INCREMENTO (266) 44 61
+DECREMENTO (267) 45 62
+FLECHA (268) 60
+SIZEOF (269) 47 48
+OPERADOR_ASIGNACION (270) 10 84 85
+IDENTIFICADOR (271) 57 59 60 68 76 77 78 79 82 83 110 113
+TIPODATO (272) 42 48 73 74 75 76 77 78 79
+CONSTANTE_REAL (273) 65
+CONSTANTE_ENTERA (274) 66
+CONSTANTE_CARACTER (275) 67
+IF (276) 95 96
+ELSE (277) 96
+RETURN (278) 108 109
+SWITCH (279) 97
+DEFAULT (280) 112
+GOTO (281) 110
+WHILE (282) 98 99
+DO (283) 99
+CASE (284) 111
+FOR (285) 100
+BREAK (286) 107
+CONTINUE (287) 106
+ERROR_LEXICO (288)
 
 
 Nonterminals, with rules where they appear
@@ -252,85 +252,83 @@ Nonterminals, with rules where they appear
 $accept (57)
     on left: 0
 entrada (58)
-    on left: 1 2, on right: 0 2 95 96
+    on left: 1 2, on right: 0 2 92 93
 linea (59)
     on left: 3 4 5 6, on right: 2
-finDeLinea (60)
-    on left: 7 8 9, on right: 6 8 9
-expresion (61)
-    on left: 10 11, on right: 3 11 15 59 73 97 98 99 100 101 102 106
-    108 111
-expresionAsignacion (62)
-    on left: 12 13, on right: 10 11 13 88
-expresionCondicional (63)
-    on left: 14 15, on right: 12 15 114
-expresionOLogico (64)
-    on left: 16 17, on right: 14 15
-expresionYLogico (65)
-    on left: 18 19, on right: 16 17 19
-expresionOInclusivo (66)
-    on left: 20 21, on right: 18 19 21
-expresionOExcluyente (67)
-    on left: 22 23, on right: 20 21 23
-expresionY (68)
-    on left: 24 25, on right: 22 23 25
-expresionIgualdad (69)
-    on left: 26 27 28, on right: 24 25 27 28
-expresionRelacional (70)
-    on left: 29 30 31 32 33, on right: 26 27 28 30 31 32 33
-expresionCorrimiento (71)
-    on left: 34 35 36, on right: 29 30 31 32 33 35 36
-expresionAditiva (72)
-    on left: 37 38 39, on right: 34 35 36 38 39
-expresionMultiplicativa (73)
-    on left: 40 41 42 43, on right: 37 38 39 41 42 43
-expresionConversion (74)
-    on left: 44 45, on right: 40 41 42 43 45 49
-expresionUnaria (75)
-    on left: 46 47 48 49 50 51, on right: 13 44 47 48 50
-operadorUnario (76)
-    on left: 52 53 54 55 56 57, on right: 49
-expresionSufijo (77)
-    on left: 58 59 60 61 62 63 64 65, on right: 46 59 61 62 63 64 65
-listaArgumentos (78)
-    on left: 66 67, on right: 60 67
-argumento2 (79)
-    on left: 68 69 70, on right: 66 67 72 87
-expresionPrimaria (80)
-    on left: 71 72 73, on right: 58
-declaracion (81)
-    on left: 74 75, on right: 4
-declaracionVarSimples (82)
-    on left: 76 77 78, on right: 74 105
-declaracionFunciones (83)
-    on left: 79 80, on right: 75
-listaParametrosDeclaracion (84)
-    on left: 81 82, on right: 79 82
-listaVarSimples (85)
-    on left: 83 84, on right: 76 77 84
-unaVarSimple (86)
-    on left: 85 86, on right: 83 84
-inicial (87)
-    on left: 87 88, on right: 86
-sentencia (88)
-    on left: 89 90 91 92 93 94, on right: 5 98 99 100 101 102 103 114
-    115 116
-sentenciaCompuesta (89)
-    on left: 95 96, on right: 79 80 89
-sentenciaExpresion (90)
-    on left: 97, on right: 90
-sentenciaSeleccion (91)
-    on left: 98 99 100, on right: 91
-sentenciaIteracion (92)
-    on left: 101 102 103, on right: 92
-declaracionExpresionOpcional (93)
-    on left: 104 105 106, on right: 103
-expresionOpcional (94)
-    on left: 107 108, on right: 103
-sentenciaSalto (95)
-    on left: 109 110 111 112 113, on right: 93
-sentenciaEtiquetada (96)
-    on left: 114 115 116, on right: 94
+expresion (60)
+    on left: 7 8, on right: 3 8 12 56 70 94 95 96 97 98 99 103 105
+    108
+expresionAsignacion (61)
+    on left: 9 10, on right: 7 8 10 85
+expresionCondicional (62)
+    on left: 11 12, on right: 9 12 111
+expresionOLogico (63)
+    on left: 13 14, on right: 11 12
+expresionYLogico (64)
+    on left: 15 16, on right: 13 14 16
+expresionOInclusivo (65)
+    on left: 17 18, on right: 15 16 18
+expresionOExcluyente (66)
+    on left: 19 20, on right: 17 18 20
+expresionY (67)
+    on left: 21 22, on right: 19 20 22
+expresionIgualdad (68)
+    on left: 23 24 25, on right: 21 22 24 25
+expresionRelacional (69)
+    on left: 26 27 28 29 30, on right: 23 24 25 27 28 29 30
+expresionCorrimiento (70)
+    on left: 31 32 33, on right: 26 27 28 29 30 32 33
+expresionAditiva (71)
+    on left: 34 35 36, on right: 31 32 33 35 36
+expresionMultiplicativa (72)
+    on left: 37 38 39 40, on right: 34 35 36 38 39 40
+expresionConversion (73)
+    on left: 41 42, on right: 37 38 39 40 42 46
+expresionUnaria (74)
+    on left: 43 44 45 46 47 48, on right: 10 41 44 45 47
+operadorUnario (75)
+    on left: 49 50 51 52 53 54, on right: 46
+expresionSufijo (76)
+    on left: 55 56 57 58 59 60 61 62, on right: 43 56 58 59 60 61 62
+listaArgumentos (77)
+    on left: 63 64, on right: 57 64
+argumento2 (78)
+    on left: 65 66 67, on right: 63 64 69 84
+expresionPrimaria (79)
+    on left: 68 69 70, on right: 55
+declaracion (80)
+    on left: 71 72, on right: 4
+declaracionVarSimples (81)
+    on left: 73 74 75, on right: 71 102
+declaracionFunciones (82)
+    on left: 76 77, on right: 72
+listaParametrosDeclaracion (83)
+    on left: 78 79, on right: 76 79
+listaVarSimples (84)
+    on left: 80 81, on right: 73 74 81
+unaVarSimple (85)
+    on left: 82 83, on right: 80 81
+inicial (86)
+    on left: 84 85, on right: 83
+sentencia (87)
+    on left: 86 87 88 89 90 91, on right: 5 95 96 97 98 99 100 111
+    112 113
+sentenciaCompuesta (88)
+    on left: 92 93, on right: 76 77 86
+sentenciaExpresion (89)
+    on left: 94, on right: 87
+sentenciaSeleccion (90)
+    on left: 95 96 97, on right: 88
+sentenciaIteracion (91)
+    on left: 98 99 100, on right: 89
+declaracionExpresionOpcional (92)
+    on left: 101 102 103, on right: 100
+expresionOpcional (93)
+    on left: 104 105, on right: 100
+sentenciaSalto (94)
+    on left: 106 107 108 109 110, on right: 90
+sentenciaEtiquetada (95)
+    on left: 111 112 113, on right: 91
 
 
 state 0
@@ -348,26 +346,26 @@ state 1
     2 entrada: entrada . linea
 
     $end                shift, and go to state 2
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 6
-    TIPODATO            shift, and go to state 7
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    IF                  shift, and go to state 11
-    RETURN              shift, and go to state 12
-    SWITCH              shift, and go to state 13
-    DEFAULT             shift, and go to state 14
-    GOTO                shift, and go to state 15
-    WHILE               shift, and go to state 16
-    DO                  shift, and go to state 17
-    CASE                shift, and go to state 18
-    FOR                 shift, and go to state 19
-    BREAK               shift, and go to state 20
-    CONTINUE            shift, and go to state 21
-    ERROR_LEXICO        shift, and go to state 22
+    error               shift, and go to state 3
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 7
+    TIPODATO            shift, and go to state 8
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
+    IF                  shift, and go to state 12
+    RETURN              shift, and go to state 13
+    SWITCH              shift, and go to state 14
+    DEFAULT             shift, and go to state 15
+    GOTO                shift, and go to state 16
+    WHILE               shift, and go to state 17
+    DO                  shift, and go to state 18
+    CASE                shift, and go to state 19
+    FOR                 shift, and go to state 20
+    BREAK               shift, and go to state 21
+    CONTINUE            shift, and go to state 22
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -418,46 +416,27 @@ state 2
 
 state 3
 
-   47 expresionUnaria: INCREMENTO . expresionUnaria
+    6 linea: error . ';'
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    '&'                 shift, and go to state 23
-    '+'                 shift, and go to state 24
-    '-'                 shift, and go to state 25
-    '*'                 shift, and go to state 26
-    '('                 shift, and go to state 62
-    '~'                 shift, and go to state 28
-    '!'                 shift, and go to state 29
-
-    expresionUnaria    go to state 63
-    operadorUnario     go to state 47
-    expresionSufijo    go to state 48
-    argumento2         go to state 49
-    expresionPrimaria  go to state 50
+    ';'  shift, and go to state 61
 
 
 state 4
 
-   48 expresionUnaria: DECREMENTO . expresionUnaria
+   44 expresionUnaria: INCREMENTO . expresionUnaria
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
     '*'                 shift, and go to state 26
-    '('                 shift, and go to state 62
+    '('                 shift, and go to state 63
     '~'                 shift, and go to state 28
     '!'                 shift, and go to state 29
 
@@ -470,25 +449,24 @@ state 4
 
 state 5
 
-   50 expresionUnaria: SIZEOF . expresionUnaria
-   51                | SIZEOF . '(' TIPODATO ')'
+   45 expresionUnaria: DECREMENTO . expresionUnaria
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
     '*'                 shift, and go to state 26
-    '('                 shift, and go to state 65
+    '('                 shift, and go to state 63
     '~'                 shift, and go to state 28
     '!'                 shift, and go to state 29
 
-    expresionUnaria    go to state 66
+    expresionUnaria    go to state 65
     operadorUnario     go to state 47
     expresionSufijo    go to state 48
     argumento2         go to state 49
@@ -497,76 +475,103 @@ state 5
 
 state 6
 
-   60 expresionSufijo: IDENTIFICADOR . '(' listaArgumentos ')'
-   71 expresionPrimaria: IDENTIFICADOR .
-  116 sentenciaEtiquetada: IDENTIFICADOR . ':' sentencia
+   47 expresionUnaria: SIZEOF . expresionUnaria
+   48                | SIZEOF . '(' TIPODATO ')'
 
-    ':'  shift, and go to state 67
-    '('  shift, and go to state 68
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
+    '&'                 shift, and go to state 23
+    '+'                 shift, and go to state 24
+    '-'                 shift, and go to state 25
+    '*'                 shift, and go to state 26
+    '('                 shift, and go to state 66
+    '~'                 shift, and go to state 28
+    '!'                 shift, and go to state 29
 
-    '('       [reduce using rule 71 (expresionPrimaria)]
-    $default  reduce using rule 71 (expresionPrimaria)
+    expresionUnaria    go to state 67
+    operadorUnario     go to state 47
+    expresionSufijo    go to state 48
+    argumento2         go to state 49
+    expresionPrimaria  go to state 50
 
 
 state 7
 
-   76 declaracionVarSimples: TIPODATO . listaVarSimples
-   77                      | TIPODATO . '*' listaVarSimples
-   78                      | TIPODATO .
-   79 declaracionFunciones: TIPODATO . IDENTIFICADOR '(' listaParametrosDeclaracion ')' sentenciaCompuesta
-   80                     | TIPODATO . IDENTIFICADOR '(' ')' sentenciaCompuesta
+   57 expresionSufijo: IDENTIFICADOR . '(' listaArgumentos ')'
+   68 expresionPrimaria: IDENTIFICADOR .
+  113 sentenciaEtiquetada: IDENTIFICADOR . ':' sentencia
 
-    IDENTIFICADOR  shift, and go to state 69
-    '*'            shift, and go to state 70
+    ':'  shift, and go to state 68
+    '('  shift, and go to state 69
 
-    $default  reduce using rule 78 (declaracionVarSimples)
-
-    listaVarSimples  go to state 71
-    unaVarSimple     go to state 72
+    '('       [reduce using rule 68 (expresionPrimaria)]
+    $default  reduce using rule 68 (expresionPrimaria)
 
 
 state 8
 
-   68 argumento2: CONSTANTE_REAL .
+   73 declaracionVarSimples: TIPODATO . listaVarSimples
+   74                      | TIPODATO . '*' listaVarSimples
+   75                      | TIPODATO .
+   76 declaracionFunciones: TIPODATO . IDENTIFICADOR '(' listaParametrosDeclaracion ')' sentenciaCompuesta
+   77                     | TIPODATO . IDENTIFICADOR '(' ')' sentenciaCompuesta
 
-    $default  reduce using rule 68 (argumento2)
+    IDENTIFICADOR  shift, and go to state 70
+    '*'            shift, and go to state 71
+
+    $default  reduce using rule 75 (declaracionVarSimples)
+
+    listaVarSimples  go to state 72
+    unaVarSimple     go to state 73
 
 
 state 9
 
-   69 argumento2: CONSTANTE_ENTERA .
+   65 argumento2: CONSTANTE_REAL .
 
-    $default  reduce using rule 69 (argumento2)
+    $default  reduce using rule 65 (argumento2)
 
 
 state 10
 
-   70 argumento2: CONSTANTE_CARACTER .
+   66 argumento2: CONSTANTE_ENTERA .
 
-    $default  reduce using rule 70 (argumento2)
+    $default  reduce using rule 66 (argumento2)
 
 
 state 11
 
-   98 sentenciaSeleccion: IF . '(' expresion ')' sentencia
-   99                   | IF . '(' expresion ')' sentencia ELSE sentencia
+   67 argumento2: CONSTANTE_CARACTER .
 
-    '('  shift, and go to state 73
+    $default  reduce using rule 67 (argumento2)
 
 
 state 12
 
-  111 sentenciaSalto: RETURN . expresion ';'
-  112               | RETURN . ';'
+   95 sentenciaSeleccion: IF . '(' expresion ')' sentencia
+   96                   | IF . '(' expresion ')' sentencia ELSE sentencia
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    ';'                 shift, and go to state 74
+    '('  shift, and go to state 74
+
+
+state 13
+
+  108 sentenciaSalto: RETURN . expresion ';'
+  109               | RETURN . ';'
+
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
+    ';'                 shift, and go to state 75
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -575,7 +580,7 @@ state 12
     '~'                 shift, and go to state 28
     '!'                 shift, and go to state 29
 
-    expresion                go to state 75
+    expresion                go to state 76
     expresionAsignacion      go to state 33
     expresionCondicional     go to state 34
     expresionOLogico         go to state 35
@@ -596,56 +601,56 @@ state 12
     expresionPrimaria        go to state 50
 
 
-state 13
-
-  100 sentenciaSeleccion: SWITCH . '(' expresion ')' sentencia
-
-    '('  shift, and go to state 76
-
-
 state 14
 
-  115 sentenciaEtiquetada: DEFAULT . ':' sentencia
+   97 sentenciaSeleccion: SWITCH . '(' expresion ')' sentencia
 
-    ':'  shift, and go to state 77
+    '('  shift, and go to state 77
 
 
 state 15
 
-  113 sentenciaSalto: GOTO . IDENTIFICADOR ';'
+  112 sentenciaEtiquetada: DEFAULT . ':' sentencia
 
-    IDENTIFICADOR  shift, and go to state 78
+    ':'  shift, and go to state 78
 
 
 state 16
 
-  101 sentenciaIteracion: WHILE . '(' expresion ')' sentencia
+  110 sentenciaSalto: GOTO . IDENTIFICADOR ';'
 
-    '('  shift, and go to state 79
+    IDENTIFICADOR  shift, and go to state 79
 
 
 state 17
 
-  102 sentenciaIteracion: DO . sentencia WHILE '(' expresion ')' ';'
+   98 sentenciaIteracion: WHILE . '(' expresion ')' sentencia
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 6
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    IF                  shift, and go to state 11
-    RETURN              shift, and go to state 12
-    SWITCH              shift, and go to state 13
-    DEFAULT             shift, and go to state 14
-    GOTO                shift, and go to state 15
-    WHILE               shift, and go to state 16
-    DO                  shift, and go to state 17
-    CASE                shift, and go to state 18
-    FOR                 shift, and go to state 19
-    BREAK               shift, and go to state 20
-    CONTINUE            shift, and go to state 21
+    '('  shift, and go to state 80
+
+
+state 18
+
+   99 sentenciaIteracion: DO . sentencia WHILE '(' expresion ')' ';'
+
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 7
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
+    IF                  shift, and go to state 12
+    RETURN              shift, and go to state 13
+    SWITCH              shift, and go to state 14
+    DEFAULT             shift, and go to state 15
+    GOTO                shift, and go to state 16
+    WHILE               shift, and go to state 17
+    DO                  shift, and go to state 18
+    CASE                shift, and go to state 19
+    FOR                 shift, and go to state 20
+    BREAK               shift, and go to state 21
+    CONTINUE            shift, and go to state 22
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -655,7 +660,7 @@ state 17
     '!'                 shift, and go to state 29
     '{'                 shift, and go to state 30
 
-    expresion                go to state 80
+    expresion                go to state 81
     expresionAsignacion      go to state 33
     expresionCondicional     go to state 34
     expresionOLogico         go to state 35
@@ -674,7 +679,7 @@ state 17
     expresionSufijo          go to state 48
     argumento2               go to state 49
     expresionPrimaria        go to state 50
-    sentencia                go to state 81
+    sentencia                go to state 82
     sentenciaCompuesta       go to state 55
     sentenciaExpresion       go to state 56
     sentenciaSeleccion       go to state 57
@@ -683,17 +688,17 @@ state 17
     sentenciaEtiquetada      go to state 60
 
 
-state 18
+state 19
 
-  114 sentenciaEtiquetada: CASE . expresionCondicional ':' sentencia
+  111 sentenciaEtiquetada: CASE . expresionCondicional ':' sentencia
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -702,7 +707,7 @@ state 18
     '~'                 shift, and go to state 28
     '!'                 shift, and go to state 29
 
-    expresionCondicional     go to state 82
+    expresionCondicional     go to state 83
     expresionOLogico         go to state 35
     expresionYLogico         go to state 36
     expresionOInclusivo      go to state 37
@@ -714,84 +719,75 @@ state 18
     expresionAditiva         go to state 43
     expresionMultiplicativa  go to state 44
     expresionConversion      go to state 45
-    expresionUnaria          go to state 83
+    expresionUnaria          go to state 84
     operadorUnario           go to state 47
     expresionSufijo          go to state 48
     argumento2               go to state 49
     expresionPrimaria        go to state 50
 
 
-state 19
-
-  103 sentenciaIteracion: FOR . '(' declaracionExpresionOpcional ';' expresionOpcional ';' expresionOpcional ')' sentencia
-
-    '('  shift, and go to state 84
-
-
 state 20
 
-  110 sentenciaSalto: BREAK . ';'
+  100 sentenciaIteracion: FOR . '(' declaracionExpresionOpcional ';' expresionOpcional ';' expresionOpcional ')' sentencia
 
-    ';'  shift, and go to state 85
+    '('  shift, and go to state 85
 
 
 state 21
 
-  109 sentenciaSalto: CONTINUE . ';'
+  107 sentenciaSalto: BREAK . ';'
 
     ';'  shift, and go to state 86
 
 
 state 22
 
-    6 linea: ERROR_LEXICO . finDeLinea
+  106 sentenciaSalto: CONTINUE . ';'
 
-    $default  reduce using rule 7 (finDeLinea)
-
-    finDeLinea  go to state 87
+    ';'  shift, and go to state 87
 
 
 state 23
 
-   52 operadorUnario: '&' .
+   49 operadorUnario: '&' .
 
-    $default  reduce using rule 52 (operadorUnario)
+    $default  reduce using rule 49 (operadorUnario)
 
 
 state 24
 
-   54 operadorUnario: '+' .
+   51 operadorUnario: '+' .
 
-    $default  reduce using rule 54 (operadorUnario)
+    $default  reduce using rule 51 (operadorUnario)
 
 
 state 25
 
-   55 operadorUnario: '-' .
+   52 operadorUnario: '-' .
 
-    $default  reduce using rule 55 (operadorUnario)
+    $default  reduce using rule 52 (operadorUnario)
 
 
 state 26
 
-   53 operadorUnario: '*' .
+   50 operadorUnario: '*' .
 
-    $default  reduce using rule 53 (operadorUnario)
+    $default  reduce using rule 50 (operadorUnario)
 
 
 state 27
 
-   45 expresionConversion: '(' . TIPODATO ')' expresionConversion
-   73 expresionPrimaria: '(' . expresion ')'
+   42 expresionConversion: '(' . TIPODATO ')' expresionConversion
+   70 expresionPrimaria: '(' . expresion ')'
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
     TIPODATO            shift, and go to state 88
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -823,22 +819,22 @@ state 27
 
 state 28
 
-   56 operadorUnario: '~' .
+   53 operadorUnario: '~' .
 
-    $default  reduce using rule 56 (operadorUnario)
+    $default  reduce using rule 53 (operadorUnario)
 
 
 state 29
 
-   57 operadorUnario: '!' .
+   54 operadorUnario: '!' .
 
-    $default  reduce using rule 57 (operadorUnario)
+    $default  reduce using rule 54 (operadorUnario)
 
 
 state 30
 
-   95 sentenciaCompuesta: '{' . entrada '}'
-   96                   | '{' . entrada
+   92 sentenciaCompuesta: '{' . entrada '}'
+   93                   | '{' . entrada
 
     $default  reduce using rule 1 (entrada)
 
@@ -855,8 +851,8 @@ state 31
 state 32
 
     3 linea: expresion . ';'
-   11 expresion: expresion . ',' expresionAsignacion
-   97 sentenciaExpresion: expresion . ';'
+    8 expresion: expresion . ',' expresionAsignacion
+   94 sentenciaExpresion: expresion . ';'
 
     ';'  shift, and go to state 91
     ','  shift, and go to state 92
@@ -864,164 +860,164 @@ state 32
 
 state 33
 
-   10 expresion: expresionAsignacion .
+    7 expresion: expresionAsignacion .
 
-    $default  reduce using rule 10 (expresion)
+    $default  reduce using rule 7 (expresion)
 
 
 state 34
 
-   12 expresionAsignacion: expresionCondicional .
+    9 expresionAsignacion: expresionCondicional .
 
-    $default  reduce using rule 12 (expresionAsignacion)
+    $default  reduce using rule 9 (expresionAsignacion)
 
 
 state 35
 
-   14 expresionCondicional: expresionOLogico .
-   15                     | expresionOLogico . '?' expresion ':' expresionCondicional
+   11 expresionCondicional: expresionOLogico .
+   12                     | expresionOLogico . '?' expresion ':' expresionCondicional
 
     '?'  shift, and go to state 93
 
-    $default  reduce using rule 14 (expresionCondicional)
+    $default  reduce using rule 11 (expresionCondicional)
 
 
 state 36
 
-   16 expresionOLogico: expresionYLogico .
-   17                 | expresionYLogico . OLOGICO expresionYLogico
-   19 expresionYLogico: expresionYLogico . YLOGICO expresionOInclusivo
+   13 expresionOLogico: expresionYLogico .
+   14                 | expresionYLogico . OLOGICO expresionYLogico
+   16 expresionYLogico: expresionYLogico . YLOGICO expresionOInclusivo
 
     OLOGICO  shift, and go to state 94
     YLOGICO  shift, and go to state 95
 
-    $default  reduce using rule 16 (expresionOLogico)
+    $default  reduce using rule 13 (expresionOLogico)
 
 
 state 37
 
-   18 expresionYLogico: expresionOInclusivo .
-   21 expresionOInclusivo: expresionOInclusivo . '|' expresionOExcluyente
+   15 expresionYLogico: expresionOInclusivo .
+   18 expresionOInclusivo: expresionOInclusivo . '|' expresionOExcluyente
 
     '|'  shift, and go to state 96
 
-    $default  reduce using rule 18 (expresionYLogico)
+    $default  reduce using rule 15 (expresionYLogico)
 
 
 state 38
 
-   20 expresionOInclusivo: expresionOExcluyente .
-   23 expresionOExcluyente: expresionOExcluyente . '^' expresionY
+   17 expresionOInclusivo: expresionOExcluyente .
+   20 expresionOExcluyente: expresionOExcluyente . '^' expresionY
 
     '^'  shift, and go to state 97
 
-    $default  reduce using rule 20 (expresionOInclusivo)
+    $default  reduce using rule 17 (expresionOInclusivo)
 
 
 state 39
 
-   22 expresionOExcluyente: expresionY .
-   25 expresionY: expresionY . '&' expresionIgualdad
+   19 expresionOExcluyente: expresionY .
+   22 expresionY: expresionY . '&' expresionIgualdad
 
     '&'  shift, and go to state 98
 
-    $default  reduce using rule 22 (expresionOExcluyente)
+    $default  reduce using rule 19 (expresionOExcluyente)
 
 
 state 40
 
-   24 expresionY: expresionIgualdad .
-   27 expresionIgualdad: expresionIgualdad . IGUAL expresionRelacional
-   28                  | expresionIgualdad . DESIGUAL expresionRelacional
+   21 expresionY: expresionIgualdad .
+   24 expresionIgualdad: expresionIgualdad . IGUAL expresionRelacional
+   25                  | expresionIgualdad . DESIGUAL expresionRelacional
 
     IGUAL     shift, and go to state 99
     DESIGUAL  shift, and go to state 100
 
-    $default  reduce using rule 24 (expresionY)
+    $default  reduce using rule 21 (expresionY)
 
 
 state 41
 
-   26 expresionIgualdad: expresionRelacional .
-   30 expresionRelacional: expresionRelacional . '<' expresionCorrimiento
-   31                    | expresionRelacional . '>' expresionCorrimiento
-   32                    | expresionRelacional . MENOIGUAL expresionCorrimiento
-   33                    | expresionRelacional . MAYOIGUAL expresionCorrimiento
+   23 expresionIgualdad: expresionRelacional .
+   27 expresionRelacional: expresionRelacional . '<' expresionCorrimiento
+   28                    | expresionRelacional . '>' expresionCorrimiento
+   29                    | expresionRelacional . MENOIGUAL expresionCorrimiento
+   30                    | expresionRelacional . MAYOIGUAL expresionCorrimiento
 
     MAYOIGUAL  shift, and go to state 101
     MENOIGUAL  shift, and go to state 102
     '<'        shift, and go to state 103
     '>'        shift, and go to state 104
 
-    $default  reduce using rule 26 (expresionIgualdad)
+    $default  reduce using rule 23 (expresionIgualdad)
 
 
 state 42
 
-   29 expresionRelacional: expresionCorrimiento .
-   35 expresionCorrimiento: expresionCorrimiento . OUTPUT expresionAditiva
-   36                     | expresionCorrimiento . INPUT expresionAditiva
+   26 expresionRelacional: expresionCorrimiento .
+   32 expresionCorrimiento: expresionCorrimiento . OUTPUT expresionAditiva
+   33                     | expresionCorrimiento . INPUT expresionAditiva
 
     OUTPUT  shift, and go to state 105
     INPUT   shift, and go to state 106
 
-    $default  reduce using rule 29 (expresionRelacional)
+    $default  reduce using rule 26 (expresionRelacional)
 
 
 state 43
 
-   34 expresionCorrimiento: expresionAditiva .
-   38 expresionAditiva: expresionAditiva . '+' expresionMultiplicativa
-   39                 | expresionAditiva . '-' expresionMultiplicativa
+   31 expresionCorrimiento: expresionAditiva .
+   35 expresionAditiva: expresionAditiva . '+' expresionMultiplicativa
+   36                 | expresionAditiva . '-' expresionMultiplicativa
 
     '+'  shift, and go to state 107
     '-'  shift, and go to state 108
 
-    $default  reduce using rule 34 (expresionCorrimiento)
+    $default  reduce using rule 31 (expresionCorrimiento)
 
 
 state 44
 
-   37 expresionAditiva: expresionMultiplicativa .
-   41 expresionMultiplicativa: expresionMultiplicativa . '*' expresionConversion
-   42                        | expresionMultiplicativa . '/' expresionConversion
-   43                        | expresionMultiplicativa . '%' expresionConversion
+   34 expresionAditiva: expresionMultiplicativa .
+   38 expresionMultiplicativa: expresionMultiplicativa . '*' expresionConversion
+   39                        | expresionMultiplicativa . '/' expresionConversion
+   40                        | expresionMultiplicativa . '%' expresionConversion
 
     '*'  shift, and go to state 109
     '/'  shift, and go to state 110
     '%'  shift, and go to state 111
 
-    $default  reduce using rule 37 (expresionAditiva)
+    $default  reduce using rule 34 (expresionAditiva)
 
 
 state 45
 
-   40 expresionMultiplicativa: expresionConversion .
+   37 expresionMultiplicativa: expresionConversion .
 
-    $default  reduce using rule 40 (expresionMultiplicativa)
+    $default  reduce using rule 37 (expresionMultiplicativa)
 
 
 state 46
 
-   13 expresionAsignacion: expresionUnaria . OPERADOR_ASIGNACION expresionAsignacion
-   44 expresionConversion: expresionUnaria .
+   10 expresionAsignacion: expresionUnaria . OPERADOR_ASIGNACION expresionAsignacion
+   41 expresionConversion: expresionUnaria .
 
     OPERADOR_ASIGNACION  shift, and go to state 112
 
-    $default  reduce using rule 44 (expresionConversion)
+    $default  reduce using rule 41 (expresionConversion)
 
 
 state 47
 
-   49 expresionUnaria: operadorUnario . expresionConversion
+   46 expresionUnaria: operadorUnario . expresionConversion
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -1031,7 +1027,7 @@ state 47
     '!'                 shift, and go to state 29
 
     expresionConversion  go to state 113
-    expresionUnaria      go to state 83
+    expresionUnaria      go to state 84
     operadorUnario       go to state 47
     expresionSufijo      go to state 48
     argumento2           go to state 49
@@ -1040,13 +1036,13 @@ state 47
 
 state 48
 
-   46 expresionUnaria: expresionSufijo .
-   59 expresionSufijo: expresionSufijo . '[' expresion ']'
-   61                | expresionSufijo . '(' ')'
-   62                | expresionSufijo . '.' IDENTIFICADOR
-   63                | expresionSufijo . FLECHA IDENTIFICADOR
-   64                | expresionSufijo . INCREMENTO
-   65                | expresionSufijo . DECREMENTO
+   43 expresionUnaria: expresionSufijo .
+   56 expresionSufijo: expresionSufijo . '[' expresion ']'
+   58                | expresionSufijo . '(' ')'
+   59                | expresionSufijo . '.' IDENTIFICADOR
+   60                | expresionSufijo . FLECHA IDENTIFICADOR
+   61                | expresionSufijo . INCREMENTO
+   62                | expresionSufijo . DECREMENTO
 
     INCREMENTO  shift, and go to state 114
     DECREMENTO  shift, and go to state 115
@@ -1055,21 +1051,21 @@ state 48
     '['         shift, and go to state 118
     '.'         shift, and go to state 119
 
-    $default  reduce using rule 46 (expresionUnaria)
+    $default  reduce using rule 43 (expresionUnaria)
 
 
 state 49
 
-   72 expresionPrimaria: argumento2 .
+   69 expresionPrimaria: argumento2 .
 
-    $default  reduce using rule 72 (expresionPrimaria)
+    $default  reduce using rule 69 (expresionPrimaria)
 
 
 state 50
 
-   58 expresionSufijo: expresionPrimaria .
+   55 expresionSufijo: expresionPrimaria .
 
-    $default  reduce using rule 58 (expresionSufijo)
+    $default  reduce using rule 55 (expresionSufijo)
 
 
 state 51
@@ -1081,16 +1077,16 @@ state 51
 
 state 52
 
-   74 declaracion: declaracionVarSimples . ';'
+   71 declaracion: declaracionVarSimples . ';'
 
     ';'  shift, and go to state 120
 
 
 state 53
 
-   75 declaracion: declaracionFunciones .
+   72 declaracion: declaracionFunciones .
 
-    $default  reduce using rule 75 (declaracion)
+    $default  reduce using rule 72 (declaracion)
 
 
 state 54
@@ -1102,124 +1098,75 @@ state 54
 
 state 55
 
-   89 sentencia: sentenciaCompuesta .
+   86 sentencia: sentenciaCompuesta .
 
-    $default  reduce using rule 89 (sentencia)
+    $default  reduce using rule 86 (sentencia)
 
 
 state 56
 
-   90 sentencia: sentenciaExpresion .
+   87 sentencia: sentenciaExpresion .
 
-    $default  reduce using rule 90 (sentencia)
+    $default  reduce using rule 87 (sentencia)
 
 
 state 57
 
-   91 sentencia: sentenciaSeleccion .
+   88 sentencia: sentenciaSeleccion .
 
-    $default  reduce using rule 91 (sentencia)
+    $default  reduce using rule 88 (sentencia)
 
 
 state 58
 
-   92 sentencia: sentenciaIteracion .
+   89 sentencia: sentenciaIteracion .
 
-    $default  reduce using rule 92 (sentencia)
+    $default  reduce using rule 89 (sentencia)
 
 
 state 59
 
-   93 sentencia: sentenciaSalto .
+   90 sentencia: sentenciaSalto .
 
-    $default  reduce using rule 93 (sentencia)
+    $default  reduce using rule 90 (sentencia)
 
 
 state 60
 
-   94 sentencia: sentenciaEtiquetada .
+   91 sentencia: sentenciaEtiquetada .
 
-    $default  reduce using rule 94 (sentencia)
+    $default  reduce using rule 91 (sentencia)
 
 
 state 61
 
-   60 expresionSufijo: IDENTIFICADOR . '(' listaArgumentos ')'
-   71 expresionPrimaria: IDENTIFICADOR .
+    6 linea: error ';' .
 
-    '('  shift, and go to state 68
-
-    '('       [reduce using rule 71 (expresionPrimaria)]
-    $default  reduce using rule 71 (expresionPrimaria)
+    $default  reduce using rule 6 (linea)
 
 
 state 62
 
-   73 expresionPrimaria: '(' . expresion ')'
+   57 expresionSufijo: IDENTIFICADOR . '(' listaArgumentos ')'
+   68 expresionPrimaria: IDENTIFICADOR .
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    '&'                 shift, and go to state 23
-    '+'                 shift, and go to state 24
-    '-'                 shift, and go to state 25
-    '*'                 shift, and go to state 26
-    '('                 shift, and go to state 27
-    '~'                 shift, and go to state 28
-    '!'                 shift, and go to state 29
+    '('  shift, and go to state 69
 
-    expresion                go to state 89
-    expresionAsignacion      go to state 33
-    expresionCondicional     go to state 34
-    expresionOLogico         go to state 35
-    expresionYLogico         go to state 36
-    expresionOInclusivo      go to state 37
-    expresionOExcluyente     go to state 38
-    expresionY               go to state 39
-    expresionIgualdad        go to state 40
-    expresionRelacional      go to state 41
-    expresionCorrimiento     go to state 42
-    expresionAditiva         go to state 43
-    expresionMultiplicativa  go to state 44
-    expresionConversion      go to state 45
-    expresionUnaria          go to state 46
-    operadorUnario           go to state 47
-    expresionSufijo          go to state 48
-    argumento2               go to state 49
-    expresionPrimaria        go to state 50
+    '('       [reduce using rule 68 (expresionPrimaria)]
+    $default  reduce using rule 68 (expresionPrimaria)
 
 
 state 63
 
-   47 expresionUnaria: INCREMENTO expresionUnaria .
+   70 expresionPrimaria: '(' . expresion ')'
 
-    $default  reduce using rule 47 (expresionUnaria)
-
-
-state 64
-
-   48 expresionUnaria: DECREMENTO expresionUnaria .
-
-    $default  reduce using rule 48 (expresionUnaria)
-
-
-state 65
-
-   51 expresionUnaria: SIZEOF '(' . TIPODATO ')'
-   73 expresionPrimaria: '(' . expresion ')'
-
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    TIPODATO            shift, and go to state 121
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -1249,35 +1196,91 @@ state 65
     expresionPrimaria        go to state 50
 
 
+state 64
+
+   44 expresionUnaria: INCREMENTO expresionUnaria .
+
+    $default  reduce using rule 44 (expresionUnaria)
+
+
+state 65
+
+   45 expresionUnaria: DECREMENTO expresionUnaria .
+
+    $default  reduce using rule 45 (expresionUnaria)
+
+
 state 66
 
-   50 expresionUnaria: SIZEOF expresionUnaria .
+   48 expresionUnaria: SIZEOF '(' . TIPODATO ')'
+   70 expresionPrimaria: '(' . expresion ')'
 
-    $default  reduce using rule 50 (expresionUnaria)
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    TIPODATO            shift, and go to state 121
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
+    '&'                 shift, and go to state 23
+    '+'                 shift, and go to state 24
+    '-'                 shift, and go to state 25
+    '*'                 shift, and go to state 26
+    '('                 shift, and go to state 27
+    '~'                 shift, and go to state 28
+    '!'                 shift, and go to state 29
+
+    expresion                go to state 89
+    expresionAsignacion      go to state 33
+    expresionCondicional     go to state 34
+    expresionOLogico         go to state 35
+    expresionYLogico         go to state 36
+    expresionOInclusivo      go to state 37
+    expresionOExcluyente     go to state 38
+    expresionY               go to state 39
+    expresionIgualdad        go to state 40
+    expresionRelacional      go to state 41
+    expresionCorrimiento     go to state 42
+    expresionAditiva         go to state 43
+    expresionMultiplicativa  go to state 44
+    expresionConversion      go to state 45
+    expresionUnaria          go to state 46
+    operadorUnario           go to state 47
+    expresionSufijo          go to state 48
+    argumento2               go to state 49
+    expresionPrimaria        go to state 50
 
 
 state 67
 
-  116 sentenciaEtiquetada: IDENTIFICADOR ':' . sentencia
+   47 expresionUnaria: SIZEOF expresionUnaria .
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 6
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    IF                  shift, and go to state 11
-    RETURN              shift, and go to state 12
-    SWITCH              shift, and go to state 13
-    DEFAULT             shift, and go to state 14
-    GOTO                shift, and go to state 15
-    WHILE               shift, and go to state 16
-    DO                  shift, and go to state 17
-    CASE                shift, and go to state 18
-    FOR                 shift, and go to state 19
-    BREAK               shift, and go to state 20
-    CONTINUE            shift, and go to state 21
+    $default  reduce using rule 47 (expresionUnaria)
+
+
+state 68
+
+  113 sentenciaEtiquetada: IDENTIFICADOR ':' . sentencia
+
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 7
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
+    IF                  shift, and go to state 12
+    RETURN              shift, and go to state 13
+    SWITCH              shift, and go to state 14
+    DEFAULT             shift, and go to state 15
+    GOTO                shift, and go to state 16
+    WHILE               shift, and go to state 17
+    DO                  shift, and go to state 18
+    CASE                shift, and go to state 19
+    FOR                 shift, and go to state 20
+    BREAK               shift, and go to state 21
+    CONTINUE            shift, and go to state 22
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -1287,7 +1290,7 @@ state 67
     '!'                 shift, and go to state 29
     '{'                 shift, and go to state 30
 
-    expresion                go to state 80
+    expresion                go to state 81
     expresionAsignacion      go to state 33
     expresionCondicional     go to state 34
     expresionOLogico         go to state 35
@@ -1315,72 +1318,72 @@ state 67
     sentenciaEtiquetada      go to state 60
 
 
-state 68
+state 69
 
-   60 expresionSufijo: IDENTIFICADOR '(' . listaArgumentos ')'
+   57 expresionSufijo: IDENTIFICADOR '(' . listaArgumentos ')'
 
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
 
     listaArgumentos  go to state 123
     argumento2       go to state 124
 
 
-state 69
+state 70
 
-   79 declaracionFunciones: TIPODATO IDENTIFICADOR . '(' listaParametrosDeclaracion ')' sentenciaCompuesta
-   80                     | TIPODATO IDENTIFICADOR . '(' ')' sentenciaCompuesta
-   85 unaVarSimple: IDENTIFICADOR .
-   86             | IDENTIFICADOR . inicial
+   76 declaracionFunciones: TIPODATO IDENTIFICADOR . '(' listaParametrosDeclaracion ')' sentenciaCompuesta
+   77                     | TIPODATO IDENTIFICADOR . '(' ')' sentenciaCompuesta
+   82 unaVarSimple: IDENTIFICADOR .
+   83             | IDENTIFICADOR . inicial
 
     OPERADOR_ASIGNACION  shift, and go to state 125
     '('                  shift, and go to state 126
 
-    $default  reduce using rule 85 (unaVarSimple)
+    $default  reduce using rule 82 (unaVarSimple)
 
     inicial  go to state 127
 
 
-state 70
+state 71
 
-   77 declaracionVarSimples: TIPODATO '*' . listaVarSimples
+   74 declaracionVarSimples: TIPODATO '*' . listaVarSimples
 
     IDENTIFICADOR  shift, and go to state 128
 
     listaVarSimples  go to state 129
-    unaVarSimple     go to state 72
-
-
-state 71
-
-   76 declaracionVarSimples: TIPODATO listaVarSimples .
-   84 listaVarSimples: listaVarSimples . ',' unaVarSimple
-
-    ','  shift, and go to state 130
-
-    $default  reduce using rule 76 (declaracionVarSimples)
+    unaVarSimple     go to state 73
 
 
 state 72
 
-   83 listaVarSimples: unaVarSimple .
+   73 declaracionVarSimples: TIPODATO listaVarSimples .
+   81 listaVarSimples: listaVarSimples . ',' unaVarSimple
 
-    $default  reduce using rule 83 (listaVarSimples)
+    ','  shift, and go to state 130
+
+    $default  reduce using rule 73 (declaracionVarSimples)
 
 
 state 73
 
-   98 sentenciaSeleccion: IF '(' . expresion ')' sentencia
-   99                   | IF '(' . expresion ')' sentencia ELSE sentencia
+   80 listaVarSimples: unaVarSimple .
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    $default  reduce using rule 80 (listaVarSimples)
+
+
+state 74
+
+   95 sentenciaSeleccion: IF '(' . expresion ')' sentencia
+   96                   | IF '(' . expresion ')' sentencia ELSE sentencia
+
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -1410,33 +1413,33 @@ state 73
     expresionPrimaria        go to state 50
 
 
-state 74
-
-  112 sentenciaSalto: RETURN ';' .
-
-    $default  reduce using rule 112 (sentenciaSalto)
-
-
 state 75
 
-   11 expresion: expresion . ',' expresionAsignacion
-  111 sentenciaSalto: RETURN expresion . ';'
+  109 sentenciaSalto: RETURN ';' .
+
+    $default  reduce using rule 109 (sentenciaSalto)
+
+
+state 76
+
+    8 expresion: expresion . ',' expresionAsignacion
+  108 sentenciaSalto: RETURN expresion . ';'
 
     ';'  shift, and go to state 132
     ','  shift, and go to state 92
 
 
-state 76
+state 77
 
-  100 sentenciaSeleccion: SWITCH '(' . expresion ')' sentencia
+   97 sentenciaSeleccion: SWITCH '(' . expresion ')' sentencia
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -1466,28 +1469,28 @@ state 76
     expresionPrimaria        go to state 50
 
 
-state 77
+state 78
 
-  115 sentenciaEtiquetada: DEFAULT ':' . sentencia
+  112 sentenciaEtiquetada: DEFAULT ':' . sentencia
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 6
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    IF                  shift, and go to state 11
-    RETURN              shift, and go to state 12
-    SWITCH              shift, and go to state 13
-    DEFAULT             shift, and go to state 14
-    GOTO                shift, and go to state 15
-    WHILE               shift, and go to state 16
-    DO                  shift, and go to state 17
-    CASE                shift, and go to state 18
-    FOR                 shift, and go to state 19
-    BREAK               shift, and go to state 20
-    CONTINUE            shift, and go to state 21
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 7
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
+    IF                  shift, and go to state 12
+    RETURN              shift, and go to state 13
+    SWITCH              shift, and go to state 14
+    DEFAULT             shift, and go to state 15
+    GOTO                shift, and go to state 16
+    WHILE               shift, and go to state 17
+    DO                  shift, and go to state 18
+    CASE                shift, and go to state 19
+    FOR                 shift, and go to state 20
+    BREAK               shift, and go to state 21
+    CONTINUE            shift, and go to state 22
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -1497,7 +1500,7 @@ state 77
     '!'                 shift, and go to state 29
     '{'                 shift, and go to state 30
 
-    expresion                go to state 80
+    expresion                go to state 81
     expresionAsignacion      go to state 33
     expresionCondicional     go to state 34
     expresionOLogico         go to state 35
@@ -1525,24 +1528,24 @@ state 77
     sentenciaEtiquetada      go to state 60
 
 
-state 78
+state 79
 
-  113 sentenciaSalto: GOTO IDENTIFICADOR . ';'
+  110 sentenciaSalto: GOTO IDENTIFICADOR . ';'
 
     ';'  shift, and go to state 135
 
 
-state 79
+state 80
 
-  101 sentenciaIteracion: WHILE '(' . expresion ')' sentencia
+   98 sentenciaIteracion: WHILE '(' . expresion ')' sentencia
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -1572,48 +1575,48 @@ state 79
     expresionPrimaria        go to state 50
 
 
-state 80
+state 81
 
-   11 expresion: expresion . ',' expresionAsignacion
-   97 sentenciaExpresion: expresion . ';'
+    8 expresion: expresion . ',' expresionAsignacion
+   94 sentenciaExpresion: expresion . ';'
 
     ';'  shift, and go to state 137
     ','  shift, and go to state 92
 
 
-state 81
+state 82
 
-  102 sentenciaIteracion: DO sentencia . WHILE '(' expresion ')' ';'
+   99 sentenciaIteracion: DO sentencia . WHILE '(' expresion ')' ';'
 
     WHILE  shift, and go to state 138
 
 
-state 82
+state 83
 
-  114 sentenciaEtiquetada: CASE expresionCondicional . ':' sentencia
+  111 sentenciaEtiquetada: CASE expresionCondicional . ':' sentencia
 
     ':'  shift, and go to state 139
 
 
-state 83
-
-   44 expresionConversion: expresionUnaria .
-
-    $default  reduce using rule 44 (expresionConversion)
-
-
 state 84
 
-  103 sentenciaIteracion: FOR '(' . declaracionExpresionOpcional ';' expresionOpcional ';' expresionOpcional ')' sentencia
+   41 expresionConversion: expresionUnaria .
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
+    $default  reduce using rule 41 (expresionConversion)
+
+
+state 85
+
+  100 sentenciaIteracion: FOR '(' . declaracionExpresionOpcional ';' expresionOpcional ';' expresionOpcional ')' sentencia
+
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
     TIPODATO            shift, and go to state 140
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -1622,7 +1625,7 @@ state 84
     '~'                 shift, and go to state 28
     '!'                 shift, and go to state 29
 
-    $default  reduce using rule 104 (declaracionExpresionOpcional)
+    $default  reduce using rule 101 (declaracionExpresionOpcional)
 
     expresion                     go to state 141
     expresionAsignacion           go to state 33
@@ -1647,74 +1650,62 @@ state 84
     declaracionExpresionOpcional  go to state 143
 
 
-state 85
-
-  110 sentenciaSalto: BREAK ';' .
-
-    $default  reduce using rule 110 (sentenciaSalto)
-
-
 state 86
 
-  109 sentenciaSalto: CONTINUE ';' .
+  107 sentenciaSalto: BREAK ';' .
 
-    $default  reduce using rule 109 (sentenciaSalto)
+    $default  reduce using rule 107 (sentenciaSalto)
 
 
 state 87
 
-    6 linea: ERROR_LEXICO finDeLinea .
-    8 finDeLinea: finDeLinea . ERROR_LEXICO ';'
-    9           | finDeLinea . ERROR_LEXICO
+  106 sentenciaSalto: CONTINUE ';' .
 
-    ERROR_LEXICO  shift, and go to state 144
-
-    ERROR_LEXICO  [reduce using rule 6 (linea)]
-    $default      reduce using rule 6 (linea)
+    $default  reduce using rule 106 (sentenciaSalto)
 
 
 state 88
 
-   45 expresionConversion: '(' TIPODATO . ')' expresionConversion
+   42 expresionConversion: '(' TIPODATO . ')' expresionConversion
 
-    ')'  shift, and go to state 145
+    ')'  shift, and go to state 144
 
 
 state 89
 
-   11 expresion: expresion . ',' expresionAsignacion
-   73 expresionPrimaria: '(' expresion . ')'
+    8 expresion: expresion . ',' expresionAsignacion
+   70 expresionPrimaria: '(' expresion . ')'
 
     ','  shift, and go to state 92
-    ')'  shift, and go to state 146
+    ')'  shift, and go to state 145
 
 
 state 90
 
     2 entrada: entrada . linea
-   95 sentenciaCompuesta: '{' entrada . '}'
-   96                   | '{' entrada .
+   92 sentenciaCompuesta: '{' entrada . '}'
+   93                   | '{' entrada .
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 6
-    TIPODATO            shift, and go to state 7
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    IF                  shift, and go to state 11
-    RETURN              shift, and go to state 12
-    SWITCH              shift, and go to state 13
-    DEFAULT             shift, and go to state 14
-    GOTO                shift, and go to state 15
-    WHILE               shift, and go to state 16
-    DO                  shift, and go to state 17
-    CASE                shift, and go to state 18
-    FOR                 shift, and go to state 19
-    BREAK               shift, and go to state 20
-    CONTINUE            shift, and go to state 21
-    ERROR_LEXICO        shift, and go to state 22
+    error               shift, and go to state 3
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 7
+    TIPODATO            shift, and go to state 8
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
+    IF                  shift, and go to state 12
+    RETURN              shift, and go to state 13
+    SWITCH              shift, and go to state 14
+    DEFAULT             shift, and go to state 15
+    GOTO                shift, and go to state 16
+    WHILE               shift, and go to state 17
+    DO                  shift, and go to state 18
+    CASE                shift, and go to state 19
+    FOR                 shift, and go to state 20
+    BREAK               shift, and go to state 21
+    CONTINUE            shift, and go to state 22
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -1723,38 +1714,39 @@ state 90
     '~'                 shift, and go to state 28
     '!'                 shift, and go to state 29
     '{'                 shift, and go to state 30
-    '}'                 shift, and go to state 147
+    '}'                 shift, and go to state 146
 
-    INCREMENTO          [reduce using rule 96 (sentenciaCompuesta)]
-    DECREMENTO          [reduce using rule 96 (sentenciaCompuesta)]
-    SIZEOF              [reduce using rule 96 (sentenciaCompuesta)]
-    IDENTIFICADOR       [reduce using rule 96 (sentenciaCompuesta)]
-    TIPODATO            [reduce using rule 96 (sentenciaCompuesta)]
-    CONSTANTE_REAL      [reduce using rule 96 (sentenciaCompuesta)]
-    CONSTANTE_ENTERA    [reduce using rule 96 (sentenciaCompuesta)]
-    CONSTANTE_CARACTER  [reduce using rule 96 (sentenciaCompuesta)]
-    IF                  [reduce using rule 96 (sentenciaCompuesta)]
-    RETURN              [reduce using rule 96 (sentenciaCompuesta)]
-    SWITCH              [reduce using rule 96 (sentenciaCompuesta)]
-    DEFAULT             [reduce using rule 96 (sentenciaCompuesta)]
-    GOTO                [reduce using rule 96 (sentenciaCompuesta)]
-    WHILE               [reduce using rule 96 (sentenciaCompuesta)]
-    DO                  [reduce using rule 96 (sentenciaCompuesta)]
-    CASE                [reduce using rule 96 (sentenciaCompuesta)]
-    FOR                 [reduce using rule 96 (sentenciaCompuesta)]
-    BREAK               [reduce using rule 96 (sentenciaCompuesta)]
-    CONTINUE            [reduce using rule 96 (sentenciaCompuesta)]
-    ERROR_LEXICO        [reduce using rule 96 (sentenciaCompuesta)]
-    '&'                 [reduce using rule 96 (sentenciaCompuesta)]
-    '+'                 [reduce using rule 96 (sentenciaCompuesta)]
-    '-'                 [reduce using rule 96 (sentenciaCompuesta)]
-    '*'                 [reduce using rule 96 (sentenciaCompuesta)]
-    '('                 [reduce using rule 96 (sentenciaCompuesta)]
-    '~'                 [reduce using rule 96 (sentenciaCompuesta)]
-    '!'                 [reduce using rule 96 (sentenciaCompuesta)]
-    '{'                 [reduce using rule 96 (sentenciaCompuesta)]
-    '}'                 [reduce using rule 96 (sentenciaCompuesta)]
-    $default            reduce using rule 96 (sentenciaCompuesta)
+    $end                reduce using rule 93 (sentenciaCompuesta)
+    error               [reduce using rule 93 (sentenciaCompuesta)]
+    INCREMENTO          [reduce using rule 93 (sentenciaCompuesta)]
+    DECREMENTO          [reduce using rule 93 (sentenciaCompuesta)]
+    SIZEOF              [reduce using rule 93 (sentenciaCompuesta)]
+    IDENTIFICADOR       [reduce using rule 93 (sentenciaCompuesta)]
+    TIPODATO            [reduce using rule 93 (sentenciaCompuesta)]
+    CONSTANTE_REAL      [reduce using rule 93 (sentenciaCompuesta)]
+    CONSTANTE_ENTERA    [reduce using rule 93 (sentenciaCompuesta)]
+    CONSTANTE_CARACTER  [reduce using rule 93 (sentenciaCompuesta)]
+    IF                  [reduce using rule 93 (sentenciaCompuesta)]
+    ELSE                reduce using rule 93 (sentenciaCompuesta)
+    RETURN              [reduce using rule 93 (sentenciaCompuesta)]
+    SWITCH              [reduce using rule 93 (sentenciaCompuesta)]
+    DEFAULT             [reduce using rule 93 (sentenciaCompuesta)]
+    GOTO                [reduce using rule 93 (sentenciaCompuesta)]
+    WHILE               [reduce using rule 93 (sentenciaCompuesta)]
+    DO                  [reduce using rule 93 (sentenciaCompuesta)]
+    CASE                [reduce using rule 93 (sentenciaCompuesta)]
+    FOR                 [reduce using rule 93 (sentenciaCompuesta)]
+    BREAK               [reduce using rule 93 (sentenciaCompuesta)]
+    CONTINUE            [reduce using rule 93 (sentenciaCompuesta)]
+    '&'                 [reduce using rule 93 (sentenciaCompuesta)]
+    '+'                 [reduce using rule 93 (sentenciaCompuesta)]
+    '-'                 [reduce using rule 93 (sentenciaCompuesta)]
+    '*'                 [reduce using rule 93 (sentenciaCompuesta)]
+    '('                 [reduce using rule 93 (sentenciaCompuesta)]
+    '~'                 [reduce using rule 93 (sentenciaCompuesta)]
+    '!'                 [reduce using rule 93 (sentenciaCompuesta)]
+    '{'                 [reduce using rule 93 (sentenciaCompuesta)]
+    '}'                 [reduce using rule 93 (sentenciaCompuesta)]
 
     linea                    go to state 31
     expresion                go to state 32
@@ -1791,84 +1783,84 @@ state 90
 state 91
 
     3 linea: expresion ';' .
-   97 sentenciaExpresion: expresion ';' .
+   94 sentenciaExpresion: expresion ';' .
 
     $end                reduce using rule 3 (linea)
-    $end                [reduce using rule 97 (sentenciaExpresion)]
+    $end                [reduce using rule 94 (sentenciaExpresion)]
+    error               reduce using rule 3 (linea)
+    error               [reduce using rule 94 (sentenciaExpresion)]
     INCREMENTO          reduce using rule 3 (linea)
-    INCREMENTO          [reduce using rule 97 (sentenciaExpresion)]
+    INCREMENTO          [reduce using rule 94 (sentenciaExpresion)]
     DECREMENTO          reduce using rule 3 (linea)
-    DECREMENTO          [reduce using rule 97 (sentenciaExpresion)]
+    DECREMENTO          [reduce using rule 94 (sentenciaExpresion)]
     SIZEOF              reduce using rule 3 (linea)
-    SIZEOF              [reduce using rule 97 (sentenciaExpresion)]
+    SIZEOF              [reduce using rule 94 (sentenciaExpresion)]
     IDENTIFICADOR       reduce using rule 3 (linea)
-    IDENTIFICADOR       [reduce using rule 97 (sentenciaExpresion)]
+    IDENTIFICADOR       [reduce using rule 94 (sentenciaExpresion)]
     TIPODATO            reduce using rule 3 (linea)
-    TIPODATO            [reduce using rule 97 (sentenciaExpresion)]
+    TIPODATO            [reduce using rule 94 (sentenciaExpresion)]
     CONSTANTE_REAL      reduce using rule 3 (linea)
-    CONSTANTE_REAL      [reduce using rule 97 (sentenciaExpresion)]
+    CONSTANTE_REAL      [reduce using rule 94 (sentenciaExpresion)]
     CONSTANTE_ENTERA    reduce using rule 3 (linea)
-    CONSTANTE_ENTERA    [reduce using rule 97 (sentenciaExpresion)]
+    CONSTANTE_ENTERA    [reduce using rule 94 (sentenciaExpresion)]
     CONSTANTE_CARACTER  reduce using rule 3 (linea)
-    CONSTANTE_CARACTER  [reduce using rule 97 (sentenciaExpresion)]
+    CONSTANTE_CARACTER  [reduce using rule 94 (sentenciaExpresion)]
     IF                  reduce using rule 3 (linea)
-    IF                  [reduce using rule 97 (sentenciaExpresion)]
+    IF                  [reduce using rule 94 (sentenciaExpresion)]
     ELSE                reduce using rule 3 (linea)
-    ELSE                [reduce using rule 97 (sentenciaExpresion)]
+    ELSE                [reduce using rule 94 (sentenciaExpresion)]
     RETURN              reduce using rule 3 (linea)
-    RETURN              [reduce using rule 97 (sentenciaExpresion)]
+    RETURN              [reduce using rule 94 (sentenciaExpresion)]
     SWITCH              reduce using rule 3 (linea)
-    SWITCH              [reduce using rule 97 (sentenciaExpresion)]
+    SWITCH              [reduce using rule 94 (sentenciaExpresion)]
     DEFAULT             reduce using rule 3 (linea)
-    DEFAULT             [reduce using rule 97 (sentenciaExpresion)]
+    DEFAULT             [reduce using rule 94 (sentenciaExpresion)]
     GOTO                reduce using rule 3 (linea)
-    GOTO                [reduce using rule 97 (sentenciaExpresion)]
+    GOTO                [reduce using rule 94 (sentenciaExpresion)]
     WHILE               reduce using rule 3 (linea)
-    WHILE               [reduce using rule 97 (sentenciaExpresion)]
+    WHILE               [reduce using rule 94 (sentenciaExpresion)]
     DO                  reduce using rule 3 (linea)
-    DO                  [reduce using rule 97 (sentenciaExpresion)]
+    DO                  [reduce using rule 94 (sentenciaExpresion)]
     CASE                reduce using rule 3 (linea)
-    CASE                [reduce using rule 97 (sentenciaExpresion)]
+    CASE                [reduce using rule 94 (sentenciaExpresion)]
     FOR                 reduce using rule 3 (linea)
-    FOR                 [reduce using rule 97 (sentenciaExpresion)]
+    FOR                 [reduce using rule 94 (sentenciaExpresion)]
     BREAK               reduce using rule 3 (linea)
-    BREAK               [reduce using rule 97 (sentenciaExpresion)]
+    BREAK               [reduce using rule 94 (sentenciaExpresion)]
     CONTINUE            reduce using rule 3 (linea)
-    CONTINUE            [reduce using rule 97 (sentenciaExpresion)]
-    ERROR_LEXICO        reduce using rule 3 (linea)
-    ERROR_LEXICO        [reduce using rule 97 (sentenciaExpresion)]
+    CONTINUE            [reduce using rule 94 (sentenciaExpresion)]
     '&'                 reduce using rule 3 (linea)
-    '&'                 [reduce using rule 97 (sentenciaExpresion)]
+    '&'                 [reduce using rule 94 (sentenciaExpresion)]
     '+'                 reduce using rule 3 (linea)
-    '+'                 [reduce using rule 97 (sentenciaExpresion)]
+    '+'                 [reduce using rule 94 (sentenciaExpresion)]
     '-'                 reduce using rule 3 (linea)
-    '-'                 [reduce using rule 97 (sentenciaExpresion)]
+    '-'                 [reduce using rule 94 (sentenciaExpresion)]
     '*'                 reduce using rule 3 (linea)
-    '*'                 [reduce using rule 97 (sentenciaExpresion)]
+    '*'                 [reduce using rule 94 (sentenciaExpresion)]
     '('                 reduce using rule 3 (linea)
-    '('                 [reduce using rule 97 (sentenciaExpresion)]
+    '('                 [reduce using rule 94 (sentenciaExpresion)]
     '~'                 reduce using rule 3 (linea)
-    '~'                 [reduce using rule 97 (sentenciaExpresion)]
+    '~'                 [reduce using rule 94 (sentenciaExpresion)]
     '!'                 reduce using rule 3 (linea)
-    '!'                 [reduce using rule 97 (sentenciaExpresion)]
+    '!'                 [reduce using rule 94 (sentenciaExpresion)]
     '{'                 reduce using rule 3 (linea)
-    '{'                 [reduce using rule 97 (sentenciaExpresion)]
+    '{'                 [reduce using rule 94 (sentenciaExpresion)]
     '}'                 reduce using rule 3 (linea)
-    '}'                 [reduce using rule 97 (sentenciaExpresion)]
+    '}'                 [reduce using rule 94 (sentenciaExpresion)]
     $default            reduce using rule 3 (linea)
 
 
 state 92
 
-   11 expresion: expresion ',' . expresionAsignacion
+    8 expresion: expresion ',' . expresionAsignacion
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -1877,7 +1869,7 @@ state 92
     '~'                 shift, and go to state 28
     '!'                 shift, and go to state 29
 
-    expresionAsignacion      go to state 148
+    expresionAsignacion      go to state 147
     expresionCondicional     go to state 34
     expresionOLogico         go to state 35
     expresionYLogico         go to state 36
@@ -1899,15 +1891,15 @@ state 92
 
 state 93
 
-   15 expresionCondicional: expresionOLogico '?' . expresion ':' expresionCondicional
+   12 expresionCondicional: expresionOLogico '?' . expresion ':' expresionCondicional
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -1916,7 +1908,7 @@ state 93
     '~'                 shift, and go to state 28
     '!'                 shift, and go to state 29
 
-    expresion                go to state 149
+    expresion                go to state 148
     expresionAsignacion      go to state 33
     expresionCondicional     go to state 34
     expresionOLogico         go to state 35
@@ -1939,15 +1931,15 @@ state 93
 
 state 94
 
-   17 expresionOLogico: expresionYLogico OLOGICO . expresionYLogico
+   14 expresionOLogico: expresionYLogico OLOGICO . expresionYLogico
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -1956,7 +1948,7 @@ state 94
     '~'                 shift, and go to state 28
     '!'                 shift, and go to state 29
 
-    expresionYLogico         go to state 150
+    expresionYLogico         go to state 149
     expresionOInclusivo      go to state 37
     expresionOExcluyente     go to state 38
     expresionY               go to state 39
@@ -1966,7 +1958,7 @@ state 94
     expresionAditiva         go to state 43
     expresionMultiplicativa  go to state 44
     expresionConversion      go to state 45
-    expresionUnaria          go to state 83
+    expresionUnaria          go to state 84
     operadorUnario           go to state 47
     expresionSufijo          go to state 48
     argumento2               go to state 49
@@ -1975,15 +1967,15 @@ state 94
 
 state 95
 
-   19 expresionYLogico: expresionYLogico YLOGICO . expresionOInclusivo
+   16 expresionYLogico: expresionYLogico YLOGICO . expresionOInclusivo
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -1992,7 +1984,7 @@ state 95
     '~'                 shift, and go to state 28
     '!'                 shift, and go to state 29
 
-    expresionOInclusivo      go to state 151
+    expresionOInclusivo      go to state 150
     expresionOExcluyente     go to state 38
     expresionY               go to state 39
     expresionIgualdad        go to state 40
@@ -2001,7 +1993,7 @@ state 95
     expresionAditiva         go to state 43
     expresionMultiplicativa  go to state 44
     expresionConversion      go to state 45
-    expresionUnaria          go to state 83
+    expresionUnaria          go to state 84
     operadorUnario           go to state 47
     expresionSufijo          go to state 48
     argumento2               go to state 49
@@ -2010,15 +2002,15 @@ state 95
 
 state 96
 
-   21 expresionOInclusivo: expresionOInclusivo '|' . expresionOExcluyente
+   18 expresionOInclusivo: expresionOInclusivo '|' . expresionOExcluyente
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -2027,7 +2019,7 @@ state 96
     '~'                 shift, and go to state 28
     '!'                 shift, and go to state 29
 
-    expresionOExcluyente     go to state 152
+    expresionOExcluyente     go to state 151
     expresionY               go to state 39
     expresionIgualdad        go to state 40
     expresionRelacional      go to state 41
@@ -2035,7 +2027,7 @@ state 96
     expresionAditiva         go to state 43
     expresionMultiplicativa  go to state 44
     expresionConversion      go to state 45
-    expresionUnaria          go to state 83
+    expresionUnaria          go to state 84
     operadorUnario           go to state 47
     expresionSufijo          go to state 48
     argumento2               go to state 49
@@ -2044,15 +2036,15 @@ state 96
 
 state 97
 
-   23 expresionOExcluyente: expresionOExcluyente '^' . expresionY
+   20 expresionOExcluyente: expresionOExcluyente '^' . expresionY
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -2061,14 +2053,14 @@ state 97
     '~'                 shift, and go to state 28
     '!'                 shift, and go to state 29
 
-    expresionY               go to state 153
+    expresionY               go to state 152
     expresionIgualdad        go to state 40
     expresionRelacional      go to state 41
     expresionCorrimiento     go to state 42
     expresionAditiva         go to state 43
     expresionMultiplicativa  go to state 44
     expresionConversion      go to state 45
-    expresionUnaria          go to state 83
+    expresionUnaria          go to state 84
     operadorUnario           go to state 47
     expresionSufijo          go to state 48
     argumento2               go to state 49
@@ -2077,15 +2069,15 @@ state 97
 
 state 98
 
-   25 expresionY: expresionY '&' . expresionIgualdad
+   22 expresionY: expresionY '&' . expresionIgualdad
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -2094,13 +2086,13 @@ state 98
     '~'                 shift, and go to state 28
     '!'                 shift, and go to state 29
 
-    expresionIgualdad        go to state 154
+    expresionIgualdad        go to state 153
     expresionRelacional      go to state 41
     expresionCorrimiento     go to state 42
     expresionAditiva         go to state 43
     expresionMultiplicativa  go to state 44
     expresionConversion      go to state 45
-    expresionUnaria          go to state 83
+    expresionUnaria          go to state 84
     operadorUnario           go to state 47
     expresionSufijo          go to state 48
     argumento2               go to state 49
@@ -2109,15 +2101,46 @@ state 98
 
 state 99
 
-   27 expresionIgualdad: expresionIgualdad IGUAL . expresionRelacional
+   24 expresionIgualdad: expresionIgualdad IGUAL . expresionRelacional
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
+    '&'                 shift, and go to state 23
+    '+'                 shift, and go to state 24
+    '-'                 shift, and go to state 25
+    '*'                 shift, and go to state 26
+    '('                 shift, and go to state 27
+    '~'                 shift, and go to state 28
+    '!'                 shift, and go to state 29
+
+    expresionRelacional      go to state 154
+    expresionCorrimiento     go to state 42
+    expresionAditiva         go to state 43
+    expresionMultiplicativa  go to state 44
+    expresionConversion      go to state 45
+    expresionUnaria          go to state 84
+    operadorUnario           go to state 47
+    expresionSufijo          go to state 48
+    argumento2               go to state 49
+    expresionPrimaria        go to state 50
+
+
+state 100
+
+   25 expresionIgualdad: expresionIgualdad DESIGUAL . expresionRelacional
+
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -2131,38 +2154,7 @@ state 99
     expresionAditiva         go to state 43
     expresionMultiplicativa  go to state 44
     expresionConversion      go to state 45
-    expresionUnaria          go to state 83
-    operadorUnario           go to state 47
-    expresionSufijo          go to state 48
-    argumento2               go to state 49
-    expresionPrimaria        go to state 50
-
-
-state 100
-
-   28 expresionIgualdad: expresionIgualdad DESIGUAL . expresionRelacional
-
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    '&'                 shift, and go to state 23
-    '+'                 shift, and go to state 24
-    '-'                 shift, and go to state 25
-    '*'                 shift, and go to state 26
-    '('                 shift, and go to state 27
-    '~'                 shift, and go to state 28
-    '!'                 shift, and go to state 29
-
-    expresionRelacional      go to state 156
-    expresionCorrimiento     go to state 42
-    expresionAditiva         go to state 43
-    expresionMultiplicativa  go to state 44
-    expresionConversion      go to state 45
-    expresionUnaria          go to state 83
+    expresionUnaria          go to state 84
     operadorUnario           go to state 47
     expresionSufijo          go to state 48
     argumento2               go to state 49
@@ -2171,15 +2163,45 @@ state 100
 
 state 101
 
-   33 expresionRelacional: expresionRelacional MAYOIGUAL . expresionCorrimiento
+   30 expresionRelacional: expresionRelacional MAYOIGUAL . expresionCorrimiento
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
+    '&'                 shift, and go to state 23
+    '+'                 shift, and go to state 24
+    '-'                 shift, and go to state 25
+    '*'                 shift, and go to state 26
+    '('                 shift, and go to state 27
+    '~'                 shift, and go to state 28
+    '!'                 shift, and go to state 29
+
+    expresionCorrimiento     go to state 156
+    expresionAditiva         go to state 43
+    expresionMultiplicativa  go to state 44
+    expresionConversion      go to state 45
+    expresionUnaria          go to state 84
+    operadorUnario           go to state 47
+    expresionSufijo          go to state 48
+    argumento2               go to state 49
+    expresionPrimaria        go to state 50
+
+
+state 102
+
+   29 expresionRelacional: expresionRelacional MENOIGUAL . expresionCorrimiento
+
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -2192,24 +2214,24 @@ state 101
     expresionAditiva         go to state 43
     expresionMultiplicativa  go to state 44
     expresionConversion      go to state 45
-    expresionUnaria          go to state 83
+    expresionUnaria          go to state 84
     operadorUnario           go to state 47
     expresionSufijo          go to state 48
     argumento2               go to state 49
     expresionPrimaria        go to state 50
 
 
-state 102
+state 103
 
-   32 expresionRelacional: expresionRelacional MENOIGUAL . expresionCorrimiento
+   27 expresionRelacional: expresionRelacional '<' . expresionCorrimiento
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -2222,24 +2244,24 @@ state 102
     expresionAditiva         go to state 43
     expresionMultiplicativa  go to state 44
     expresionConversion      go to state 45
-    expresionUnaria          go to state 83
+    expresionUnaria          go to state 84
     operadorUnario           go to state 47
     expresionSufijo          go to state 48
     argumento2               go to state 49
     expresionPrimaria        go to state 50
 
 
-state 103
+state 104
 
-   30 expresionRelacional: expresionRelacional '<' . expresionCorrimiento
+   28 expresionRelacional: expresionRelacional '>' . expresionCorrimiento
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -2252,37 +2274,7 @@ state 103
     expresionAditiva         go to state 43
     expresionMultiplicativa  go to state 44
     expresionConversion      go to state 45
-    expresionUnaria          go to state 83
-    operadorUnario           go to state 47
-    expresionSufijo          go to state 48
-    argumento2               go to state 49
-    expresionPrimaria        go to state 50
-
-
-state 104
-
-   31 expresionRelacional: expresionRelacional '>' . expresionCorrimiento
-
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    '&'                 shift, and go to state 23
-    '+'                 shift, and go to state 24
-    '-'                 shift, and go to state 25
-    '*'                 shift, and go to state 26
-    '('                 shift, and go to state 27
-    '~'                 shift, and go to state 28
-    '!'                 shift, and go to state 29
-
-    expresionCorrimiento     go to state 160
-    expresionAditiva         go to state 43
-    expresionMultiplicativa  go to state 44
-    expresionConversion      go to state 45
-    expresionUnaria          go to state 83
+    expresionUnaria          go to state 84
     operadorUnario           go to state 47
     expresionSufijo          go to state 48
     argumento2               go to state 49
@@ -2291,15 +2283,44 @@ state 104
 
 state 105
 
-   35 expresionCorrimiento: expresionCorrimiento OUTPUT . expresionAditiva
+   32 expresionCorrimiento: expresionCorrimiento OUTPUT . expresionAditiva
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
+    '&'                 shift, and go to state 23
+    '+'                 shift, and go to state 24
+    '-'                 shift, and go to state 25
+    '*'                 shift, and go to state 26
+    '('                 shift, and go to state 27
+    '~'                 shift, and go to state 28
+    '!'                 shift, and go to state 29
+
+    expresionAditiva         go to state 160
+    expresionMultiplicativa  go to state 44
+    expresionConversion      go to state 45
+    expresionUnaria          go to state 84
+    operadorUnario           go to state 47
+    expresionSufijo          go to state 48
+    argumento2               go to state 49
+    expresionPrimaria        go to state 50
+
+
+state 106
+
+   33 expresionCorrimiento: expresionCorrimiento INPUT . expresionAditiva
+
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -2311,36 +2332,7 @@ state 105
     expresionAditiva         go to state 161
     expresionMultiplicativa  go to state 44
     expresionConversion      go to state 45
-    expresionUnaria          go to state 83
-    operadorUnario           go to state 47
-    expresionSufijo          go to state 48
-    argumento2               go to state 49
-    expresionPrimaria        go to state 50
-
-
-state 106
-
-   36 expresionCorrimiento: expresionCorrimiento INPUT . expresionAditiva
-
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    '&'                 shift, and go to state 23
-    '+'                 shift, and go to state 24
-    '-'                 shift, and go to state 25
-    '*'                 shift, and go to state 26
-    '('                 shift, and go to state 27
-    '~'                 shift, and go to state 28
-    '!'                 shift, and go to state 29
-
-    expresionAditiva         go to state 162
-    expresionMultiplicativa  go to state 44
-    expresionConversion      go to state 45
-    expresionUnaria          go to state 83
+    expresionUnaria          go to state 84
     operadorUnario           go to state 47
     expresionSufijo          go to state 48
     argumento2               go to state 49
@@ -2349,15 +2341,43 @@ state 106
 
 state 107
 
-   38 expresionAditiva: expresionAditiva '+' . expresionMultiplicativa
+   35 expresionAditiva: expresionAditiva '+' . expresionMultiplicativa
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
+    '&'                 shift, and go to state 23
+    '+'                 shift, and go to state 24
+    '-'                 shift, and go to state 25
+    '*'                 shift, and go to state 26
+    '('                 shift, and go to state 27
+    '~'                 shift, and go to state 28
+    '!'                 shift, and go to state 29
+
+    expresionMultiplicativa  go to state 162
+    expresionConversion      go to state 45
+    expresionUnaria          go to state 84
+    operadorUnario           go to state 47
+    expresionSufijo          go to state 48
+    argumento2               go to state 49
+    expresionPrimaria        go to state 50
+
+
+state 108
+
+   36 expresionAditiva: expresionAditiva '-' . expresionMultiplicativa
+
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -2368,35 +2388,7 @@ state 107
 
     expresionMultiplicativa  go to state 163
     expresionConversion      go to state 45
-    expresionUnaria          go to state 83
-    operadorUnario           go to state 47
-    expresionSufijo          go to state 48
-    argumento2               go to state 49
-    expresionPrimaria        go to state 50
-
-
-state 108
-
-   39 expresionAditiva: expresionAditiva '-' . expresionMultiplicativa
-
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    '&'                 shift, and go to state 23
-    '+'                 shift, and go to state 24
-    '-'                 shift, and go to state 25
-    '*'                 shift, and go to state 26
-    '('                 shift, and go to state 27
-    '~'                 shift, and go to state 28
-    '!'                 shift, and go to state 29
-
-    expresionMultiplicativa  go to state 164
-    expresionConversion      go to state 45
-    expresionUnaria          go to state 83
+    expresionUnaria          go to state 84
     operadorUnario           go to state 47
     expresionSufijo          go to state 48
     argumento2               go to state 49
@@ -2405,15 +2397,42 @@ state 108
 
 state 109
 
-   41 expresionMultiplicativa: expresionMultiplicativa '*' . expresionConversion
+   38 expresionMultiplicativa: expresionMultiplicativa '*' . expresionConversion
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
+    '&'                 shift, and go to state 23
+    '+'                 shift, and go to state 24
+    '-'                 shift, and go to state 25
+    '*'                 shift, and go to state 26
+    '('                 shift, and go to state 27
+    '~'                 shift, and go to state 28
+    '!'                 shift, and go to state 29
+
+    expresionConversion  go to state 164
+    expresionUnaria      go to state 84
+    operadorUnario       go to state 47
+    expresionSufijo      go to state 48
+    argumento2           go to state 49
+    expresionPrimaria    go to state 50
+
+
+state 110
+
+   39 expresionMultiplicativa: expresionMultiplicativa '/' . expresionConversion
+
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -2423,24 +2442,24 @@ state 109
     '!'                 shift, and go to state 29
 
     expresionConversion  go to state 165
-    expresionUnaria      go to state 83
+    expresionUnaria      go to state 84
     operadorUnario       go to state 47
     expresionSufijo      go to state 48
     argumento2           go to state 49
     expresionPrimaria    go to state 50
 
 
-state 110
+state 111
 
-   42 expresionMultiplicativa: expresionMultiplicativa '/' . expresionConversion
+   40 expresionMultiplicativa: expresionMultiplicativa '%' . expresionConversion
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -2450,34 +2469,7 @@ state 110
     '!'                 shift, and go to state 29
 
     expresionConversion  go to state 166
-    expresionUnaria      go to state 83
-    operadorUnario       go to state 47
-    expresionSufijo      go to state 48
-    argumento2           go to state 49
-    expresionPrimaria    go to state 50
-
-
-state 111
-
-   43 expresionMultiplicativa: expresionMultiplicativa '%' . expresionConversion
-
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    '&'                 shift, and go to state 23
-    '+'                 shift, and go to state 24
-    '-'                 shift, and go to state 25
-    '*'                 shift, and go to state 26
-    '('                 shift, and go to state 27
-    '~'                 shift, and go to state 28
-    '!'                 shift, and go to state 29
-
-    expresionConversion  go to state 167
-    expresionUnaria      go to state 83
+    expresionUnaria      go to state 84
     operadorUnario       go to state 47
     expresionSufijo      go to state 48
     argumento2           go to state 49
@@ -2486,15 +2478,15 @@ state 111
 
 state 112
 
-   13 expresionAsignacion: expresionUnaria OPERADOR_ASIGNACION . expresionAsignacion
+   10 expresionAsignacion: expresionUnaria OPERADOR_ASIGNACION . expresionAsignacion
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -2503,7 +2495,7 @@ state 112
     '~'                 shift, and go to state 28
     '!'                 shift, and go to state 29
 
-    expresionAsignacion      go to state 168
+    expresionAsignacion      go to state 167
     expresionCondicional     go to state 34
     expresionOLogico         go to state 35
     expresionYLogico         go to state 36
@@ -2525,50 +2517,50 @@ state 112
 
 state 113
 
-   49 expresionUnaria: operadorUnario expresionConversion .
+   46 expresionUnaria: operadorUnario expresionConversion .
 
-    $default  reduce using rule 49 (expresionUnaria)
+    $default  reduce using rule 46 (expresionUnaria)
 
 
 state 114
 
-   64 expresionSufijo: expresionSufijo INCREMENTO .
+   61 expresionSufijo: expresionSufijo INCREMENTO .
 
-    $default  reduce using rule 64 (expresionSufijo)
+    $default  reduce using rule 61 (expresionSufijo)
 
 
 state 115
 
-   65 expresionSufijo: expresionSufijo DECREMENTO .
+   62 expresionSufijo: expresionSufijo DECREMENTO .
 
-    $default  reduce using rule 65 (expresionSufijo)
+    $default  reduce using rule 62 (expresionSufijo)
 
 
 state 116
 
-   63 expresionSufijo: expresionSufijo FLECHA . IDENTIFICADOR
+   60 expresionSufijo: expresionSufijo FLECHA . IDENTIFICADOR
 
-    IDENTIFICADOR  shift, and go to state 169
+    IDENTIFICADOR  shift, and go to state 168
 
 
 state 117
 
-   61 expresionSufijo: expresionSufijo '(' . ')'
+   58 expresionSufijo: expresionSufijo '(' . ')'
 
-    ')'  shift, and go to state 170
+    ')'  shift, and go to state 169
 
 
 state 118
 
-   59 expresionSufijo: expresionSufijo '[' . expresion ']'
+   56 expresionSufijo: expresionSufijo '[' . expresion ']'
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -2577,7 +2569,7 @@ state 118
     '~'                 shift, and go to state 28
     '!'                 shift, and go to state 29
 
-    expresion                go to state 171
+    expresion                go to state 170
     expresionAsignacion      go to state 33
     expresionCondicional     go to state 34
     expresionOLogico         go to state 35
@@ -2600,60 +2592,60 @@ state 118
 
 state 119
 
-   62 expresionSufijo: expresionSufijo '.' . IDENTIFICADOR
+   59 expresionSufijo: expresionSufijo '.' . IDENTIFICADOR
 
-    IDENTIFICADOR  shift, and go to state 172
+    IDENTIFICADOR  shift, and go to state 171
 
 
 state 120
 
-   74 declaracion: declaracionVarSimples ';' .
+   71 declaracion: declaracionVarSimples ';' .
 
-    $default  reduce using rule 74 (declaracion)
+    $default  reduce using rule 71 (declaracion)
 
 
 state 121
 
-   51 expresionUnaria: SIZEOF '(' TIPODATO . ')'
+   48 expresionUnaria: SIZEOF '(' TIPODATO . ')'
 
-    ')'  shift, and go to state 173
+    ')'  shift, and go to state 172
 
 
 state 122
 
-  116 sentenciaEtiquetada: IDENTIFICADOR ':' sentencia .
+  113 sentenciaEtiquetada: IDENTIFICADOR ':' sentencia .
 
-    $default  reduce using rule 116 (sentenciaEtiquetada)
+    $default  reduce using rule 113 (sentenciaEtiquetada)
 
 
 state 123
 
-   60 expresionSufijo: IDENTIFICADOR '(' listaArgumentos . ')'
-   67 listaArgumentos: listaArgumentos . ',' argumento2
+   57 expresionSufijo: IDENTIFICADOR '(' listaArgumentos . ')'
+   64 listaArgumentos: listaArgumentos . ',' argumento2
 
-    ','  shift, and go to state 174
-    ')'  shift, and go to state 175
+    ','  shift, and go to state 173
+    ')'  shift, and go to state 174
 
 
 state 124
 
-   66 listaArgumentos: argumento2 .
+   63 listaArgumentos: argumento2 .
 
-    $default  reduce using rule 66 (listaArgumentos)
+    $default  reduce using rule 63 (listaArgumentos)
 
 
 state 125
 
-   87 inicial: OPERADOR_ASIGNACION . argumento2
-   88        | OPERADOR_ASIGNACION . expresionAsignacion
+   84 inicial: OPERADOR_ASIGNACION . argumento2
+   85        | OPERADOR_ASIGNACION . expresionAsignacion
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -2662,7 +2654,7 @@ state 125
     '~'                 shift, and go to state 28
     '!'                 shift, and go to state 29
 
-    expresionAsignacion      go to state 176
+    expresionAsignacion      go to state 175
     expresionCondicional     go to state 34
     expresionOLogico         go to state 35
     expresionYLogico         go to state 36
@@ -2678,144 +2670,144 @@ state 125
     expresionUnaria          go to state 46
     operadorUnario           go to state 47
     expresionSufijo          go to state 48
-    argumento2               go to state 177
+    argumento2               go to state 176
     expresionPrimaria        go to state 50
 
 
 state 126
 
-   79 declaracionFunciones: TIPODATO IDENTIFICADOR '(' . listaParametrosDeclaracion ')' sentenciaCompuesta
-   80                     | TIPODATO IDENTIFICADOR '(' . ')' sentenciaCompuesta
+   76 declaracionFunciones: TIPODATO IDENTIFICADOR '(' . listaParametrosDeclaracion ')' sentenciaCompuesta
+   77                     | TIPODATO IDENTIFICADOR '(' . ')' sentenciaCompuesta
 
-    TIPODATO  shift, and go to state 178
-    ')'       shift, and go to state 179
+    TIPODATO  shift, and go to state 177
+    ')'       shift, and go to state 178
 
-    listaParametrosDeclaracion  go to state 180
+    listaParametrosDeclaracion  go to state 179
 
 
 state 127
 
-   86 unaVarSimple: IDENTIFICADOR inicial .
+   83 unaVarSimple: IDENTIFICADOR inicial .
 
-    $default  reduce using rule 86 (unaVarSimple)
+    $default  reduce using rule 83 (unaVarSimple)
 
 
 state 128
 
-   85 unaVarSimple: IDENTIFICADOR .
-   86             | IDENTIFICADOR . inicial
+   82 unaVarSimple: IDENTIFICADOR .
+   83             | IDENTIFICADOR . inicial
 
     OPERADOR_ASIGNACION  shift, and go to state 125
 
-    $default  reduce using rule 85 (unaVarSimple)
+    $default  reduce using rule 82 (unaVarSimple)
 
     inicial  go to state 127
 
 
 state 129
 
-   77 declaracionVarSimples: TIPODATO '*' listaVarSimples .
-   84 listaVarSimples: listaVarSimples . ',' unaVarSimple
+   74 declaracionVarSimples: TIPODATO '*' listaVarSimples .
+   81 listaVarSimples: listaVarSimples . ',' unaVarSimple
 
     ','  shift, and go to state 130
 
-    $default  reduce using rule 77 (declaracionVarSimples)
+    $default  reduce using rule 74 (declaracionVarSimples)
 
 
 state 130
 
-   84 listaVarSimples: listaVarSimples ',' . unaVarSimple
+   81 listaVarSimples: listaVarSimples ',' . unaVarSimple
 
     IDENTIFICADOR  shift, and go to state 128
 
-    unaVarSimple  go to state 181
+    unaVarSimple  go to state 180
 
 
 state 131
 
-   11 expresion: expresion . ',' expresionAsignacion
-   98 sentenciaSeleccion: IF '(' expresion . ')' sentencia
-   99                   | IF '(' expresion . ')' sentencia ELSE sentencia
+    8 expresion: expresion . ',' expresionAsignacion
+   95 sentenciaSeleccion: IF '(' expresion . ')' sentencia
+   96                   | IF '(' expresion . ')' sentencia ELSE sentencia
+
+    ','  shift, and go to state 92
+    ')'  shift, and go to state 181
+
+
+state 132
+
+  108 sentenciaSalto: RETURN expresion ';' .
+
+    $default  reduce using rule 108 (sentenciaSalto)
+
+
+state 133
+
+    8 expresion: expresion . ',' expresionAsignacion
+   97 sentenciaSeleccion: SWITCH '(' expresion . ')' sentencia
 
     ','  shift, and go to state 92
     ')'  shift, and go to state 182
 
 
-state 132
+state 134
 
-  111 sentenciaSalto: RETURN expresion ';' .
+  112 sentenciaEtiquetada: DEFAULT ':' sentencia .
 
-    $default  reduce using rule 111 (sentenciaSalto)
+    $default  reduce using rule 112 (sentenciaEtiquetada)
 
 
-state 133
+state 135
 
-   11 expresion: expresion . ',' expresionAsignacion
-  100 sentenciaSeleccion: SWITCH '(' expresion . ')' sentencia
+  110 sentenciaSalto: GOTO IDENTIFICADOR ';' .
+
+    $default  reduce using rule 110 (sentenciaSalto)
+
+
+state 136
+
+    8 expresion: expresion . ',' expresionAsignacion
+   98 sentenciaIteracion: WHILE '(' expresion . ')' sentencia
 
     ','  shift, and go to state 92
     ')'  shift, and go to state 183
 
 
-state 134
-
-  115 sentenciaEtiquetada: DEFAULT ':' sentencia .
-
-    $default  reduce using rule 115 (sentenciaEtiquetada)
-
-
-state 135
-
-  113 sentenciaSalto: GOTO IDENTIFICADOR ';' .
-
-    $default  reduce using rule 113 (sentenciaSalto)
-
-
-state 136
-
-   11 expresion: expresion . ',' expresionAsignacion
-  101 sentenciaIteracion: WHILE '(' expresion . ')' sentencia
-
-    ','  shift, and go to state 92
-    ')'  shift, and go to state 184
-
-
 state 137
 
-   97 sentenciaExpresion: expresion ';' .
+   94 sentenciaExpresion: expresion ';' .
 
-    $default  reduce using rule 97 (sentenciaExpresion)
+    $default  reduce using rule 94 (sentenciaExpresion)
 
 
 state 138
 
-  102 sentenciaIteracion: DO sentencia WHILE . '(' expresion ')' ';'
+   99 sentenciaIteracion: DO sentencia WHILE . '(' expresion ')' ';'
 
-    '('  shift, and go to state 185
+    '('  shift, and go to state 184
 
 
 state 139
 
-  114 sentenciaEtiquetada: CASE expresionCondicional ':' . sentencia
+  111 sentenciaEtiquetada: CASE expresionCondicional ':' . sentencia
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 6
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    IF                  shift, and go to state 11
-    RETURN              shift, and go to state 12
-    SWITCH              shift, and go to state 13
-    DEFAULT             shift, and go to state 14
-    GOTO                shift, and go to state 15
-    WHILE               shift, and go to state 16
-    DO                  shift, and go to state 17
-    CASE                shift, and go to state 18
-    FOR                 shift, and go to state 19
-    BREAK               shift, and go to state 20
-    CONTINUE            shift, and go to state 21
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 7
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
+    IF                  shift, and go to state 12
+    RETURN              shift, and go to state 13
+    SWITCH              shift, and go to state 14
+    DEFAULT             shift, and go to state 15
+    GOTO                shift, and go to state 16
+    WHILE               shift, and go to state 17
+    DO                  shift, and go to state 18
+    CASE                shift, and go to state 19
+    FOR                 shift, and go to state 20
+    BREAK               shift, and go to state 21
+    CONTINUE            shift, and go to state 22
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -2825,7 +2817,7 @@ state 139
     '!'                 shift, and go to state 29
     '{'                 shift, and go to state 30
 
-    expresion                go to state 80
+    expresion                go to state 81
     expresionAsignacion      go to state 33
     expresionCondicional     go to state 34
     expresionOLogico         go to state 35
@@ -2844,7 +2836,7 @@ state 139
     expresionSufijo          go to state 48
     argumento2               go to state 49
     expresionPrimaria        go to state 50
-    sentencia                go to state 186
+    sentencia                go to state 185
     sentenciaCompuesta       go to state 55
     sentenciaExpresion       go to state 56
     sentenciaSeleccion       go to state 57
@@ -2855,64 +2847,54 @@ state 139
 
 state 140
 
-   76 declaracionVarSimples: TIPODATO . listaVarSimples
-   77                      | TIPODATO . '*' listaVarSimples
-   78                      | TIPODATO .
+   73 declaracionVarSimples: TIPODATO . listaVarSimples
+   74                      | TIPODATO . '*' listaVarSimples
+   75                      | TIPODATO .
 
     IDENTIFICADOR  shift, and go to state 128
-    '*'            shift, and go to state 70
+    '*'            shift, and go to state 71
 
-    $default  reduce using rule 78 (declaracionVarSimples)
+    $default  reduce using rule 75 (declaracionVarSimples)
 
-    listaVarSimples  go to state 71
-    unaVarSimple     go to state 72
+    listaVarSimples  go to state 72
+    unaVarSimple     go to state 73
 
 
 state 141
 
-   11 expresion: expresion . ',' expresionAsignacion
-  106 declaracionExpresionOpcional: expresion .
+    8 expresion: expresion . ',' expresionAsignacion
+  103 declaracionExpresionOpcional: expresion .
 
     ','  shift, and go to state 92
 
-    $default  reduce using rule 106 (declaracionExpresionOpcional)
+    $default  reduce using rule 103 (declaracionExpresionOpcional)
 
 
 state 142
 
-  105 declaracionExpresionOpcional: declaracionVarSimples .
+  102 declaracionExpresionOpcional: declaracionVarSimples .
 
-    $default  reduce using rule 105 (declaracionExpresionOpcional)
+    $default  reduce using rule 102 (declaracionExpresionOpcional)
 
 
 state 143
 
-  103 sentenciaIteracion: FOR '(' declaracionExpresionOpcional . ';' expresionOpcional ';' expresionOpcional ')' sentencia
+  100 sentenciaIteracion: FOR '(' declaracionExpresionOpcional . ';' expresionOpcional ';' expresionOpcional ')' sentencia
 
-    ';'  shift, and go to state 187
+    ';'  shift, and go to state 186
 
 
 state 144
 
-    8 finDeLinea: finDeLinea ERROR_LEXICO . ';'
-    9           | finDeLinea ERROR_LEXICO .
+   42 expresionConversion: '(' TIPODATO ')' . expresionConversion
 
-    ';'  shift, and go to state 188
-
-    $default  reduce using rule 9 (finDeLinea)
-
-
-state 145
-
-   45 expresionConversion: '(' TIPODATO ')' . expresionConversion
-
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -2921,157 +2903,133 @@ state 145
     '~'                 shift, and go to state 28
     '!'                 shift, and go to state 29
 
-    expresionConversion  go to state 189
-    expresionUnaria      go to state 83
+    expresionConversion  go to state 187
+    expresionUnaria      go to state 84
     operadorUnario       go to state 47
     expresionSufijo      go to state 48
     argumento2           go to state 49
     expresionPrimaria    go to state 50
 
 
+state 145
+
+   70 expresionPrimaria: '(' expresion ')' .
+
+    $default  reduce using rule 70 (expresionPrimaria)
+
+
 state 146
 
-   73 expresionPrimaria: '(' expresion ')' .
+   92 sentenciaCompuesta: '{' entrada '}' .
 
-    $default  reduce using rule 73 (expresionPrimaria)
+    $default  reduce using rule 92 (sentenciaCompuesta)
 
 
 state 147
 
-   95 sentenciaCompuesta: '{' entrada '}' .
+    8 expresion: expresion ',' expresionAsignacion .
 
-    $default  reduce using rule 95 (sentenciaCompuesta)
+    $default  reduce using rule 8 (expresion)
 
 
 state 148
 
-   11 expresion: expresion ',' expresionAsignacion .
+    8 expresion: expresion . ',' expresionAsignacion
+   12 expresionCondicional: expresionOLogico '?' expresion . ':' expresionCondicional
 
-    $default  reduce using rule 11 (expresion)
+    ','  shift, and go to state 92
+    ':'  shift, and go to state 188
 
 
 state 149
 
-   11 expresion: expresion . ',' expresionAsignacion
-   15 expresionCondicional: expresionOLogico '?' expresion . ':' expresionCondicional
+   14 expresionOLogico: expresionYLogico OLOGICO expresionYLogico .
+   16 expresionYLogico: expresionYLogico . YLOGICO expresionOInclusivo
 
-    ','  shift, and go to state 92
-    ':'  shift, and go to state 190
+    YLOGICO  shift, and go to state 95
+
+    $default  reduce using rule 14 (expresionOLogico)
 
 
 state 150
 
-   17 expresionOLogico: expresionYLogico OLOGICO expresionYLogico .
-   19 expresionYLogico: expresionYLogico . YLOGICO expresionOInclusivo
+   16 expresionYLogico: expresionYLogico YLOGICO expresionOInclusivo .
+   18 expresionOInclusivo: expresionOInclusivo . '|' expresionOExcluyente
 
-    YLOGICO  shift, and go to state 95
+    '|'  shift, and go to state 96
 
-    $default  reduce using rule 17 (expresionOLogico)
+    $default  reduce using rule 16 (expresionYLogico)
 
 
 state 151
 
-   19 expresionYLogico: expresionYLogico YLOGICO expresionOInclusivo .
-   21 expresionOInclusivo: expresionOInclusivo . '|' expresionOExcluyente
+   18 expresionOInclusivo: expresionOInclusivo '|' expresionOExcluyente .
+   20 expresionOExcluyente: expresionOExcluyente . '^' expresionY
 
-    '|'  shift, and go to state 96
+    '^'  shift, and go to state 97
 
-    $default  reduce using rule 19 (expresionYLogico)
+    $default  reduce using rule 18 (expresionOInclusivo)
 
 
 state 152
 
-   21 expresionOInclusivo: expresionOInclusivo '|' expresionOExcluyente .
-   23 expresionOExcluyente: expresionOExcluyente . '^' expresionY
+   20 expresionOExcluyente: expresionOExcluyente '^' expresionY .
+   22 expresionY: expresionY . '&' expresionIgualdad
 
-    '^'  shift, and go to state 97
+    '&'  shift, and go to state 98
 
-    $default  reduce using rule 21 (expresionOInclusivo)
+    $default  reduce using rule 20 (expresionOExcluyente)
 
 
 state 153
 
-   23 expresionOExcluyente: expresionOExcluyente '^' expresionY .
-   25 expresionY: expresionY . '&' expresionIgualdad
-
-    '&'  shift, and go to state 98
-
-    $default  reduce using rule 23 (expresionOExcluyente)
-
-
-state 154
-
-   25 expresionY: expresionY '&' expresionIgualdad .
-   27 expresionIgualdad: expresionIgualdad . IGUAL expresionRelacional
-   28                  | expresionIgualdad . DESIGUAL expresionRelacional
+   22 expresionY: expresionY '&' expresionIgualdad .
+   24 expresionIgualdad: expresionIgualdad . IGUAL expresionRelacional
+   25                  | expresionIgualdad . DESIGUAL expresionRelacional
 
     IGUAL     shift, and go to state 99
     DESIGUAL  shift, and go to state 100
 
-    $default  reduce using rule 25 (expresionY)
+    $default  reduce using rule 22 (expresionY)
+
+
+state 154
+
+   24 expresionIgualdad: expresionIgualdad IGUAL expresionRelacional .
+   27 expresionRelacional: expresionRelacional . '<' expresionCorrimiento
+   28                    | expresionRelacional . '>' expresionCorrimiento
+   29                    | expresionRelacional . MENOIGUAL expresionCorrimiento
+   30                    | expresionRelacional . MAYOIGUAL expresionCorrimiento
+
+    MAYOIGUAL  shift, and go to state 101
+    MENOIGUAL  shift, and go to state 102
+    '<'        shift, and go to state 103
+    '>'        shift, and go to state 104
+
+    $default  reduce using rule 24 (expresionIgualdad)
 
 
 state 155
 
-   27 expresionIgualdad: expresionIgualdad IGUAL expresionRelacional .
-   30 expresionRelacional: expresionRelacional . '<' expresionCorrimiento
-   31                    | expresionRelacional . '>' expresionCorrimiento
-   32                    | expresionRelacional . MENOIGUAL expresionCorrimiento
-   33                    | expresionRelacional . MAYOIGUAL expresionCorrimiento
+   25 expresionIgualdad: expresionIgualdad DESIGUAL expresionRelacional .
+   27 expresionRelacional: expresionRelacional . '<' expresionCorrimiento
+   28                    | expresionRelacional . '>' expresionCorrimiento
+   29                    | expresionRelacional . MENOIGUAL expresionCorrimiento
+   30                    | expresionRelacional . MAYOIGUAL expresionCorrimiento
 
     MAYOIGUAL  shift, and go to state 101
     MENOIGUAL  shift, and go to state 102
     '<'        shift, and go to state 103
     '>'        shift, and go to state 104
 
-    $default  reduce using rule 27 (expresionIgualdad)
+    $default  reduce using rule 25 (expresionIgualdad)
 
 
 state 156
 
-   28 expresionIgualdad: expresionIgualdad DESIGUAL expresionRelacional .
-   30 expresionRelacional: expresionRelacional . '<' expresionCorrimiento
-   31                    | expresionRelacional . '>' expresionCorrimiento
-   32                    | expresionRelacional . MENOIGUAL expresionCorrimiento
-   33                    | expresionRelacional . MAYOIGUAL expresionCorrimiento
-
-    MAYOIGUAL  shift, and go to state 101
-    MENOIGUAL  shift, and go to state 102
-    '<'        shift, and go to state 103
-    '>'        shift, and go to state 104
-
-    $default  reduce using rule 28 (expresionIgualdad)
-
-
-state 157
-
-   33 expresionRelacional: expresionRelacional MAYOIGUAL expresionCorrimiento .
-   35 expresionCorrimiento: expresionCorrimiento . OUTPUT expresionAditiva
-   36                     | expresionCorrimiento . INPUT expresionAditiva
-
-    OUTPUT  shift, and go to state 105
-    INPUT   shift, and go to state 106
-
-    $default  reduce using rule 33 (expresionRelacional)
-
-
-state 158
-
-   32 expresionRelacional: expresionRelacional MENOIGUAL expresionCorrimiento .
-   35 expresionCorrimiento: expresionCorrimiento . OUTPUT expresionAditiva
-   36                     | expresionCorrimiento . INPUT expresionAditiva
-
-    OUTPUT  shift, and go to state 105
-    INPUT   shift, and go to state 106
-
-    $default  reduce using rule 32 (expresionRelacional)
-
-
-state 159
-
-   30 expresionRelacional: expresionRelacional '<' expresionCorrimiento .
-   35 expresionCorrimiento: expresionCorrimiento . OUTPUT expresionAditiva
-   36                     | expresionCorrimiento . INPUT expresionAditiva
+   30 expresionRelacional: expresionRelacional MAYOIGUAL expresionCorrimiento .
+   32 expresionCorrimiento: expresionCorrimiento . OUTPUT expresionAditiva
+   33                     | expresionCorrimiento . INPUT expresionAditiva
 
     OUTPUT  shift, and go to state 105
     INPUT   shift, and go to state 106
@@ -3079,227 +3037,251 @@ state 159
     $default  reduce using rule 30 (expresionRelacional)
 
 
-state 160
+state 157
 
-   31 expresionRelacional: expresionRelacional '>' expresionCorrimiento .
-   35 expresionCorrimiento: expresionCorrimiento . OUTPUT expresionAditiva
-   36                     | expresionCorrimiento . INPUT expresionAditiva
+   29 expresionRelacional: expresionRelacional MENOIGUAL expresionCorrimiento .
+   32 expresionCorrimiento: expresionCorrimiento . OUTPUT expresionAditiva
+   33                     | expresionCorrimiento . INPUT expresionAditiva
 
     OUTPUT  shift, and go to state 105
     INPUT   shift, and go to state 106
 
-    $default  reduce using rule 31 (expresionRelacional)
+    $default  reduce using rule 29 (expresionRelacional)
+
+
+state 158
+
+   27 expresionRelacional: expresionRelacional '<' expresionCorrimiento .
+   32 expresionCorrimiento: expresionCorrimiento . OUTPUT expresionAditiva
+   33                     | expresionCorrimiento . INPUT expresionAditiva
+
+    OUTPUT  shift, and go to state 105
+    INPUT   shift, and go to state 106
+
+    $default  reduce using rule 27 (expresionRelacional)
+
+
+state 159
+
+   28 expresionRelacional: expresionRelacional '>' expresionCorrimiento .
+   32 expresionCorrimiento: expresionCorrimiento . OUTPUT expresionAditiva
+   33                     | expresionCorrimiento . INPUT expresionAditiva
+
+    OUTPUT  shift, and go to state 105
+    INPUT   shift, and go to state 106
+
+    $default  reduce using rule 28 (expresionRelacional)
+
+
+state 160
+
+   32 expresionCorrimiento: expresionCorrimiento OUTPUT expresionAditiva .
+   35 expresionAditiva: expresionAditiva . '+' expresionMultiplicativa
+   36                 | expresionAditiva . '-' expresionMultiplicativa
+
+    '+'  shift, and go to state 107
+    '-'  shift, and go to state 108
+
+    $default  reduce using rule 32 (expresionCorrimiento)
 
 
 state 161
 
-   35 expresionCorrimiento: expresionCorrimiento OUTPUT expresionAditiva .
-   38 expresionAditiva: expresionAditiva . '+' expresionMultiplicativa
-   39                 | expresionAditiva . '-' expresionMultiplicativa
+   33 expresionCorrimiento: expresionCorrimiento INPUT expresionAditiva .
+   35 expresionAditiva: expresionAditiva . '+' expresionMultiplicativa
+   36                 | expresionAditiva . '-' expresionMultiplicativa
 
     '+'  shift, and go to state 107
     '-'  shift, and go to state 108
 
-    $default  reduce using rule 35 (expresionCorrimiento)
+    $default  reduce using rule 33 (expresionCorrimiento)
 
 
 state 162
 
-   36 expresionCorrimiento: expresionCorrimiento INPUT expresionAditiva .
-   38 expresionAditiva: expresionAditiva . '+' expresionMultiplicativa
-   39                 | expresionAditiva . '-' expresionMultiplicativa
+   35 expresionAditiva: expresionAditiva '+' expresionMultiplicativa .
+   38 expresionMultiplicativa: expresionMultiplicativa . '*' expresionConversion
+   39                        | expresionMultiplicativa . '/' expresionConversion
+   40                        | expresionMultiplicativa . '%' expresionConversion
 
-    '+'  shift, and go to state 107
-    '-'  shift, and go to state 108
+    '*'  shift, and go to state 109
+    '/'  shift, and go to state 110
+    '%'  shift, and go to state 111
 
-    $default  reduce using rule 36 (expresionCorrimiento)
+    $default  reduce using rule 35 (expresionAditiva)
 
 
 state 163
 
-   38 expresionAditiva: expresionAditiva '+' expresionMultiplicativa .
-   41 expresionMultiplicativa: expresionMultiplicativa . '*' expresionConversion
-   42                        | expresionMultiplicativa . '/' expresionConversion
-   43                        | expresionMultiplicativa . '%' expresionConversion
+   36 expresionAditiva: expresionAditiva '-' expresionMultiplicativa .
+   38 expresionMultiplicativa: expresionMultiplicativa . '*' expresionConversion
+   39                        | expresionMultiplicativa . '/' expresionConversion
+   40                        | expresionMultiplicativa . '%' expresionConversion
 
     '*'  shift, and go to state 109
     '/'  shift, and go to state 110
     '%'  shift, and go to state 111
 
-    $default  reduce using rule 38 (expresionAditiva)
+    $default  reduce using rule 36 (expresionAditiva)
 
 
 state 164
 
-   39 expresionAditiva: expresionAditiva '-' expresionMultiplicativa .
-   41 expresionMultiplicativa: expresionMultiplicativa . '*' expresionConversion
-   42                        | expresionMultiplicativa . '/' expresionConversion
-   43                        | expresionMultiplicativa . '%' expresionConversion
+   38 expresionMultiplicativa: expresionMultiplicativa '*' expresionConversion .
 
-    '*'  shift, and go to state 109
-    '/'  shift, and go to state 110
-    '%'  shift, and go to state 111
-
-    $default  reduce using rule 39 (expresionAditiva)
+    $default  reduce using rule 38 (expresionMultiplicativa)
 
 
 state 165
 
-   41 expresionMultiplicativa: expresionMultiplicativa '*' expresionConversion .
+   39 expresionMultiplicativa: expresionMultiplicativa '/' expresionConversion .
 
-    $default  reduce using rule 41 (expresionMultiplicativa)
+    $default  reduce using rule 39 (expresionMultiplicativa)
 
 
 state 166
 
-   42 expresionMultiplicativa: expresionMultiplicativa '/' expresionConversion .
+   40 expresionMultiplicativa: expresionMultiplicativa '%' expresionConversion .
 
-    $default  reduce using rule 42 (expresionMultiplicativa)
+    $default  reduce using rule 40 (expresionMultiplicativa)
 
 
 state 167
 
-   43 expresionMultiplicativa: expresionMultiplicativa '%' expresionConversion .
+   10 expresionAsignacion: expresionUnaria OPERADOR_ASIGNACION expresionAsignacion .
 
-    $default  reduce using rule 43 (expresionMultiplicativa)
+    $default  reduce using rule 10 (expresionAsignacion)
 
 
 state 168
 
-   13 expresionAsignacion: expresionUnaria OPERADOR_ASIGNACION expresionAsignacion .
-
-    $default  reduce using rule 13 (expresionAsignacion)
-
-
-state 169
-
-   63 expresionSufijo: expresionSufijo FLECHA IDENTIFICADOR .
-
-    $default  reduce using rule 63 (expresionSufijo)
-
-
-state 170
-
-   61 expresionSufijo: expresionSufijo '(' ')' .
-
-    $default  reduce using rule 61 (expresionSufijo)
-
-
-state 171
-
-   11 expresion: expresion . ',' expresionAsignacion
-   59 expresionSufijo: expresionSufijo '[' expresion . ']'
-
-    ','  shift, and go to state 92
-    ']'  shift, and go to state 191
-
-
-state 172
-
-   62 expresionSufijo: expresionSufijo '.' IDENTIFICADOR .
-
-    $default  reduce using rule 62 (expresionSufijo)
-
-
-state 173
-
-   51 expresionUnaria: SIZEOF '(' TIPODATO ')' .
-
-    $default  reduce using rule 51 (expresionUnaria)
-
-
-state 174
-
-   67 listaArgumentos: listaArgumentos ',' . argumento2
-
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-
-    argumento2  go to state 192
-
-
-state 175
-
-   60 expresionSufijo: IDENTIFICADOR '(' listaArgumentos ')' .
+   60 expresionSufijo: expresionSufijo FLECHA IDENTIFICADOR .
 
     $default  reduce using rule 60 (expresionSufijo)
 
 
+state 169
+
+   58 expresionSufijo: expresionSufijo '(' ')' .
+
+    $default  reduce using rule 58 (expresionSufijo)
+
+
+state 170
+
+    8 expresion: expresion . ',' expresionAsignacion
+   56 expresionSufijo: expresionSufijo '[' expresion . ']'
+
+    ','  shift, and go to state 92
+    ']'  shift, and go to state 189
+
+
+state 171
+
+   59 expresionSufijo: expresionSufijo '.' IDENTIFICADOR .
+
+    $default  reduce using rule 59 (expresionSufijo)
+
+
+state 172
+
+   48 expresionUnaria: SIZEOF '(' TIPODATO ')' .
+
+    $default  reduce using rule 48 (expresionUnaria)
+
+
+state 173
+
+   64 listaArgumentos: listaArgumentos ',' . argumento2
+
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
+
+    argumento2  go to state 190
+
+
+state 174
+
+   57 expresionSufijo: IDENTIFICADOR '(' listaArgumentos ')' .
+
+    $default  reduce using rule 57 (expresionSufijo)
+
+
+state 175
+
+   85 inicial: OPERADOR_ASIGNACION expresionAsignacion .
+
+    $default  reduce using rule 85 (inicial)
+
+
 state 176
 
-   88 inicial: OPERADOR_ASIGNACION expresionAsignacion .
+   69 expresionPrimaria: argumento2 .
+   84 inicial: OPERADOR_ASIGNACION argumento2 .
 
-    $default  reduce using rule 88 (inicial)
+    ';'       reduce using rule 69 (expresionPrimaria)
+    ';'       [reduce using rule 84 (inicial)]
+    ','       reduce using rule 69 (expresionPrimaria)
+    ','       [reduce using rule 84 (inicial)]
+    $default  reduce using rule 69 (expresionPrimaria)
 
 
 state 177
 
-   72 expresionPrimaria: argumento2 .
-   87 inicial: OPERADOR_ASIGNACION argumento2 .
+   78 listaParametrosDeclaracion: TIPODATO . IDENTIFICADOR
 
-    ';'       reduce using rule 72 (expresionPrimaria)
-    ';'       [reduce using rule 87 (inicial)]
-    ','       reduce using rule 72 (expresionPrimaria)
-    ','       [reduce using rule 87 (inicial)]
-    $default  reduce using rule 72 (expresionPrimaria)
+    IDENTIFICADOR  shift, and go to state 191
 
 
 state 178
 
-   81 listaParametrosDeclaracion: TIPODATO . IDENTIFICADOR
+   77 declaracionFunciones: TIPODATO IDENTIFICADOR '(' ')' . sentenciaCompuesta
 
-    IDENTIFICADOR  shift, and go to state 193
+    '{'  shift, and go to state 30
+
+    sentenciaCompuesta  go to state 192
 
 
 state 179
 
-   80 declaracionFunciones: TIPODATO IDENTIFICADOR '(' ')' . sentenciaCompuesta
+   76 declaracionFunciones: TIPODATO IDENTIFICADOR '(' listaParametrosDeclaracion . ')' sentenciaCompuesta
+   79 listaParametrosDeclaracion: listaParametrosDeclaracion . ',' TIPODATO IDENTIFICADOR
 
-    '{'  shift, and go to state 30
-
-    sentenciaCompuesta  go to state 194
+    ','  shift, and go to state 193
+    ')'  shift, and go to state 194
 
 
 state 180
 
-   79 declaracionFunciones: TIPODATO IDENTIFICADOR '(' listaParametrosDeclaracion . ')' sentenciaCompuesta
-   82 listaParametrosDeclaracion: listaParametrosDeclaracion . ',' TIPODATO IDENTIFICADOR
+   81 listaVarSimples: listaVarSimples ',' unaVarSimple .
 
-    ','  shift, and go to state 195
-    ')'  shift, and go to state 196
+    $default  reduce using rule 81 (listaVarSimples)
 
 
 state 181
 
-   84 listaVarSimples: listaVarSimples ',' unaVarSimple .
+   95 sentenciaSeleccion: IF '(' expresion ')' . sentencia
+   96                   | IF '(' expresion ')' . sentencia ELSE sentencia
 
-    $default  reduce using rule 84 (listaVarSimples)
-
-
-state 182
-
-   98 sentenciaSeleccion: IF '(' expresion ')' . sentencia
-   99                   | IF '(' expresion ')' . sentencia ELSE sentencia
-
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 6
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    IF                  shift, and go to state 11
-    RETURN              shift, and go to state 12
-    SWITCH              shift, and go to state 13
-    DEFAULT             shift, and go to state 14
-    GOTO                shift, and go to state 15
-    WHILE               shift, and go to state 16
-    DO                  shift, and go to state 17
-    CASE                shift, and go to state 18
-    FOR                 shift, and go to state 19
-    BREAK               shift, and go to state 20
-    CONTINUE            shift, and go to state 21
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 7
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
+    IF                  shift, and go to state 12
+    RETURN              shift, and go to state 13
+    SWITCH              shift, and go to state 14
+    DEFAULT             shift, and go to state 15
+    GOTO                shift, and go to state 16
+    WHILE               shift, and go to state 17
+    DO                  shift, and go to state 18
+    CASE                shift, and go to state 19
+    FOR                 shift, and go to state 20
+    BREAK               shift, and go to state 21
+    CONTINUE            shift, and go to state 22
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -3309,7 +3291,125 @@ state 182
     '!'                 shift, and go to state 29
     '{'                 shift, and go to state 30
 
-    expresion                go to state 80
+    expresion                go to state 81
+    expresionAsignacion      go to state 33
+    expresionCondicional     go to state 34
+    expresionOLogico         go to state 35
+    expresionYLogico         go to state 36
+    expresionOInclusivo      go to state 37
+    expresionOExcluyente     go to state 38
+    expresionY               go to state 39
+    expresionIgualdad        go to state 40
+    expresionRelacional      go to state 41
+    expresionCorrimiento     go to state 42
+    expresionAditiva         go to state 43
+    expresionMultiplicativa  go to state 44
+    expresionConversion      go to state 45
+    expresionUnaria          go to state 46
+    operadorUnario           go to state 47
+    expresionSufijo          go to state 48
+    argumento2               go to state 49
+    expresionPrimaria        go to state 50
+    sentencia                go to state 195
+    sentenciaCompuesta       go to state 55
+    sentenciaExpresion       go to state 56
+    sentenciaSeleccion       go to state 57
+    sentenciaIteracion       go to state 58
+    sentenciaSalto           go to state 59
+    sentenciaEtiquetada      go to state 60
+
+
+state 182
+
+   97 sentenciaSeleccion: SWITCH '(' expresion ')' . sentencia
+
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 7
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
+    IF                  shift, and go to state 12
+    RETURN              shift, and go to state 13
+    SWITCH              shift, and go to state 14
+    DEFAULT             shift, and go to state 15
+    GOTO                shift, and go to state 16
+    WHILE               shift, and go to state 17
+    DO                  shift, and go to state 18
+    CASE                shift, and go to state 19
+    FOR                 shift, and go to state 20
+    BREAK               shift, and go to state 21
+    CONTINUE            shift, and go to state 22
+    '&'                 shift, and go to state 23
+    '+'                 shift, and go to state 24
+    '-'                 shift, and go to state 25
+    '*'                 shift, and go to state 26
+    '('                 shift, and go to state 27
+    '~'                 shift, and go to state 28
+    '!'                 shift, and go to state 29
+    '{'                 shift, and go to state 30
+
+    expresion                go to state 81
+    expresionAsignacion      go to state 33
+    expresionCondicional     go to state 34
+    expresionOLogico         go to state 35
+    expresionYLogico         go to state 36
+    expresionOInclusivo      go to state 37
+    expresionOExcluyente     go to state 38
+    expresionY               go to state 39
+    expresionIgualdad        go to state 40
+    expresionRelacional      go to state 41
+    expresionCorrimiento     go to state 42
+    expresionAditiva         go to state 43
+    expresionMultiplicativa  go to state 44
+    expresionConversion      go to state 45
+    expresionUnaria          go to state 46
+    operadorUnario           go to state 47
+    expresionSufijo          go to state 48
+    argumento2               go to state 49
+    expresionPrimaria        go to state 50
+    sentencia                go to state 196
+    sentenciaCompuesta       go to state 55
+    sentenciaExpresion       go to state 56
+    sentenciaSeleccion       go to state 57
+    sentenciaIteracion       go to state 58
+    sentenciaSalto           go to state 59
+    sentenciaEtiquetada      go to state 60
+
+
+state 183
+
+   98 sentenciaIteracion: WHILE '(' expresion ')' . sentencia
+
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 7
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
+    IF                  shift, and go to state 12
+    RETURN              shift, and go to state 13
+    SWITCH              shift, and go to state 14
+    DEFAULT             shift, and go to state 15
+    GOTO                shift, and go to state 16
+    WHILE               shift, and go to state 17
+    DO                  shift, and go to state 18
+    CASE                shift, and go to state 19
+    FOR                 shift, and go to state 20
+    BREAK               shift, and go to state 21
+    CONTINUE            shift, and go to state 22
+    '&'                 shift, and go to state 23
+    '+'                 shift, and go to state 24
+    '-'                 shift, and go to state 25
+    '*'                 shift, and go to state 26
+    '('                 shift, and go to state 27
+    '~'                 shift, and go to state 28
+    '!'                 shift, and go to state 29
+    '{'                 shift, and go to state 30
+
+    expresion                go to state 81
     expresionAsignacion      go to state 33
     expresionCondicional     go to state 34
     expresionOLogico         go to state 35
@@ -3337,87 +3437,17 @@ state 182
     sentenciaEtiquetada      go to state 60
 
 
-state 183
-
-  100 sentenciaSeleccion: SWITCH '(' expresion ')' . sentencia
-
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 6
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    IF                  shift, and go to state 11
-    RETURN              shift, and go to state 12
-    SWITCH              shift, and go to state 13
-    DEFAULT             shift, and go to state 14
-    GOTO                shift, and go to state 15
-    WHILE               shift, and go to state 16
-    DO                  shift, and go to state 17
-    CASE                shift, and go to state 18
-    FOR                 shift, and go to state 19
-    BREAK               shift, and go to state 20
-    CONTINUE            shift, and go to state 21
-    '&'                 shift, and go to state 23
-    '+'                 shift, and go to state 24
-    '-'                 shift, and go to state 25
-    '*'                 shift, and go to state 26
-    '('                 shift, and go to state 27
-    '~'                 shift, and go to state 28
-    '!'                 shift, and go to state 29
-    '{'                 shift, and go to state 30
-
-    expresion                go to state 80
-    expresionAsignacion      go to state 33
-    expresionCondicional     go to state 34
-    expresionOLogico         go to state 35
-    expresionYLogico         go to state 36
-    expresionOInclusivo      go to state 37
-    expresionOExcluyente     go to state 38
-    expresionY               go to state 39
-    expresionIgualdad        go to state 40
-    expresionRelacional      go to state 41
-    expresionCorrimiento     go to state 42
-    expresionAditiva         go to state 43
-    expresionMultiplicativa  go to state 44
-    expresionConversion      go to state 45
-    expresionUnaria          go to state 46
-    operadorUnario           go to state 47
-    expresionSufijo          go to state 48
-    argumento2               go to state 49
-    expresionPrimaria        go to state 50
-    sentencia                go to state 198
-    sentenciaCompuesta       go to state 55
-    sentenciaExpresion       go to state 56
-    sentenciaSeleccion       go to state 57
-    sentenciaIteracion       go to state 58
-    sentenciaSalto           go to state 59
-    sentenciaEtiquetada      go to state 60
-
-
 state 184
 
-  101 sentenciaIteracion: WHILE '(' expresion ')' . sentencia
+   99 sentenciaIteracion: DO sentencia WHILE '(' . expresion ')' ';'
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 6
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    IF                  shift, and go to state 11
-    RETURN              shift, and go to state 12
-    SWITCH              shift, and go to state 13
-    DEFAULT             shift, and go to state 14
-    GOTO                shift, and go to state 15
-    WHILE               shift, and go to state 16
-    DO                  shift, and go to state 17
-    CASE                shift, and go to state 18
-    FOR                 shift, and go to state 19
-    BREAK               shift, and go to state 20
-    CONTINUE            shift, and go to state 21
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -3425,9 +3455,8 @@ state 184
     '('                 shift, and go to state 27
     '~'                 shift, and go to state 28
     '!'                 shift, and go to state 29
-    '{'                 shift, and go to state 30
 
-    expresion                go to state 80
+    expresion                go to state 198
     expresionAsignacion      go to state 33
     expresionCondicional     go to state 34
     expresionOLogico         go to state 35
@@ -3446,295 +3475,296 @@ state 184
     expresionSufijo          go to state 48
     argumento2               go to state 49
     expresionPrimaria        go to state 50
-    sentencia                go to state 199
-    sentenciaCompuesta       go to state 55
-    sentenciaExpresion       go to state 56
-    sentenciaSeleccion       go to state 57
-    sentenciaIteracion       go to state 58
-    sentenciaSalto           go to state 59
-    sentenciaEtiquetada      go to state 60
 
 
 state 185
 
-  102 sentenciaIteracion: DO sentencia WHILE '(' . expresion ')' ';'
+  111 sentenciaEtiquetada: CASE expresionCondicional ':' sentencia .
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    '&'                 shift, and go to state 23
-    '+'                 shift, and go to state 24
-    '-'                 shift, and go to state 25
-    '*'                 shift, and go to state 26
-    '('                 shift, and go to state 27
-    '~'                 shift, and go to state 28
-    '!'                 shift, and go to state 29
-
-    expresion                go to state 200
-    expresionAsignacion      go to state 33
-    expresionCondicional     go to state 34
-    expresionOLogico         go to state 35
-    expresionYLogico         go to state 36
-    expresionOInclusivo      go to state 37
-    expresionOExcluyente     go to state 38
-    expresionY               go to state 39
-    expresionIgualdad        go to state 40
-    expresionRelacional      go to state 41
-    expresionCorrimiento     go to state 42
-    expresionAditiva         go to state 43
-    expresionMultiplicativa  go to state 44
-    expresionConversion      go to state 45
-    expresionUnaria          go to state 46
-    operadorUnario           go to state 47
-    expresionSufijo          go to state 48
-    argumento2               go to state 49
-    expresionPrimaria        go to state 50
+    $default  reduce using rule 111 (sentenciaEtiquetada)
 
 
 state 186
 
-  114 sentenciaEtiquetada: CASE expresionCondicional ':' sentencia .
+  100 sentenciaIteracion: FOR '(' declaracionExpresionOpcional ';' . expresionOpcional ';' expresionOpcional ')' sentencia
 
-    $default  reduce using rule 114 (sentenciaEtiquetada)
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
+    '&'                 shift, and go to state 23
+    '+'                 shift, and go to state 24
+    '-'                 shift, and go to state 25
+    '*'                 shift, and go to state 26
+    '('                 shift, and go to state 27
+    '~'                 shift, and go to state 28
+    '!'                 shift, and go to state 29
+
+    $default  reduce using rule 104 (expresionOpcional)
+
+    expresion                go to state 199
+    expresionAsignacion      go to state 33
+    expresionCondicional     go to state 34
+    expresionOLogico         go to state 35
+    expresionYLogico         go to state 36
+    expresionOInclusivo      go to state 37
+    expresionOExcluyente     go to state 38
+    expresionY               go to state 39
+    expresionIgualdad        go to state 40
+    expresionRelacional      go to state 41
+    expresionCorrimiento     go to state 42
+    expresionAditiva         go to state 43
+    expresionMultiplicativa  go to state 44
+    expresionConversion      go to state 45
+    expresionUnaria          go to state 46
+    operadorUnario           go to state 47
+    expresionSufijo          go to state 48
+    argumento2               go to state 49
+    expresionPrimaria        go to state 50
+    expresionOpcional        go to state 200
 
 
 state 187
 
-  103 sentenciaIteracion: FOR '(' declaracionExpresionOpcional ';' . expresionOpcional ';' expresionOpcional ')' sentencia
+   42 expresionConversion: '(' TIPODATO ')' expresionConversion .
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    '&'                 shift, and go to state 23
-    '+'                 shift, and go to state 24
-    '-'                 shift, and go to state 25
-    '*'                 shift, and go to state 26
-    '('                 shift, and go to state 27
-    '~'                 shift, and go to state 28
-    '!'                 shift, and go to state 29
-
-    $default  reduce using rule 107 (expresionOpcional)
-
-    expresion                go to state 201
-    expresionAsignacion      go to state 33
-    expresionCondicional     go to state 34
-    expresionOLogico         go to state 35
-    expresionYLogico         go to state 36
-    expresionOInclusivo      go to state 37
-    expresionOExcluyente     go to state 38
-    expresionY               go to state 39
-    expresionIgualdad        go to state 40
-    expresionRelacional      go to state 41
-    expresionCorrimiento     go to state 42
-    expresionAditiva         go to state 43
-    expresionMultiplicativa  go to state 44
-    expresionConversion      go to state 45
-    expresionUnaria          go to state 46
-    operadorUnario           go to state 47
-    expresionSufijo          go to state 48
-    argumento2               go to state 49
-    expresionPrimaria        go to state 50
-    expresionOpcional        go to state 202
+    $default  reduce using rule 42 (expresionConversion)
 
 
 state 188
 
-    8 finDeLinea: finDeLinea ERROR_LEXICO ';' .
+   12 expresionCondicional: expresionOLogico '?' expresion ':' . expresionCondicional
 
-    $default  reduce using rule 8 (finDeLinea)
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
+    '&'                 shift, and go to state 23
+    '+'                 shift, and go to state 24
+    '-'                 shift, and go to state 25
+    '*'                 shift, and go to state 26
+    '('                 shift, and go to state 27
+    '~'                 shift, and go to state 28
+    '!'                 shift, and go to state 29
+
+    expresionCondicional     go to state 201
+    expresionOLogico         go to state 35
+    expresionYLogico         go to state 36
+    expresionOInclusivo      go to state 37
+    expresionOExcluyente     go to state 38
+    expresionY               go to state 39
+    expresionIgualdad        go to state 40
+    expresionRelacional      go to state 41
+    expresionCorrimiento     go to state 42
+    expresionAditiva         go to state 43
+    expresionMultiplicativa  go to state 44
+    expresionConversion      go to state 45
+    expresionUnaria          go to state 84
+    operadorUnario           go to state 47
+    expresionSufijo          go to state 48
+    argumento2               go to state 49
+    expresionPrimaria        go to state 50
 
 
 state 189
 
-   45 expresionConversion: '(' TIPODATO ')' expresionConversion .
+   56 expresionSufijo: expresionSufijo '[' expresion ']' .
 
-    $default  reduce using rule 45 (expresionConversion)
+    $default  reduce using rule 56 (expresionSufijo)
 
 
 state 190
 
-   15 expresionCondicional: expresionOLogico '?' expresion ':' . expresionCondicional
+   64 listaArgumentos: listaArgumentos ',' argumento2 .
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    '&'                 shift, and go to state 23
-    '+'                 shift, and go to state 24
-    '-'                 shift, and go to state 25
-    '*'                 shift, and go to state 26
-    '('                 shift, and go to state 27
-    '~'                 shift, and go to state 28
-    '!'                 shift, and go to state 29
-
-    expresionCondicional     go to state 203
-    expresionOLogico         go to state 35
-    expresionYLogico         go to state 36
-    expresionOInclusivo      go to state 37
-    expresionOExcluyente     go to state 38
-    expresionY               go to state 39
-    expresionIgualdad        go to state 40
-    expresionRelacional      go to state 41
-    expresionCorrimiento     go to state 42
-    expresionAditiva         go to state 43
-    expresionMultiplicativa  go to state 44
-    expresionConversion      go to state 45
-    expresionUnaria          go to state 83
-    operadorUnario           go to state 47
-    expresionSufijo          go to state 48
-    argumento2               go to state 49
-    expresionPrimaria        go to state 50
+    $default  reduce using rule 64 (listaArgumentos)
 
 
 state 191
 
-   59 expresionSufijo: expresionSufijo '[' expresion ']' .
+   78 listaParametrosDeclaracion: TIPODATO IDENTIFICADOR .
 
-    $default  reduce using rule 59 (expresionSufijo)
+    $default  reduce using rule 78 (listaParametrosDeclaracion)
 
 
 state 192
 
-   67 listaArgumentos: listaArgumentos ',' argumento2 .
+   77 declaracionFunciones: TIPODATO IDENTIFICADOR '(' ')' sentenciaCompuesta .
 
-    $default  reduce using rule 67 (listaArgumentos)
+    $default  reduce using rule 77 (declaracionFunciones)
 
 
 state 193
 
-   81 listaParametrosDeclaracion: TIPODATO IDENTIFICADOR .
+   79 listaParametrosDeclaracion: listaParametrosDeclaracion ',' . TIPODATO IDENTIFICADOR
 
-    $default  reduce using rule 81 (listaParametrosDeclaracion)
+    TIPODATO  shift, and go to state 202
 
 
 state 194
 
-   80 declaracionFunciones: TIPODATO IDENTIFICADOR '(' ')' sentenciaCompuesta .
+   76 declaracionFunciones: TIPODATO IDENTIFICADOR '(' listaParametrosDeclaracion ')' . sentenciaCompuesta
 
-    $default  reduce using rule 80 (declaracionFunciones)
+    '{'  shift, and go to state 30
+
+    sentenciaCompuesta  go to state 203
 
 
 state 195
 
-   82 listaParametrosDeclaracion: listaParametrosDeclaracion ',' . TIPODATO IDENTIFICADOR
+   95 sentenciaSeleccion: IF '(' expresion ')' sentencia .
+   96                   | IF '(' expresion ')' sentencia . ELSE sentencia
 
-    TIPODATO  shift, and go to state 204
+    ELSE  shift, and go to state 204
+
+    ELSE      [reduce using rule 95 (sentenciaSeleccion)]
+    $default  reduce using rule 95 (sentenciaSeleccion)
 
 
 state 196
 
-   79 declaracionFunciones: TIPODATO IDENTIFICADOR '(' listaParametrosDeclaracion ')' . sentenciaCompuesta
+   97 sentenciaSeleccion: SWITCH '(' expresion ')' sentencia .
 
-    '{'  shift, and go to state 30
-
-    sentenciaCompuesta  go to state 205
+    $default  reduce using rule 97 (sentenciaSeleccion)
 
 
 state 197
 
-   98 sentenciaSeleccion: IF '(' expresion ')' sentencia .
-   99                   | IF '(' expresion ')' sentencia . ELSE sentencia
+   98 sentenciaIteracion: WHILE '(' expresion ')' sentencia .
 
-    ELSE  shift, and go to state 206
-
-    ELSE      [reduce using rule 98 (sentenciaSeleccion)]
-    $default  reduce using rule 98 (sentenciaSeleccion)
+    $default  reduce using rule 98 (sentenciaIteracion)
 
 
 state 198
 
-  100 sentenciaSeleccion: SWITCH '(' expresion ')' sentencia .
+    8 expresion: expresion . ',' expresionAsignacion
+   99 sentenciaIteracion: DO sentencia WHILE '(' expresion . ')' ';'
 
-    $default  reduce using rule 100 (sentenciaSeleccion)
+    ','  shift, and go to state 92
+    ')'  shift, and go to state 205
 
 
 state 199
 
-  101 sentenciaIteracion: WHILE '(' expresion ')' sentencia .
+    8 expresion: expresion . ',' expresionAsignacion
+  105 expresionOpcional: expresion .
 
-    $default  reduce using rule 101 (sentenciaIteracion)
+    ','  shift, and go to state 92
+
+    $default  reduce using rule 105 (expresionOpcional)
 
 
 state 200
 
-   11 expresion: expresion . ',' expresionAsignacion
-  102 sentenciaIteracion: DO sentencia WHILE '(' expresion . ')' ';'
+  100 sentenciaIteracion: FOR '(' declaracionExpresionOpcional ';' expresionOpcional . ';' expresionOpcional ')' sentencia
 
-    ','  shift, and go to state 92
-    ')'  shift, and go to state 207
+    ';'  shift, and go to state 206
 
 
 state 201
 
-   11 expresion: expresion . ',' expresionAsignacion
-  108 expresionOpcional: expresion .
+   12 expresionCondicional: expresionOLogico '?' expresion ':' expresionCondicional .
 
-    ','  shift, and go to state 92
-
-    $default  reduce using rule 108 (expresionOpcional)
+    $default  reduce using rule 12 (expresionCondicional)
 
 
 state 202
 
-  103 sentenciaIteracion: FOR '(' declaracionExpresionOpcional ';' expresionOpcional . ';' expresionOpcional ')' sentencia
+   79 listaParametrosDeclaracion: listaParametrosDeclaracion ',' TIPODATO . IDENTIFICADOR
 
-    ';'  shift, and go to state 208
+    IDENTIFICADOR  shift, and go to state 207
 
 
 state 203
 
-   15 expresionCondicional: expresionOLogico '?' expresion ':' expresionCondicional .
+   76 declaracionFunciones: TIPODATO IDENTIFICADOR '(' listaParametrosDeclaracion ')' sentenciaCompuesta .
 
-    $default  reduce using rule 15 (expresionCondicional)
+    $default  reduce using rule 76 (declaracionFunciones)
 
 
 state 204
 
-   82 listaParametrosDeclaracion: listaParametrosDeclaracion ',' TIPODATO . IDENTIFICADOR
+   96 sentenciaSeleccion: IF '(' expresion ')' sentencia ELSE . sentencia
 
-    IDENTIFICADOR  shift, and go to state 209
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 7
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
+    IF                  shift, and go to state 12
+    RETURN              shift, and go to state 13
+    SWITCH              shift, and go to state 14
+    DEFAULT             shift, and go to state 15
+    GOTO                shift, and go to state 16
+    WHILE               shift, and go to state 17
+    DO                  shift, and go to state 18
+    CASE                shift, and go to state 19
+    FOR                 shift, and go to state 20
+    BREAK               shift, and go to state 21
+    CONTINUE            shift, and go to state 22
+    '&'                 shift, and go to state 23
+    '+'                 shift, and go to state 24
+    '-'                 shift, and go to state 25
+    '*'                 shift, and go to state 26
+    '('                 shift, and go to state 27
+    '~'                 shift, and go to state 28
+    '!'                 shift, and go to state 29
+    '{'                 shift, and go to state 30
+
+    expresion                go to state 81
+    expresionAsignacion      go to state 33
+    expresionCondicional     go to state 34
+    expresionOLogico         go to state 35
+    expresionYLogico         go to state 36
+    expresionOInclusivo      go to state 37
+    expresionOExcluyente     go to state 38
+    expresionY               go to state 39
+    expresionIgualdad        go to state 40
+    expresionRelacional      go to state 41
+    expresionCorrimiento     go to state 42
+    expresionAditiva         go to state 43
+    expresionMultiplicativa  go to state 44
+    expresionConversion      go to state 45
+    expresionUnaria          go to state 46
+    operadorUnario           go to state 47
+    expresionSufijo          go to state 48
+    argumento2               go to state 49
+    expresionPrimaria        go to state 50
+    sentencia                go to state 208
+    sentenciaCompuesta       go to state 55
+    sentenciaExpresion       go to state 56
+    sentenciaSeleccion       go to state 57
+    sentenciaIteracion       go to state 58
+    sentenciaSalto           go to state 59
+    sentenciaEtiquetada      go to state 60
 
 
 state 205
 
-   79 declaracionFunciones: TIPODATO IDENTIFICADOR '(' listaParametrosDeclaracion ')' sentenciaCompuesta .
+   99 sentenciaIteracion: DO sentencia WHILE '(' expresion ')' . ';'
 
-    $default  reduce using rule 79 (declaracionFunciones)
+    ';'  shift, and go to state 209
 
 
 state 206
 
-   99 sentenciaSeleccion: IF '(' expresion ')' sentencia ELSE . sentencia
+  100 sentenciaIteracion: FOR '(' declaracionExpresionOpcional ';' expresionOpcional ';' . expresionOpcional ')' sentencia
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 6
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    IF                  shift, and go to state 11
-    RETURN              shift, and go to state 12
-    SWITCH              shift, and go to state 13
-    DEFAULT             shift, and go to state 14
-    GOTO                shift, and go to state 15
-    WHILE               shift, and go to state 16
-    DO                  shift, and go to state 17
-    CASE                shift, and go to state 18
-    FOR                 shift, and go to state 19
-    BREAK               shift, and go to state 20
-    CONTINUE            shift, and go to state 21
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 62
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -3742,9 +3772,10 @@ state 206
     '('                 shift, and go to state 27
     '~'                 shift, and go to state 28
     '!'                 shift, and go to state 29
-    '{'                 shift, and go to state 30
 
-    expresion                go to state 80
+    $default  reduce using rule 104 (expresionOpcional)
+
+    expresion                go to state 199
     expresionAsignacion      go to state 33
     expresionCondicional     go to state 34
     expresionOLogico         go to state 35
@@ -3763,115 +3794,59 @@ state 206
     expresionSufijo          go to state 48
     argumento2               go to state 49
     expresionPrimaria        go to state 50
-    sentencia                go to state 210
-    sentenciaCompuesta       go to state 55
-    sentenciaExpresion       go to state 56
-    sentenciaSeleccion       go to state 57
-    sentenciaIteracion       go to state 58
-    sentenciaSalto           go to state 59
-    sentenciaEtiquetada      go to state 60
+    expresionOpcional        go to state 210
 
 
 state 207
 
-  102 sentenciaIteracion: DO sentencia WHILE '(' expresion ')' . ';'
+   79 listaParametrosDeclaracion: listaParametrosDeclaracion ',' TIPODATO IDENTIFICADOR .
 
-    ';'  shift, and go to state 211
+    $default  reduce using rule 79 (listaParametrosDeclaracion)
 
 
 state 208
 
-  103 sentenciaIteracion: FOR '(' declaracionExpresionOpcional ';' expresionOpcional ';' . expresionOpcional ')' sentencia
+   96 sentenciaSeleccion: IF '(' expresion ')' sentencia ELSE sentencia .
 
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 61
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    '&'                 shift, and go to state 23
-    '+'                 shift, and go to state 24
-    '-'                 shift, and go to state 25
-    '*'                 shift, and go to state 26
-    '('                 shift, and go to state 27
-    '~'                 shift, and go to state 28
-    '!'                 shift, and go to state 29
-
-    $default  reduce using rule 107 (expresionOpcional)
-
-    expresion                go to state 201
-    expresionAsignacion      go to state 33
-    expresionCondicional     go to state 34
-    expresionOLogico         go to state 35
-    expresionYLogico         go to state 36
-    expresionOInclusivo      go to state 37
-    expresionOExcluyente     go to state 38
-    expresionY               go to state 39
-    expresionIgualdad        go to state 40
-    expresionRelacional      go to state 41
-    expresionCorrimiento     go to state 42
-    expresionAditiva         go to state 43
-    expresionMultiplicativa  go to state 44
-    expresionConversion      go to state 45
-    expresionUnaria          go to state 46
-    operadorUnario           go to state 47
-    expresionSufijo          go to state 48
-    argumento2               go to state 49
-    expresionPrimaria        go to state 50
-    expresionOpcional        go to state 212
+    $default  reduce using rule 96 (sentenciaSeleccion)
 
 
 state 209
 
-   82 listaParametrosDeclaracion: listaParametrosDeclaracion ',' TIPODATO IDENTIFICADOR .
+   99 sentenciaIteracion: DO sentencia WHILE '(' expresion ')' ';' .
 
-    $default  reduce using rule 82 (listaParametrosDeclaracion)
+    $default  reduce using rule 99 (sentenciaIteracion)
 
 
 state 210
 
-   99 sentenciaSeleccion: IF '(' expresion ')' sentencia ELSE sentencia .
+  100 sentenciaIteracion: FOR '(' declaracionExpresionOpcional ';' expresionOpcional ';' expresionOpcional . ')' sentencia
 
-    $default  reduce using rule 99 (sentenciaSeleccion)
+    ')'  shift, and go to state 211
 
 
 state 211
 
-  102 sentenciaIteracion: DO sentencia WHILE '(' expresion ')' ';' .
+  100 sentenciaIteracion: FOR '(' declaracionExpresionOpcional ';' expresionOpcional ';' expresionOpcional ')' . sentencia
 
-    $default  reduce using rule 102 (sentenciaIteracion)
-
-
-state 212
-
-  103 sentenciaIteracion: FOR '(' declaracionExpresionOpcional ';' expresionOpcional ';' expresionOpcional . ')' sentencia
-
-    ')'  shift, and go to state 213
-
-
-state 213
-
-  103 sentenciaIteracion: FOR '(' declaracionExpresionOpcional ';' expresionOpcional ';' expresionOpcional ')' . sentencia
-
-    INCREMENTO          shift, and go to state 3
-    DECREMENTO          shift, and go to state 4
-    SIZEOF              shift, and go to state 5
-    IDENTIFICADOR       shift, and go to state 6
-    CONSTANTE_REAL      shift, and go to state 8
-    CONSTANTE_ENTERA    shift, and go to state 9
-    CONSTANTE_CARACTER  shift, and go to state 10
-    IF                  shift, and go to state 11
-    RETURN              shift, and go to state 12
-    SWITCH              shift, and go to state 13
-    DEFAULT             shift, and go to state 14
-    GOTO                shift, and go to state 15
-    WHILE               shift, and go to state 16
-    DO                  shift, and go to state 17
-    CASE                shift, and go to state 18
-    FOR                 shift, and go to state 19
-    BREAK               shift, and go to state 20
-    CONTINUE            shift, and go to state 21
+    INCREMENTO          shift, and go to state 4
+    DECREMENTO          shift, and go to state 5
+    SIZEOF              shift, and go to state 6
+    IDENTIFICADOR       shift, and go to state 7
+    CONSTANTE_REAL      shift, and go to state 9
+    CONSTANTE_ENTERA    shift, and go to state 10
+    CONSTANTE_CARACTER  shift, and go to state 11
+    IF                  shift, and go to state 12
+    RETURN              shift, and go to state 13
+    SWITCH              shift, and go to state 14
+    DEFAULT             shift, and go to state 15
+    GOTO                shift, and go to state 16
+    WHILE               shift, and go to state 17
+    DO                  shift, and go to state 18
+    CASE                shift, and go to state 19
+    FOR                 shift, and go to state 20
+    BREAK               shift, and go to state 21
+    CONTINUE            shift, and go to state 22
     '&'                 shift, and go to state 23
     '+'                 shift, and go to state 24
     '-'                 shift, and go to state 25
@@ -3881,7 +3856,7 @@ state 213
     '!'                 shift, and go to state 29
     '{'                 shift, and go to state 30
 
-    expresion                go to state 80
+    expresion                go to state 81
     expresionAsignacion      go to state 33
     expresionCondicional     go to state 34
     expresionOLogico         go to state 35
@@ -3900,7 +3875,7 @@ state 213
     expresionSufijo          go to state 48
     argumento2               go to state 49
     expresionPrimaria        go to state 50
-    sentencia                go to state 214
+    sentencia                go to state 212
     sentenciaCompuesta       go to state 55
     sentenciaExpresion       go to state 56
     sentenciaSeleccion       go to state 57
@@ -3909,8 +3884,8 @@ state 213
     sentenciaEtiquetada      go to state 60
 
 
-state 214
+state 212
 
-  103 sentenciaIteracion: FOR '(' declaracionExpresionOpcional ';' expresionOpcional ';' expresionOpcional ')' sentencia .
+  100 sentenciaIteracion: FOR '(' declaracionExpresionOpcional ';' expresionOpcional ';' expresionOpcional ')' sentencia .
 
-    $default  reduce using rule 103 (sentenciaIteracion)
+    $default  reduce using rule 100 (sentenciaIteracion)

@@ -180,7 +180,7 @@ void mostrarTablaAux(symrec *aux){ // funcion provisional para debuggear
 void compararParametros(symrec *funcionAInvocar) {
     symrec *aux = sym_tabla_parametros_aux;
     symrec *aux2 = funcionAInvocar->value.lista_parametros;
-
+    int enteroAuxiliar;
     while (aux)
     {   if (!aux2) {
             agregarError(&arrayErrores, 0, "Se estan invocando menos parametros de los que se deberian \n");
@@ -188,8 +188,11 @@ void compararParametros(symrec *funcionAInvocar) {
         if(aux2->type == aux->type) {
             printf("El tipo de los parametros es correcto\n");
         } else {
-            char* error1= "Tipo declarado : " + aux2->type;
-            char* error2= "Tipo declarado : " + aux->type;
+            char* error1 = malloc(strlen("Tipo declarado : %d  ") + 5) ;
+            sprintf(error1, "Tipo declarado : %d  ", aux2->type);
+            
+            char* error2 = malloc(strlen("Tipo declarado : %d  ") + 5);
+            sprintf(error2, "Tipo a invocar : %d  ", aux->type);
             agregarError(&arrayErrores, 2, "El tipo de los parametros no es correcto \n", error1, error2);
         }
         

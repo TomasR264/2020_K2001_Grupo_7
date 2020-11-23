@@ -102,12 +102,8 @@ entrada:  /* vacio */
 linea:    expresion   ';' {printf("Se encontro una expresion\n");}
         | declaracion  {printf("Se encontro una declaracion\n");}
         | sentencia   {printf("Se encontro una sentencia\n");}
-        | ERROR_LEXICO finDeLinea  {printf("Se encontro un error lexico\n");}
+        | error   ';'{ yyerrok; yyerror(""); agregarError(&arrayErrores, 0, "Se encontro un error lexico");}
 ;
-
-finDeLinea: /* vacio */
-            | finDeLinea ERROR_LEXICO ';'
-            | finDeLinea ERROR_LEXICO 
 
 ////////////////////////////////  EXPRESIONES //////////////////////////////////////
 
@@ -223,6 +219,7 @@ declaracionVarSimples:          TIPODATO listaVarSimples   {tiparDeclaraciones($
                               | TIPODATO '*' listaVarSimples   {tiparDeclaraciones($<identificador>1); }
                               | TIPODATO   
 ;
+
 
 
 declaracionFunciones:     TIPODATO IDENTIFICADOR '(' listaParametrosDeclaracion ')' sentenciaCompuesta {
