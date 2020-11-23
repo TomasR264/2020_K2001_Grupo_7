@@ -122,3 +122,5 @@ ESCAPE_HEXA \\x[0-9a-fA-F]{1,2}
 . {printf("Se encontro un error lexico, con la cadena no reconocida:   \"%s\"  \n\n\n\n", yytext);}
 
 %%
+
+//[^\n ;\(\)\{\}]+/(\n|;)

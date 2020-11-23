@@ -152,7 +152,34 @@ void mostrarLista(){ // funcion provisional para debuggear
     while (aux)
     {
         printf("Se definio la variable: %s ", aux->name);
-        printf(", de tipo: %d \n", aux->type);
+        switch (aux->type)
+        {
+        case 0:
+            printf(", de tipo: int \n");
+            break;
+        case 1:
+            printf(", de tipo: char \n");
+            break;
+        case 2:
+            printf(", de tipo: double \n");
+            break;
+        case 3:
+            printf(", de tipo: float \n");
+            break;
+        case 4:
+            printf(", de tipo: void \n");
+            break;
+        case 5:
+            printf(", con un error de tipo: auxiliar \n");
+            break;
+        case 6:
+            printf(", de tipo: funcion \n");
+            break;
+        
+        default:
+            break;
+        }
+        
         aux=aux->next;
 
     }
